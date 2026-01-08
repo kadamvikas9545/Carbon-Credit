@@ -1,0 +1,1847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura3.0 - Advanced Mental Health Platform</title>
+    <style>
+        /* ======================================= */
+        /* CSS STYLES */
+        /* ======================================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #23d5ab;
+            --primary-dark: #1ba885;
+            --accent: #e73c7e;
+            --text-dark: #2d3748;
+            --text-medium: #4a5568;
+            --text-light: #718096;
+            --success: #23d5ab;
+            --danger: #e73c7e;
+            --info: #23a6d5;
+            /* Added for toast */
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(400px); }
+            to { transform: translateX(0); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(238, 119, 82, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(231, 60, 126, 0.3) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 2px solid rgba(35, 213, 171, 0.3);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+            cursor: pointer;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(35, 213, 171, 0.3);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-medium);
+            text-decoration: none;
+            transition: all 0.3s;
+            font-weight: 500;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after, .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--primary-dark);
+        }
+
+        .btn {
+            padding: 0.75rem 1.75rem;
+            border-radius: 25px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            box-shadow: 0 4px 15px rgba(35, 213, 171, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(35, 213, 171, 0.5);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary-dark);
+            border: 2px solid var(--primary);
+        }
+
+        .hero {
+            padding: 10rem 5% 4rem;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .badge {
+            display: inline-block;
+            background: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            margin-bottom: 2rem;
+            border: 2px solid var(--primary);
+            font-size: 0.95rem;
+            color: var(--primary-dark);
+            animation: fadeInDown 0.8s ease;
+            box-shadow: 0 4px 15px rgba(35, 213, 171, 0.2);
+        }
+
+        .hero h1 {
+            font-size: 5rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-medium);
+            max-width: 800px;
+            margin: 0 auto 3rem;
+        }
+
+        .mood-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 3rem 5%;
+            border-radius: 20px;
+            margin: 0 5% 4rem;
+            border: 2px solid rgba(35, 213, 171, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(20px);
+        }
+
+        .mood-section h3 {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1.5rem;
+        }
+
+        .mood-options {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .mood-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 2rem 2.5rem;
+            border-radius: 15px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .mood-btn:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 30px rgba(35, 213, 171, 0.4);
+        }
+
+        .mood-btn.active {
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(35, 213, 171, 0.4);
+        }
+
+        .mood-icon {
+            font-size: 3rem;
+        }
+
+        .mood-label {
+            font-weight: 500;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            border: 2px solid rgba(35, 213, 171, 0.3);
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Specific Resource Modal style */
+        #resourceContentModal .modal-content {
+            max-width: 800px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-medium);
+        }
+
+        .close-btn:hover {
+            color: var(--accent);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 2px solid rgba(35, 213, 171, 0.2);
+            font-size: 1rem;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .section-container {
+            padding: 8rem 5% 4rem;
+            min-height: 100vh;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .dashboard-header {
+            margin-bottom: 3rem;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2.5rem;
+            color: var(--primary-dark);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 2px solid rgba(35, 213, 171, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(20px);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--primary-dark);
+        }
+        
+        /* Resource Section specific style to allow categories to break the grid */
+        #resources .feature-grid {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .category-header-container {
+            grid-column: 1 / -1;
+            /* Makes the category header span all columns */
+        }
+
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2.5rem;
+            border-radius: 15px;
+            border: 2px solid rgba(35, 213, 171, 0.3);
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .feature-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-dark);
+        }
+        
+        .feature-card p {
+            flex-grow: 1;
+            /* Allows description to take up available space */
+        }
+
+
+        .chat-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            border: 2px solid rgba(35, 213, 171, 0.3);
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .message {
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .message-content {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1rem 1.5rem;
+            border-radius: 15px;
+            max-width: 70%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #23d5ab, #23a6d5);
+            color: white;
+        }
+
+        .chat-input-area {
+            padding: 1.5rem;
+            border-top: 2px solid var(--primary);
+            display: flex;
+            gap: 1rem;
+            background: white;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 1rem;
+            border-radius: 25px;
+            border: 2px solid rgba(35, 213, 171, 0.2);
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(35, 213, 171, 0.5);
+        }
+
+        .wellness-tips {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            margin-top: 2rem;
+            border: 2px solid rgba(35, 213, 171, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .tip-card {
+            background: rgba(255, 255, 255, 0.6);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            max-width: 640px;
+            margin: 0 auto 2rem;
+            background: rgba(0, 0, 0, 0.9);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 2px solid var(--primary);
+        }
+
+        #video {
+            width: 100%;
+            display: block;
+            transform: scaleX(-1);
+        }
+
+        .analysis-result {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            margin-top: 2rem;
+            border: 2px solid rgba(35, 213, 171, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .emotion-bar {
+            margin-bottom: 1rem;
+        }
+
+        .emotion-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .emotion-progress {
+            height: 20px;
+            background: rgba(35, 213, 171, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .emotion-fill {
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            transition: width 0.5s ease;
+        }
+
+        .therapist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .therapist-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 2px solid rgba(35, 213, 171, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .therapist-header {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .therapist-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        .emergency-section {
+            background: linear-gradient(135deg, #e73c7e, #ee7752);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .emergency-btn {
+            background: white;
+            color: #e73c7e;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .emergency-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .spinner {
+            border: 3px solid rgba(35, 213, 171, 0.3);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 3000;
+            animation: slideInRight 0.3s ease;
+        }
+        
+        .toast.success { background: var(--primary); }
+        .toast.danger { background: var(--danger); }
+        .toast.info { background: var(--info); }
+
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 3rem; }
+            .stats-grid, .feature-grid, .therapist-grid { grid-template-columns: 1fr; }
+            .nav-links { gap: 1rem; }
+            .nav-links a { font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo" onclick="showSection('home')">
+            <div class="logo-icon">🧠</div>
+            <div>Aura3.0</div>
+        </div>
+        <div class="nav-links" id="mainNav">
+            <a onclick="showSection('features')">Features</a>
+            <a onclick="showSection('therapists')">Find Therapist</a>
+            <a onclick="showSection('resources')">Resources</a>
+            <button class="btn btn-primary" onclick="showModal('login')">Sign In</button>
+        </div>
+        <div class="nav-links hidden" id="dashboardNav">
+            <a onclick="showSection('dashboard')">Dashboard</a>
+            <a onclick="showSection('chat')">Chat</a>
+            <a onclick="showSection('facial-analysis')">Mood Analysis</a>
+            <a onclick="showSection('therapists')">Therapists</a>
+            <a onclick="showSection('resources')">Resources</a>
+            <button class="btn btn-secondary" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <section class="hero" id="home">
+        <div class="badge">🌸 Your AI-Powered Mental Health Companion</div>
+        <h1>Find Peace<br>of Mind</h1>
+        <p>Experience a new way of emotional support. Our AI companion is here to listen, understand, and guide you through life's journey with personalized care and 24/7 availability.</p>
+        
+        <div class="mood-section">
+            <h3>How are you feeling today?</h3>
+            <div class="mood-options">
+                <div class="mood-btn" onclick="selectMood(this, 'down')">
+                    <div class="mood-icon">😔</div>
+                    <div class="mood-label">Down</div>
+                </div>
+                <div class="mood-btn" onclick="selectMood(this, 'content')">
+                    <div class="mood-icon">😊</div>
+                    <div class="mood-label">Content</div>
+                </div>
+                <div class="mood-btn" onclick="selectMood(this, 'peaceful')">
+                    <div class="mood-icon">😌</div>
+                    <div class="mood-label">Peaceful</div>
+                </div>
+                <div class="mood-btn" onclick="selectMood(this, 'happy')">
+                    <div class="mood-icon">😄</div>
+                    <div class="mood-label">Happy</div>
+                </div>
+                <div class="mood-btn" onclick="selectMood(this, 'excited')">
+                    <div class="mood-icon">✨</div>
+                    <div class="mood-label">Excited</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-container hidden" id="features">
+        <div class="section-header">
+            <h2>Comprehensive Mental Health Support</h2>
+            <p>Everything you need to take care of your mental wellbeing</p>
+        </div>
+        <div class="feature-grid">
+            <div class="feature-card" onclick="handleFeatureClick('chat')">
+                <div class="feature-icon">💬</div>
+                <h3>24/7 AI Companion</h3>
+                <p>Chat with our empathetic AI companion anytime, anywhere. Get instant support and coping strategies.</p>
+            </div>
+            <div class="feature-card" onclick="handleFeatureClick('facial-analysis')">
+                <div class="feature-icon">📊</div>
+                <h3>Facial Emotion Analysis</h3>
+                <p>Advanced AI analyzes your facial expressions to understand your emotional state in real-time.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🧘</div>
+                <h3>Guided Meditation</h3>
+                <p>Access meditation sessions tailored to your needs. Reduce stress and improve sleep.</p>
+            </div>
+            <div class="feature-card" onclick="showSection('therapists')">
+                <div class="feature-icon">👨‍⚕️</div>
+                <h3>Find Therapists</h3>
+                <p>Connect with licensed mental health professionals near you.</p>
+            </div>
+            <div class="feature-card" onclick="handleFeatureClick('resources')">
+                <div class="feature-icon">📚</div>
+                <h3>Wellness Library</h3>
+                <p>Access articles, videos, and resources about mental health and self-care.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Goal Tracking</h3>
+                <p>Set personal wellness goals and track your progress with smart reminders.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-container hidden" id="dashboard">
+        <div class="dashboard-header">
+            <h1>Welcome Back! 🌸</h1>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-label">Mood Check-ins</div>
+                <div class="stat-value">23</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">💬</div>
+                <div class="stat-label">Chat Sessions</div>
+                <div class="stat-value">15</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🧘</div>
+                <div class="stat-label">Meditation Minutes</div>
+                <div class="stat-value">180</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🔥</div>
+                <div class="stat-label">Day Streak</div>
+                <div class="stat-value">7</div>
+            </div>
+        </div>
+
+        <div class="wellness-tips">
+            <h3 style="color: var(--primary-dark); margin-bottom: 1rem;">💡 Daily Wellness Tips</h3>
+            <div class="tip-card">
+                <strong>🌅 Morning Routine:</strong> Start your day with 5 minutes of deep breathing to set a calm tone.
+            </div>
+            <div class="tip-card">
+                <strong>💧 Stay Hydrated:</strong> Drink water regularly. Dehydration can affect your mood and energy.
+            </div>
+            <div class="tip-card">
+                <strong>🚶 Move Your Body:</strong> Even a 10-minute walk can boost your mental clarity and mood.
+            </div>
+        </div>
+    </section>
+
+    <section class="section-container hidden" id="chat">
+        <div class="section-header">
+            <h2>AI Companion Chat</h2>
+            <p>Share your thoughts and feelings in a safe, judgment-free space</p>
+        </div>
+        <div class="chat-container">
+            <div class="chat-messages" id="chatMessages">
+                <div class="message">
+                    <div class="message-avatar">🤖</div>
+                    <div class="message-content">
+                        Hello! I'm here to listen and support you. How are you feeling today?
+                    </div>
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Type your message..." onkeypress="handleChatKeypress(event)">
+                <button class="send-btn" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-container hidden" id="facial-analysis">
+        <div class="section-header">
+            <h2>AI Facial Emotion Analysis</h2>
+            <p>Let our AI analyze your facial expressions to understand your emotional state</p>
+        </div>
+        <div class="video-container">
+            <video id="video" autoplay playsinline></video>
+        </div>
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <button class="btn btn-primary" onclick="startCamera()">Start Camera</button>
+            <button class="btn btn-secondary" onclick="stopCamera()">Stop Camera</button>
+        </div>
+        <div class="analysis-result" id="emotionResults">
+            <h3 style="color: var(--primary-dark); margin-bottom: 1.5rem;">Detected Emotions</h3>
+            <div class="emotion-bar">
+                <div class="emotion-label">
+                    <span>😊 Happy</span>
+                    <span id="happyPercent">0%</span>
+                </div>
+                <div class="emotion-progress">
+                    <div class="emotion-fill" id="happyBar" style="width: 0%"></div>
+                </div>
+            </div>
+            <div class="emotion-bar">
+                <div class="emotion-label">
+                    <span>😢 Sad</span>
+                    <span id="sadPercent">0%</span>
+                </div>
+                <div class="emotion-progress">
+                    <div class="emotion-fill" id="sadBar" style="width: 0%"></div>
+                </div>
+            </div>
+            <div class="emotion-bar">
+                <div class="emotion-label">
+                    <span>😠 Angry</span>
+                    <span id="angryPercent">0%</span>
+                </div>
+                <div class="emotion-progress">
+                    <div class="emotion-fill" id="angryBar" style="width: 0%"></div>
+                </div>
+            </div>
+            <div class="emotion-bar">
+                <div class="emotion-label">
+                    <span>😨 Anxious</span>
+                    <span id="anxiousPercent">0%</span>
+                </div>
+                <div class="emotion-progress">
+                    <div class="emotion-fill" id="anxiousBar" style="width: 0%"></div>
+                </div>
+            </div>
+            <div class="emotion-bar">
+                <div class="emotion-label">
+                    <span>😐 Neutral</span>
+                    <span id="neutralPercent">0%</span>
+                </div>
+                <div class="emotion-progress">
+                    <div class="emotion-fill" id="neutralBar" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="analysis-result hidden" id="stressAnalysisResults">
+            <h3 style="color: var(--primary-dark); margin-bottom: 1.5rem;">🧠 Advanced Stress & Anxiety Analysis</h3>
+            <div style="background: rgba(255, 255, 255, 0.6); padding: 1.5rem; border-radius: 10px; margin-bottom: 1.5rem;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 1rem;">
+                    <div>
+                        <div style="color: var(--text-light); font-size: 0.9rem;">Stress Level</div>
+                        <div style="font-size: 2rem; font-weight: 700; color: var(--accent);" id="stressLevel">0%</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--text-light); font-size: 0.9rem;">Anxiety Index</div>
+                        <div style="font-size: 2rem; font-weight: 700; color: var(--accent);" id="anxietyIndex">0%</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--text-light); font-size: 0.9rem;">Verhulst Score</div>
+                        <div style="font-size: 2rem; font-weight: 700; color: var(--primary-dark);" id="verhulstScore">0.0</div>
+                    </div>
+                </div>
+                <div id="stressStatus" style="padding: 1rem; border-radius: 8px; font-weight: 500; text-align: center;"></div>
+            </div>
+            <div style="background: white; padding: 1.5rem; border-radius: 10px; margin-bottom: 1.5rem;">
+                <h4 style="color: var(--primary-dark); margin-bottom: 1rem;">Stress & Anxiety Trend</h4>
+                <canvas id="stressChart" style="max-height: 300px;"></canvas>
+            </div>
+            <div id="aiRecommendations" style="background: rgba(35, 213, 171, 0.1); padding: 1.5rem; border-radius: 10px; border-left: 4px solid var(--primary);">
+                <h4 style="color: var(--primary-dark); margin-bottom: 1rem;">💡 AI Recommendations</h4>
+                <div id="recommendationsList"></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-container" id="therapists">
+        <div class="emergency-section">
+            <h3>🆘 Need Immediate Help?</h3>
+            <p>If you're in crisis, please reach out immediately</p>
+            <button class="emergency-btn" onclick="callEmergency('suicide')">Suicide Helpline: 9152987821</button>
+            <button class="emergency-btn" onclick="callEmergency('mental')">Mental Health: 08046110007</button>
+        </div>
+        <div class="section-header">
+            <h2>Find Mental Health Professionals</h2>
+            <p>Connect with licensed therapists in your area</p>
+        </div>
+        <div id="therapistLoading" class="spinner"></div>
+        <div class="therapist-grid" id="therapistGrid"></div>
+    </section>
+
+    <section class="section-container hidden" id="resources">
+        <div class="section-header">
+            <h2>Wellness Resources</h2>
+            <p>Educational content to support your mental health journey</p>
+        </div>
+        <div id="resourcesLoading" class="spinner"></div>
+        <div id="resourceGrid">
+            
+        </div>
+    </section>
+
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Sign In</h2>
+                <button class="close-btn" onclick="closeModal('login')">×</button>
+            </div>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" required placeholder="your@email.com"> 
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
+                <p style="text-align: center; margin-top: 1rem;">
+                    Don't have an account?
+                    <a href="#" onclick="showModal('register'); return false;" style="color: var(--primary-dark);">Sign Up</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create Account</h2>
+                <button class="close-btn" onclick="closeModal('register')">×</button>
+            </div>
+            <form onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" required placeholder="Your name">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="registerEmail" required placeholder="your@email.com"> 
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="registerPassword" required placeholder="••••••••"> 
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Create Account</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
+    <script>
+        let isLoggedIn = false;
+        let videoStream = null;
+        let analysisInterval = null;
+        let scanStartTime = null;
+        let emotionHistory = [];
+        let stressChart = null;
+        let currentSection = 'home';
+        
+        // ==========================================================
+        // SIMULATED API DATA (Combined content from resource.json and chatresource.json)
+        // ==========================================================
+        const allResources = [
+          // Data from resource.json
+          {
+            "category": "Understanding Anxiety",
+            "title": "Anxiety Disorders Overview",
+            "description": "Learn about symptoms like excessive worry, rapid heartbeat; triggers like stress or genetics; coping like CBT therapy.",
+            "buttonText": "Read More",
+            "url": "https://www.nimh.nih.gov/health/topics/anxiety-disorders",
+            "type": "article",
+            "source": "NIMH (National Institute of Mental Health)"
+          },
+          {
+            "category": "Understanding Anxiety",
+            "title": "Tips for Coping with Anxiety",
+            "description": "Identify triggers, practice relaxation, limit caffeine/alcohol; includes journaling and therapy strategies.",
+            "buttonText": "Read More",
+            "url": "https://adaa.org/tips",
+            "type": "article",
+            "source": "ADAA (Anxiety and Depression Association of America)"
+          },
+          {
+            "category": "Understanding Anxiety",
+            "title": "Coping Strategies from Mayo Clinic",
+            "description": "Breathing exercises, visualization, and when to seek help for persistent anxiety.",
+            "buttonText": "Read More",
+            "url": "https://www.mayoclinichealthsystem.org/hometown-health/speaking-of-health/11-tips-for-coping-with-an-anxiety-disorder",
+            "type": "article",
+            "source": "Mayo Clinic"
+          },
+          {
+            "category": "Meditation Library",
+            "title": "Guided Meditations for Stress & Sleep",
+            "description": "Free sessions for stress reduction, better sleep, focus; includes body scans and breathing.",
+            "buttonText": "Listen Now",
+            "url": "https://www.uclahealth.org/uclamindful/guided-meditations",
+            "type": "audio",
+            "source": "UCLA Mindful (free downloads)"
+          },
+          {
+            "category": "Meditation Library",
+            "title": "Headspace Meditation Basics",
+            "description": "Guided audios for anxiety, focus, emotional balance; start with free trials or basics course.",
+            "buttonText": "Listen Now",
+            "url": "https://www.headspace.com/meditation",
+            "type": "audio",
+            "source": "Headspace"
+          },
+          {
+            "category": "Meditation Library",
+            "title": "Mayo Clinic Meditation Guide",
+            "description": "Quick techniques anywhere for stress relief, including walking meditation.",
+            "buttonText": "Read More",
+            "url": "https://www.mayoclinic.org/tests-procedures/meditation/in-depth/meditation/art-20045858",
+            "type": "article/audio",
+            "source": "Mayo Clinic"
+          },
+          {
+            "category": "Building Resilience",
+            "title": "Resilience Roadmap from APA",
+            "description": "Adapt to challenges; build through mindset, social support, coping skills like reframing.",
+            "buttonText": "Start Learning",
+            "url": "https://www.apa.org/topics/resilience",
+            "type": "article",
+            "source": "American Psychological Association"
+          },
+          {
+            "category": "Building Resilience",
+            "title": "19 Resilience Exercises",
+            "description": "Activities like journaling, gratitude, and cognitive reframing to bounce back stronger.",
+            "buttonText": "Start Learning",
+            "url": "https://positivepsychology.com/resilience-activities-exercises/",
+            "type": "guide",
+            "source": "PositivePsychology.com"
+          },
+          {
+            "category": "Building Resilience",
+            "title": "6 Daily Exercises for Mental Strength",
+            "description": "Neuroscientist tips: Embrace mistakes, spend time in nature, practice mindfulness.",
+            "buttonText": "Start Learning",
+            "url": "https://www.cnbc.com/2021/08/31/do-these-exercises-every-day-to-build-resilience-and-mental-strength-says-neuroscientist.html",
+            "type": "article",
+            "source": "CNBC (based on neuroscientist Wendi Suzuki)"
+          },
+          {
+            "category": "Sleep Better",
+            "title": "Sleep Hygiene Tips",
+            "description": "Consistent schedule, no screens before bed, exercise; aim for 7-9 hours.",
+            "buttonText": "Read More",
+            "url": "https://www.sleepfoundation.org/sleep-hygiene",
+            "type": "article",
+            "source": "Sleep Foundation"
+          },
+          {
+            "category": "Sleep Better",
+            "title": "Harvard Health Sleep Practices",
+            "description": "Wind down routine, avoid caffeine/alcohol; track patterns for better rest.",
+            "buttonText": "Read More",
+            "url": "https://www.health.harvard.edu/staying-healthy/sleep-hygiene-simple-practices-for-better-rest",
+            "type": "article",
+            "source": "Harvard Health"
+          },
+          {
+            "category": "Sleep Better",
+            "title": "Mayo Clinic 6 Steps to Better Sleep",
+            "description": "Daily routines, environment tweaks for quality sleep impacting mental health.",
+            "buttonText": "Read More",
+            "url": "https://www.mayoclinic.org/healthy-lifestyle/adult-health/in-depth/sleep/art-20048379",
+            "type": "article",
+            "source": "Mayo Clinic"
+          },
+          {
+            "category": "Self-Care Guide",
+            "title": "NIMH Caring for Mental Health",
+            "description": "Daily gratitude, positivity, connections; small acts for physical/mental boost.",
+            "buttonText": "View Guide",
+            "url": "https://www.nimh.nih.gov/health/topics/caring-for-your-mental-health",
+            "type": "guide",
+            "source": "NIMH"
+          },
+          {
+            "category": "Self-Care Guide",
+            "title": "5 Types of Self-Care",
+            "description": "Physical (exercise/sleep), emotional (journaling), social, etc., for balance.",
+            "buttonText": "View Guide",
+            "url": "https://www.verywellmind.com/self-care-strategies-overall-stress-reduction-3144729",
+            "type": "guide",
+            "source": "Verywell Mind"
+          },
+          {
+            "category": "Self-Care Guide",
+            "title": "20+ Self-Care Practices",
+            "description": "Exercise, mindfulness, hobbies; prioritize for well-being.",
+            "buttonText": "View Guide",
+            "url": "https://www.calm.com/blog/self-care-practices",
+            "type": "article",
+            "source": "Calm Blog"
+          },
+          {
+            "category": "Support Groups",
+            "title": "ADAA Online Peer Support",
+            "description": "Free, moderated forums for anxiety/depression; share experiences safely.",
+            "buttonText": "Join Community",
+            "url": "https://adaa.org/find-help/support",
+            "type": "group",
+            "source": "ADAA"
+          },
+          {
+            "category": "Support Groups",
+            "title": "NAMI Support Groups",
+            "description": "Virtual/in-person for mental health conditions; open to all.",
+            "buttonText": "Join Community",
+            "url": "https://www.nami.org/support-education/support-groups/",
+            "type": "group",
+            "source": "NAMI (National Alliance on Mental Illness)"
+          },
+          {
+            "category": "Support Groups",
+            "title": "DBSA Online Groups",
+            "description": "For depression/bipolar; safe space to discuss coping and hope.",
+            "buttonText": "Join Community",
+            "url": "https://www.dbsalliance.org/support/chapters-and-support-groups/online-support-groups/",
+            "type": "group",
+            "source": "DBSA (Depression and Bipolar Support Alliance)"
+          },
+          // Data from chatresource.json
+          {
+            "category": "Crisis & Suicide Prevention Chats",
+            "title": "988 Suicide & Crisis Lifeline",
+            "description": "Free, 24/7 confidential chat, text, or call support for emotional distress or suicidal thoughts.",
+            "buttonText": "Chat Now",
+            "url": "https://988lifeline.org/chat/",
+            "type": "crisis-chat",
+            "details": "Also text 988 or call 988",
+            "source": "Official U.S. Suicide & Crisis Lifeline"
+          },
+          {
+            "category": "Crisis & Suicide Prevention Chats",
+            "title": "Crisis Text Line",
+            "description": "Text-based support for any crisis; trained volunteers help de-escalate and connect to resources.",
+            "buttonText": "Text HOME to 741741",
+            "url": "https://www.crisistextline.org/",
+            "type": "crisis-text",
+            "details": "Available in US, Canada, UK, Ireland",
+            "source": "Crisis Text Line"
+          },
+          {
+            "category": "Crisis & Suicide Prevention Chats",
+            "title": "The Trevor Project (LGBTQ+ Youth)",
+            "description": "Specialized crisis chat for LGBTQ+ young people under 25 facing suicidal thoughts or identity issues.",
+            "buttonText": "Chat Now",
+            "url": "https://www.thetrevorproject.org/get-help/",
+            "type": "crisis-chat",
+            "details": "Also text START to 678-678",
+            "source": "The Trevor Project"
+          },
+          {
+            "category": "General Mental Health Support Chats",
+            "title": "7 Cups",
+            "description": "Anonymous emotional support chat with trained listeners; optional paid therapy upgrade.",
+            "buttonText": "Start Chat",
+            "url": "https://www.7cups.com/",
+            "type": "support-chat",
+            "details": "Global, free listener chats available 24/7",
+            "source": "7 Cups"
+          },
+          {
+            "category": "General Mental Health Support Chats",
+            "title": "NAMI Helpline Chat",
+            "description": "Information, referrals, and support for mental health conditions from National Alliance on Mental Illness.",
+            "buttonText": "Chat Now",
+            "url": "https://www.nami.org/help",
+            "type": "support-chat",
+            "details": "Limited hours; check website for availability",
+            "source": "NAMI"
+          },
+          {
+            "category": "General Mental Health Support Chats",
+            "title": "SAMHSA Behavioral Health Chat",
+            "description": "Confidential web chat for substance use or mental health treatment locator and information.",
+            "buttonText": "Chat Now",
+            "url": "https://www.samhsa.gov/find-help/helplines",
+            "type": "support-chat",
+            "source": "SAMHSA (U.S. Substance Abuse and Mental Health Services Administration)"
+          },
+          {
+            "category": "Peer Support & Community Chats",
+            "title": "Togetherall",
+            "description": "Anonymous peer-to-peer moderated community chat for mental health; clinically supervised.",
+            "buttonText": "Join Chat",
+            "url": "https://togetherall.com/",
+            "type": "peer-community",
+            "details": "Free via some universities/employers",
+            "source": "Togetherall"
+          },
+          {
+            "category": "Peer Support & Community Chats",
+            "title": "HearMe",
+            "description": "Peer support chat app for empathy and venting; non-professional listeners.",
+            "buttonText": "Download & Chat",
+            "url": "https://hearme.app/",
+            "type": "peer-chat",
+            "source": "HearMe"
+          },
+          {
+            "category": "Peer Support & Community Chats",
+            "title": "ADAA Online Support",
+            "description": "Peer forums and chat resources specifically for anxiety and depression.",
+            "buttonText": "Join Community",
+            "url": "https://adaa.org/find-help/support",
+            "type": "peer-forum",
+            "source": "Anxiety and Depression Association of America"
+          }
+      ];
+
+
+        // ==========================================================
+        // RESOURCE RENDERING LOGIC
+        // ==========================================================
+
+        function getIconForType(type) {
+            if (type.includes('crisis')) return '🚨';
+            if (type.includes('chat') || type.includes('forum') || type.includes('group')) return '👥';
+            if (type.includes('audio')) return '🎧';
+            if (type.includes('article') || type.includes('guide')) return '📖';
+            return '🔗';
+        }
+
+        function renderResources() {
+            const grid = document.getElementById('resourceGrid');
+            if (!grid) return;
+            grid.innerHTML = ''; // Clear previous content
+            
+            // Hide the spinner once data is available (simulating fast fetch)
+            document.getElementById('resourcesLoading').classList.add('hidden');
+            // 1. Group the resources by category
+            const resourcesByCategory = allResources.reduce((acc, resource) => {
+                acc[resource.category] = acc[resource.category] || [];
+                acc[resource.category].push(resource);
+                return acc;
+            }, {});
+            // 2. Iterate through categories and render headers and cards
+            for (const category in resourcesByCategory) {
+                // Create a header for the category
+                const categoryHeader = document.createElement('div');
+                categoryHeader.className = 'category-header-container';
+                categoryHeader.innerHTML = `
+                    <div class="section-header" style="text-align: left;">
+                        <h2 style="font-size: 2rem; margin-top: 3rem; margin-bottom: 0.5rem; color: var(--accent);">${category}</h2>
+                        <p style="text-align: left; margin-bottom: 2rem;">Explore guides, tools, and support groups related to ${category.toLowerCase()}.</p>
+                    </div>
+                `;
+                grid.appendChild(categoryHeader);
+
+                const categoryContainer = document.createElement('div');
+                categoryContainer.className = 'feature-grid'; // Use feature-grid for card layout
+
+                resourcesByCategory[category].forEach(resource => {
+                    const card = document.createElement('div');
+                    card.className = 'feature-card';
+                    card.style.cursor = 'default';
+                    
+                    // Construct the card HTML
+                    card.innerHTML = `
+                        <div>
+                            <div class="feature-icon">${getIconForType(resource.type)}</div>
+                            <h3>${resource.title}</h3>
+                            <p style="margin-bottom: 1rem;">${resource.description}</p>
+                            <div style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-light);">Source: ${resource.source}</div>
+                        </div>
+                        <a href="${resource.url}" target="_blank" class="btn btn-secondary" style="margin-top: 1.5rem; padding: 0.5rem 1rem; display: block; text-decoration: none; border-color: var(--primary); color: var(--primary-dark);">
+                            ${resource.buttonText} &rarr;
+                        </a>
+                    `;
+                    categoryContainer.appendChild(card);
+                });
+                grid.appendChild(categoryContainer);
+            }
+        }
+
+
+        // ==========================================================
+        // CORE APPLICATION LOGIC
+        // ==========================================================
+
+        function showSection(id) {
+            document.querySelectorAll('section').forEach(section => {
+                section.classList.add('hidden');
+            });
+
+            document.getElementById(id).classList.remove('hidden');
+            currentSection = id;
+
+            // Update nav links active state
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.classList.remove('active');
+                if (link.textContent.toLowerCase().includes(id.toLowerCase())) {
+                    link.classList.add('active');
+                }
+            });
+            // Special handling for the resources section
+            if (id === 'resources') {
+                renderResources();
+            }
+        }
+
+        function showModal(type) {
+            const modalId = type + 'Modal';
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(type) {
+            const modalId = type + 'Modal';
+            document.getElementById(modalId).classList.remove('active');
+        }
+        
+        function closeAllModals() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.classList.remove('active');
+            });
+        }
+
+        function selectMood(element, mood) {
+            document.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+            // Log mood or initiate AI chat sequence based on mood
+            showToast(`Mood logged: ${mood.charAt(0).toUpperCase() + mood.slice(1)}!`, 'success');
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            closeModal('login');
+            // In a real app, this would send credentials to the server.
+            isLoggedIn = true;
+            document.getElementById('mainNav').classList.add('hidden');
+            document.getElementById('dashboardNav').classList.remove('hidden');
+            showSection('dashboard');
+            showToast('Welcome back to Aura3.0!', 'success');
+        }
+
+        function handleRegister(event) {
+            event.preventDefault();
+            closeModal('register');
+            // In a real app, this would create a new user account.
+            isLoggedIn = true;
+            document.getElementById('mainNav').classList.add('hidden');
+            document.getElementById('dashboardNav').classList.remove('hidden');
+            showSection('dashboard');
+            showToast('Account created successfully! Welcome!', 'success');
+        }
+
+        function logout() {
+            isLoggedIn = false;
+            document.getElementById('dashboardNav').classList.add('hidden');
+            document.getElementById('mainNav').classList.remove('hidden');
+            showSection('home');
+            showToast('You have been logged out.', 'info');
+        }
+
+        function handleFeatureClick(sectionId) {
+            if (isLoggedIn) {
+                showSection(sectionId);
+            } else {
+                showToast('Please sign in to access this feature.', 'danger');
+                showModal('login');
+            }
+        }
+
+        function addMessage(sender, text) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            messageDiv.innerHTML = `
+                <div class="message-avatar">${sender === 'user' ? '👤' : '🤖'}</div>
+                <div class="message-content">${text}</div>
+            `;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll to bottom
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (message === '') return;
+
+            addMessage('user', message);
+            input.value = '';
+            // Show typing indicator
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message';
+            typingDiv.id = 'typingIndicator';
+            typingDiv.innerHTML = `
+                <div class="message-avatar">🤖</div>
+                <div class="message-content">
+                    <div class="spinner" style="width: 20px; height: 20px; margin: 0;"></div>
+                </div>
+            `;
+            document.getElementById('chatMessages').appendChild(typingDiv);
+
+            try {
+                const aiResponse = await generateAiResponse(message);
+                document.getElementById('typingIndicator')?.remove();
+                addMessage('ai', aiResponse);
+            } catch (error) {
+                document.getElementById('typingIndicator')?.remove();
+                addMessage('ai', "I apologize, but I'm having trouble connecting right now. Please try again in a moment.");
+                console.error('Chat error:', error);
+            }
+        }
+
+        async function generateAiResponse(userMessage) {
+            // OPTION 1: Use Backend API (Best for production) -- NOW UNCOMMENTED
+            // This routes the request through your running server.js to avoid CORS errors.
+            try {
+                const response = await fetch('http://localhost:5000/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: userMessage })
+                });
+                if (!response.ok) {
+                    // This handles server-side errors (e.g., if server is running but fails to reach Gemini)
+                    throw new Error(`Backend API failed with status ${response.status}`);
+                }
+                const data = await response.json();
+                return data.reply;
+            } catch (error) {
+                console.error('Backend API Error:', error);
+                // If the backend request fails (e.g., server is not running), we fall back.
+                return generateFallbackResponse(userMessage); 
+            }
+            
+            // OPTION 2: Direct Gemini API Call (Updated with your Key) -- NOW COMMENTED OUT
+            // This is the source of the CORS error when running index.html directly.
+            
+            const GEMINI_API_KEY = "AIzaSyB1cl0WK3xq8EjfV3Ii2-72TNk8eO3cmJE";
+            
+            // UPDATED: Changed model to 'gemini-2.0-flash'
+            const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: `You are Aura, a compassionate and empathetic mental health AI companion. Your role is to provide emotional support, active listening, and gentle guidance. 
+
+Guidelines:
+- Be warm, supportive, and non-judgmental
+- Validate feelings and show empathy
+- Offer coping strategies when appropriate
+- Encourage professional help for serious concerns
+- Keep responses concise but meaningful (2-4 sentences)
+- Use encouraging emojis occasionally 🌸💚
+- Never diagnose or replace professional therapy
+
+User message: ${userMessage}
+
+Respond as Aura with compassion and support:`
+                            }]
+                        }],
+                        generationConfig: {
+                            temperature: 0.7,
+                            topK: 40,
+                            topP: 0.95,
+                            maxOutputTokens: 500,
+                        }
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('API request failed');
+                }
+
+                const data = await response.json();
+                if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
+                    return data.candidates[0].content.parts[0].text;
+                } else {
+                    throw new Error('Unexpected API response format');
+                }
+            } catch (error) {
+                console.error('Gemini API Error:', error);
+                // Fallback to basic responses if API fails
+                return generateFallbackResponse(userMessage);
+            }
+            
+        }
+
+        function generateFallbackResponse(userMessage) {
+            const lowerCaseMessage = userMessage.toLowerCase();
+            if (lowerCaseMessage.includes('feel') || lowerCaseMessage.includes('how are you')) {
+                return "I'm here for you. How can I support you today? 🌸";
+            } else if (lowerCaseMessage.includes('anxiety') || lowerCaseMessage.includes('stress')) {
+                return "I hear that you're dealing with stress. Would you like to try a quick grounding exercise, or shall I share some coping strategies? 💚";
+            } else if (lowerCaseMessage.includes('thank')) {
+                return "You're very welcome! Remember, I'm here anytime you need to talk. 🌸";
+            } else if (lowerCaseMessage.includes('sad') || lowerCaseMessage.includes('depressed')) {
+                return "I'm sorry you're feeling this way. Your feelings are valid. Would it help to talk about what's troubling you?";
+            } else {
+                return "I'm listening. Can you tell me more about what's on your mind? 💚";
+            }
+        }
+
+        function handleChatKeypress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+        
+        // Facial Analysis & Camera Simulation functions
+        async function startCamera() {
+            const video = document.getElementById('video');
+            try {
+                videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = videoStream;
+                scanStartTime = Date.now();
+                document.getElementById('stressAnalysisResults').classList.remove('hidden');
+                document.getElementById('recommendationsList').innerHTML = '<li>Analyzing your expressions...</li>';
+                showToast('Camera started. Analyzing mood...', 'info');
+                // Start simulation interval (replace with actual face detection library)
+                if (!analysisInterval) {
+                    analysisInterval = setInterval(simulateEmotionAnalysis, 2000);
+                }
+            } catch (err) {
+                console.error("Error accessing camera: ", err);
+                showToast('Error: Could not access camera. Please check permissions.', 'danger');
+            }
+        }
+
+        function stopCamera() {
+            if (videoStream) {
+                videoStream.getTracks().forEach(track => track.stop());
+                videoStream = null;
+            }
+            if (analysisInterval) {
+                clearInterval(analysisInterval);
+                analysisInterval = null;
+            }
+            document.getElementById('video').srcObject = null;
+            showToast('Camera stopped. Analysis halted.', 'info');
+        }
+
+        function simulateEmotionAnalysis() {
+            // Simulated emotion detection logic
+            const emotions = ['happy', 'sad', 'angry', 'anxious', 'neutral'];
+            const newEmotionData = {};
+            let total = 0;
+            
+            // Generate random percentages that sum close to 100
+            emotions.forEach(e => {
+                newEmotionData[e] = Math.random() * (e === 'neutral' ? 50 : 30);
+                total += newEmotionData[e];
+            });
+            // Normalize and update DOM
+            emotions.forEach(e => {
+                const percent = Math.floor((newEmotionData[e] / total) * 100);
+                document.getElementById(`${e}Percent`).textContent = `${percent}%`;
+                document.getElementById(`${e}Bar`).style.width = `${percent}%`;
+                newEmotionData[e] = percent; // Store normalized value
+            });
+            // Advanced Stress/Verhulst Calculation (Simplified)
+            const stressLevel = newEmotionData['anxious'] + newEmotionData['angry'];
+            const anxietyIndex = newEmotionData['anxious'] + Math.max(0, newEmotionData['sad'] - newEmotionData['happy']);
+            const verhulstScore = (1 - (newEmotionData['happy'] + newEmotionData['neutral']) / 100).toFixed(2);
+            document.getElementById('stressLevel').textContent = `${stressLevel}%`;
+            document.getElementById('anxietyIndex').textContent = `${anxietyIndex}%`;
+            document.getElementById('verhulstScore').textContent = verhulstScore;
+
+            let statusText = '';
+            let statusColor = '';
+            if (anxietyIndex > 50) {
+                statusText = 'HIGH STRESS ALERT. Consider a break.';
+                statusColor = '#e73c7e';
+            } else if (anxietyIndex > 30) {
+                statusText = 'Elevated stress detected. Practice deep breathing.';
+                statusColor = '#ee7752';
+            } else {
+                statusText = 'Stress levels are low. Good work!';
+                statusColor = '#1ba885';
+            }
+            document.getElementById('stressStatus').textContent = statusText;
+            document.getElementById('stressStatus').style.backgroundColor = statusColor + '20';
+            document.getElementById('stressStatus').style.color = statusColor;
+
+            // Update history for chart
+            emotionHistory.push({ stress: stressLevel, time: (Date.now() - scanStartTime) / 60000 });
+            if (emotionHistory.length > 20) emotionHistory.shift(); // Keep last 20 points
+            
+            updateStressChart();
+            updateRecommendations(stressLevel);
+        }
+
+        function updateRecommendations(stressLevel) {
+            const list = document.getElementById('recommendationsList');
+            list.innerHTML = '';
+            
+            let recommendations = [];
+            if (stressLevel > 60) {
+                recommendations = [
+                    "Immediate Action: Step away from your screen and practice the 4-7-8 breathing technique.",
+                    "Grounding Exercise: List 5 things you can see, 4 things you can touch, 3 things you can hear, 2 things you can smell, and 1 thing you can taste.",
+                    "Quick Break: Take a 5-minute walk outside if possible."
+                ];
+            } else if (stressLevel > 30) {
+                recommendations = [
+                    "Mindfulness Check: Take 1 minute to focus purely on your breath.",
+                    "Hydration: Drink a glass of water, which can help regulate physiological stress responses.",
+                    "Reframing: Challenge a negative thought. Replace 'I can't do this' with 'I can try this one step at a time'."
+                ];
+            } else {
+                recommendations = [
+                    "Maintenance: Keep up the good work by scheduling a relaxation time today.",
+                    "Social: Connect with a friend or loved one for a brief, positive chat.",
+                    "Nutrition: Ensure your next meal is balanced for sustained energy."
+                ];
+            }
+
+            recommendations.forEach(rec => {
+                const li = document.createElement('div');
+                li.style.marginBottom = '0.5rem';
+                li.innerHTML = `• ${rec}`;
+                list.appendChild(li);
+            });
+        }
+
+        function updateStressChart() {
+            const ctx = document.getElementById('stressChart').getContext('2d');
+            const data = {
+                labels: emotionHistory.map(h => `${Math.floor(h.time)}m`),
+                datasets: [{
+                    label: 'Stress Level (%)',
+                    data: emotionHistory.map(h => h.stress),
+                    borderColor: 'rgb(231, 60, 126)',
+                    backgroundColor: 'rgba(231, 60, 126, 0.1)',
+                    tension: 0.3,
+                    fill: true
+                }]
+            };
+
+            const config = {
+                type: 'line',
+                data: data,
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            min: 0,
+                            max: 100,
+                            title: { display: true, text: 'Stress Index' }
+                        },
+                        x: {
+                            title: { display: true, text: 'Time (minutes)' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            };
+            if (stressChart) {
+                stressChart.data = data;
+                stressChart.update();
+            } else {
+                stressChart = new Chart(ctx, config);
+            }
+        }
+
+        function callEmergency(type) {
+            const numbers = {
+                suicide: '9152987821',
+                mental: '08046110007'
+            };
+            showToast('Connecting to helpline: ' + numbers[type], 'danger');
+            // In a real app, you would use window.open('tel:...')
+        }
+        
+        function bookTherapist(name) {
+            showToast('Booking appointment with ' + name + '...', 'info');
+            setTimeout(() => {
+                showToast('Appointment request sent! 📧', 'success');
+            }, 2000);
+        }
+
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = 'toast ' + type;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+        
+        // Render therapists data on load (simulated)
+        function renderTherapists() {
+            const grid = document.getElementById('therapistGrid');
+            if (!grid) return;
+            
+            // Simulated Therapist Data
+            const therapists = [
+                { name: "Dr. Maya Sharma, Ph.D.", title: "Licensed Clinical Psychologist", specialization: "CBT for anxiety and trauma. Focus on mindfulness integration. Accepts virtual and in-person sessions.", icon: "👩‍⚕️" },
+                { name: "Mr. Alex Chen, LCSW", title: "Licensed Clinical Social Worker", specialization: "Expert in couples counseling and depression support. Uses a Person-Centered approach. Available evenings and weekends.", icon: "👨‍⚕️" },
+                { name: "Ms. Lena Patel, LMFT", title: "Marriage and Family Therapist", specialization: "Works with teens and families on communication issues and self-esteem building. Offers sliding scale fees.", icon: "🧘" }
+            ];
+            // Simulate loading delay
+            setTimeout(() => {
+                document.getElementById('therapistLoading').classList.add('hidden');
+                grid.innerHTML = ''; // Clear spinner
+
+                therapists.forEach(therapist => {
+                    const card = document.createElement('div');
+                    card.className = 'therapist-card';
+                    card.innerHTML = `
+                        <div class="therapist-header">
+                            <div class="therapist-avatar">${therapist.icon}</div>
+                            <div>
+                                <h3 style="margin-bottom: 0.5rem;">${therapist.name}</h3>
+                                <p style="color: var(--text-medium);">${therapist.title}</p>
+                            </div>
+                        </div>
+                        <p>${therapist.specialization}</p>
+                        <button class="btn btn-primary" style="margin-top: 1rem; width: 100%;" onclick="bookTherapist('${therapist.name}')">
+                            📅 Book Appointment
+                        </button>
+                    `;
+                    grid.appendChild(card);
+                });
+            }, 1000);
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                closeAllModals();
+            }
+        }
+
+        // Initialize on load
+        window.addEventListener('load', () => {
+            showSection('home');
+            renderTherapists();
+        });
+    </script>
+</body>
+</html>

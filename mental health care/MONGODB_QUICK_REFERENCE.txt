@@ -1,0 +1,126 @@
+# 🚀 MongoDB Integration - Quick Reference Card
+
+## Start MongoDB & Backend (Copy-Paste Commands)
+
+```bash
+# Terminal 1 - Start MongoDB
+mongod
+
+# Terminal 2 - Start Backend Server
+cd "c:\Users\vikas\OneDrive\Desktop\HTML TUTORIAL\mental health care\backend"
+npm install
+node server.js
+
+# Terminal 3 - View MongoDB Data
+# Open MongoDB Compass → Connect → Select 'aura3' database
+```
+
+---
+
+## What Gets Saved? ✅
+
+| Feature | Collection | When | Data Fields |
+|---------|-----------|------|-------------|
+| **Reviews** | `reviews` | User submits rating | name, rating, comment, email |
+| **Vibe Checks** | `vibechecks` | Daily questionnaire | answers (A-E), email, timestamp |
+| **Chat** | `chatmessages` | Send message to Aura | userMessage, aiResponse, email |
+| **Meditation** | `meditations` | Complete session | duration, type, feedback |
+| **User Account** | `users` | Register/Login | name, email, hashed password |
+| **Mood Logs** | `moods` | Log daily mood | mood, note, timestamp |
+
+---
+
+## Quick Test
+
+```
+1. Open http://localhost:5000/api/health
+   → Should show "status: OK"
+
+2. Click "Share Your Story" in app
+   → Submit review with 5 stars
+
+3. Open MongoDB Compass
+   → Go to aura3 → reviews
+   → Should see your review!
+```
+
+---
+
+## Backend .env Setup
+
+Create file: `backend/.env`
+
+```
+MONGO_URI=mongodb://127.0.0.1:27017/aura3
+JWT_SECRET=aura_super_secret_key_12345
+NODE_ENV=development
+PORT=5000
+```
+
+---
+
+## All Endpoints
+
+**GET /api/health** - Check backend  
+**POST /api/register** - Create account  
+**POST /api/login** - Login  
+**POST /api/reviews** - Submit review  
+**GET /api/reviews** - Get all reviews  
+**POST /api/vibecheck** - Save vibe check  
+**GET /api/vibecheck/:email** - Get vibe history  
+**POST /api/chat-session** - Save chat  
+**GET /api/chat-history/:email** - Get chat history  
+**POST /api/meditation** - Log meditation  
+**GET /api/meditation/:email** - Get meditation history  
+
+---
+
+## Key Features
+
+✅ **Auto Save** - No manual upload  
+✅ **Fallback** - Works offline (localStorage)  
+✅ **Anonymous** - Option to post anonymously  
+✅ **Email Tracking** - Link all data to user  
+✅ **Secure** - Passwords hashed, JWT auth  
+
+---
+
+## Troubleshooting
+
+| Problem | Fix |
+|---------|-----|
+| MongoDB won't connect | Run `mongod` in another terminal |
+| "Cannot find module" | Run `npm install` in backend folder |
+| Port 5000 in use | Change `PORT=5001` in .env |
+| No data in Compass | Refresh collections, check backend logs |
+| "Backend unavailable" | Verify `node server.js` is running |
+
+---
+
+## Docs
+
+📘 **Full Guide** → `MONGODB_INTEGRATION.md`  
+📝 **Testing** → `MONGODB_TEST_GUIDE.md`  
+✅ **Setup** → `MONGODB_SETUP_CHECKLIST.md`  
+📊 **Summary** → `MONGODB_COMPLETE_SUMMARY.md`  
+
+---
+
+## File Locations
+
+```
+backend/
+├── .env (CREATE THIS)
+├── server.js ✅ Updated
+├── package.json
+└── node_modules/
+
+mental health care/
+├── simple.html ✅ Updated
+└── MONGODB docs (4 files)
+```
+
+---
+
+**Status:** ✅ Ready to Use  
+**Date:** December 27, 2025

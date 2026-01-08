@@ -1,0 +1,3881 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aura3.0 - Advanced Mental Health Platform</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.js"></script>
+  <!-- Fixed: Using actively maintained face-api.js fork with correct model paths -->
+  <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.15/dist/face-api.js"></script>
+  <style>
+    /* ======================================= */
+    /* PLAYFUL DUOLINGO-INSPIRED CSS */
+    /* ======================================= */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #58cc02;
+      --primary-dark: #46a302;
+      --primary-light: #89e219;
+      --accent: #ff9600;
+      --accent-light: #ffc800;
+      --secondary: #1cb0f6;
+      --danger: #ff4b4b;
+      --success: #58cc02;
+      --info: #1cb0f6;
+      --text-dark: #3c3c3c;
+      --text-medium: #777777;
+      --text-light: #afafaf;
+      --bg-light: #f7f7f7;
+      --white: #ffffff;
+      --purple: #ce82ff;
+      --pink: #ff9eca;
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0px) rotate(0deg);
+      }
+
+      50% {
+        transform: translateY(-15px) rotate(3deg);
+      }
+    }
+
+    @keyframes bounce {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    @keyframes wiggle {
+
+      0%,
+      100% {
+        transform: rotate(0deg);
+      }
+
+      25% {
+        transform: rotate(-5deg);
+      }
+
+      75% {
+        transform: rotate(5deg);
+      }
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideInRight {
+      from {
+        transform: translateX(400px);
+      }
+
+      to {
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateY(-50px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    body {
+      font-family: 'Segoe UI', 'Arial Rounded MT Bold', 'Nunito', sans-serif;
+      background: linear-gradient(180deg, #e8f5f7 0%, #ffffff 100%);
+      color: var(--text-dark);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image:
+        radial-gradient(circle at 10% 20%, rgba(88, 204, 2, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 90% 80%, rgba(255, 150, 0, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(28, 176, 246, 0.03) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 5%;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+      background: var(--white);
+      border-bottom: 3px solid var(--bg-light);
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--primary);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .logo:hover {
+      transform: scale(1.05);
+    }
+
+    .logo-icon {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      box-shadow: 0 4px 15px rgba(88, 204, 2, 0.3);
+      /* Logo should stay still — no floating animation */
+      animation: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: var(--text-medium);
+      text-decoration: none;
+      transition: all 0.3s;
+      font-weight: 700;
+      cursor: pointer;
+      position: relative;
+      font-size: 1rem;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 3px;
+      background: var(--primary);
+      border-radius: 3px;
+      transition: width 0.3s;
+    }
+
+    .nav-links a:hover::after,
+    .nav-links a.active::after {
+      width: 100%;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .language-selector {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 999;
+    }
+
+    .language-selector select {
+      padding: 0.6rem 1rem;
+      border: 2px solid var(--primary);
+      border-radius: 20px;
+      background: var(--white);
+      color: var(--text-dark);
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 0.95rem;
+      box-shadow: 0 4px 15px rgba(88, 204, 2, 0.2);
+    }
+
+    .language-selector select:hover {
+      background: var(--primary);
+      color: var(--white);
+      box-shadow: 0 6px 20px rgba(88, 204, 2, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .language-selector select:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(88, 204, 2, 0.2);
+    }
+
+    .btn {
+      padding: 0.85rem 2rem;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      font-weight: 800;
+      transition: all 0.2s;
+      font-size: 1rem;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 0 rgba(0, 0, 0, 0.15);
+      position: relative;
+      top: 0;
+    }
+
+    .btn:hover {
+      top: -2px;
+      box-shadow: 0 6px 0 rgba(0, 0, 0, 0.15);
+    }
+
+    .btn:active {
+      top: 2px;
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-primary {
+      background: linear-gradient(180deg, var(--primary-light), var(--primary));
+      color: white;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--primary);
+      border: 3px solid var(--primary);
+      box-shadow: none;
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-light);
+    }
+
+    .hero {
+      padding: 8rem 5% 4rem;
+      text-align: center;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
+
+    .badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--accent), var(--accent-light));
+      padding: 0.75rem 1.75rem;
+      border-radius: 50px;
+      margin-bottom: 2rem;
+      font-size: 1rem;
+      color: white;
+      font-weight: 800;
+      animation: fadeInDown 0.8s ease, bounce 2s ease infinite;
+      box-shadow: 0 4px 15px rgba(255, 150, 0, 0.3);
+    }
+
+    .hero h1 {
+      font-size: 4.5rem;
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      color: var(--primary);
+      text-shadow: 3px 3px 0 rgba(88, 204, 2, 0.1);
+      animation: fadeInUp 1s ease;
+    }
+
+    .hero p {
+      font-size: 1.35rem;
+      color: var(--text-medium);
+      max-width: 700px;
+      margin: 0 auto 3rem;
+      font-weight: 500;
+    }
+
+    .mood-section {
+      background: var(--white);
+      padding: 3rem 5%;
+      border-radius: 30px;
+      margin: 0 5% 4rem;
+      border: 4px solid var(--bg-light);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .mood-section h3 {
+      text-align: center;
+      margin-bottom: 2.5rem;
+      font-size: 1.75rem;
+      color: var(--text-dark);
+      font-weight: 800;
+    }
+
+    .mood-options {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .mood-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      background: var(--bg-light);
+      padding: 2rem 2rem;
+      border-radius: 25px;
+      border: 4px solid transparent;
+      cursor: pointer;
+      transition: all 0.3s;
+      min-width: 120px;
+    }
+
+    .mood-btn:hover {
+      border-color: var(--primary);
+      transform: translateY(-8px) scale(1.05);
+      box-shadow: 0 15px 30px rgba(88, 204, 2, 0.3);
+      background: white;
+    }
+
+    .mood-btn.active {
+      border-color: var(--primary);
+      background: linear-gradient(135deg, rgba(88, 204, 2, 0.1), rgba(88, 204, 2, 0.05));
+      box-shadow: 0 10px 30px rgba(88, 204, 2, 0.3);
+      animation: pulse 1s ease infinite;
+    }
+
+    .mood-icon {
+      font-size: 3.5rem;
+      animation: wiggle 2s ease-in-out infinite;
+    }
+
+    .mood-label {
+      font-weight: 800;
+      color: var(--text-dark);
+      font-size: 1.1rem;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(5px);
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 3rem;
+      border-radius: 30px;
+      max-width: 500px;
+      width: 90%;
+      border: 4px solid var(--primary);
+      animation: slideIn 0.3s ease;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    }
+
+    #resourceContentModal .modal-content {
+      max-width: 800px;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .modal-header h2 {
+      color: var(--primary);
+      font-weight: 900;
+    }
+
+    .close-btn {
+      background: var(--bg-light);
+      border: none;
+      font-size: 2rem;
+      cursor: pointer;
+      color: var(--text-medium);
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .close-btn:hover {
+      background: var(--danger);
+      color: white;
+      transform: rotate(90deg);
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 800;
+      color: var(--text-dark);
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 1rem;
+      border-radius: 15px;
+      border: 3px solid var(--bg-light);
+      font-size: 1rem;
+      transition: all 0.2s;
+      font-weight: 600;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(88, 204, 2, 0.1);
+    }
+
+    .mind-check-section {
+      background: linear-gradient(135deg, rgba(88, 204, 2, 0.05), rgba(255, 150, 0, 0.05));
+      padding: 1.5rem;
+      border-radius: 20px;
+      margin: 1.5rem 0;
+      border: 2px dashed var(--primary);
+      animation: fadeInUp 0.8s ease;
+    }
+
+    .mind-check-section h3 {
+      text-align: center;
+      color: var(--primary);
+      font-weight: 900;
+      margin-bottom: 1rem;
+      font-size: 1.3rem;
+    }
+
+    .mind-check-question {
+      margin-bottom: 1rem;
+      padding: 1rem;
+      background: var(--white);
+      border-radius: 15px;
+      border-left: 4px solid var(--accent);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .mind-check-question label {
+      font-weight: 700;
+      color: var(--text-dark);
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .mind-check-question select,
+    .mind-check-question input[type="range"],
+    .mind-check-question textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 10px;
+      border: 2px solid var(--bg-light);
+      font-size: 1rem;
+      transition: all 0.2s;
+    }
+
+    .mind-check-question select:focus,
+    .mind-check-question input[type="range"]:focus,
+    .mind-check-question textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(88, 204, 2, 0.1);
+    }
+
+    .mind-check-question textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+
+    .stress-slider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .stress-slider input[type="range"] {
+      flex: 1;
+    }
+
+    .stress-value {
+      font-weight: 800;
+      color: var(--accent);
+      min-width: 40px;
+    }
+
+    .support-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .support-option {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      background: var(--bg-light);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .support-option:hover {
+      background: var(--primary-light);
+      transform: translateX(5px);
+    }
+
+    .support-option input[type="radio"] {
+      margin: 0;
+    }
+
+    .vibe-check-intro {
+      text-align: center;
+      padding: 1rem;
+      background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+      border-radius: 20px;
+      margin-bottom: 1rem;
+    }
+
+    .vibe-check-intro h3 {
+      color: var(--primary-dark);
+      font-weight: 900;
+      margin-bottom: 0.5rem;
+    }
+
+    .vibe-check-intro p {
+      color: var(--text-dark);
+      font-style: italic;
+    }
+
+    .section-container {
+      padding: 8rem 5% 4rem;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .dashboard-header {
+      margin-bottom: 3rem;
+      text-align: center;
+    }
+
+    .dashboard-header h1 {
+      font-size: 3rem;
+      color: var(--primary);
+      font-weight: 900;
+      animation: fadeInDown 0.6s ease;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 2.5rem;
+      border-radius: 25px;
+      border: 4px solid var(--bg-light);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s;
+      text-align: center;
+      cursor: pointer;
+      /* Added for clickability */
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+      border-color: var(--primary);
+    }
+
+    .stat-icon {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+      animation: bounce 2s ease infinite;
+    }
+
+    .stat-label {
+      color: var(--text-medium);
+      font-size: 1rem;
+      margin-bottom: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .stat-value {
+      font-size: 3rem;
+      font-weight: 900;
+      color: var(--primary);
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .section-header h2 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      color: var(--primary);
+      font-weight: 900;
+    }
+
+    .section-header p {
+      font-size: 1.2rem;
+      color: var(--text-medium);
+      font-weight: 600;
+    }
+
+    #resources .feature-grid {
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .category-header-container {
+      grid-column: 1 / -1;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      background: white;
+      padding: 2.5rem;
+      border-radius: 25px;
+      border: 4px solid var(--bg-light);
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .feature-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-8px);
+      box-shadow: 0 15px 40px rgba(255, 150, 0, 0.2);
+    }
+
+    .feature-icon {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .feature-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: var(--text-dark);
+      font-weight: 900;
+    }
+
+    .feature-card p {
+      flex-grow: 1;
+      color: var(--text-dark);
+      font-weight: 700;
+    }
+
+    .chat-container {
+      background: white;
+      border-radius: 30px;
+      border: 2px solid rgba(88,204,2,0.12);
+      height: 600px;
+      max-height: calc(100vh - 220px);
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+    }
+
+    .chat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      border-bottom: 3px solid var(--bg-light);
+      background: white;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 2rem;
+      background: var(--bg-light);
+      word-wrap: break-word;
+    }
+
+    .message {
+      margin-bottom: 1.5rem;
+      display: flex;
+      gap: 1rem;
+      animation: fadeInUp 0.3s ease;
+    }
+
+    .message.user {
+      flex-direction: row-reverse;
+    }
+
+    .message-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+      box-shadow: 0 4px 15px rgba(88, 204, 2, 0.3);
+    }
+
+    .message-content {
+      background: white;
+      padding: 1rem 1.25rem;
+      border-radius: 18px;
+      max-width: 72%;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+      font-weight: 600;
+      border: 1px solid rgba(0,0,0,0.04);
+    }
+
+    .message.user .message-content {
+      background: linear-gradient(135deg, var(--primary-light), var(--primary));
+      color: white;
+      border: none;
+    }
+
+    .chat-header .controls { display:flex; gap:0.5rem; align-items:center }
+    .chat-header .controls .clear-all { background: transparent; border: 2px dashed rgba(0,0,0,0.06); padding:0.4rem 0.8rem; border-radius:12px; cursor:pointer; font-weight:700 }
+
+    .chat-input-area {
+      padding: 1.5rem;
+      border-top: 4px solid var(--bg-light);
+      display: flex;
+      gap: 1rem;
+      background: white;
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 1.25rem;
+      border-radius: 25px;
+      border: 3px solid var(--bg-light);
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .chat-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(88, 204, 2, 0.1);
+    }
+
+    .send-btn {
+      background: linear-gradient(180deg, var(--primary-light), var(--primary));
+      color: white;
+      border: none;
+      padding: 1.25rem 2.5rem;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: 800;
+      transition: all 0.2s;
+      box-shadow: 0 4px 0 var(--primary-dark);
+      position: relative;
+      top: 0;
+    }
+
+    .send-btn:hover {
+      top: -2px;
+      box-shadow: 0 6px 0 var(--primary-dark);
+    }
+
+    .send-btn:active {
+      top: 2px;
+      box-shadow: 0 2px 0 var(--primary-dark);
+    }
+
+    .wellness-tips {
+      background: white;
+      padding: 2.5rem;
+      border-radius: 25px;
+      margin-top: 2rem;
+      border: 4px solid var(--bg-light);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    .wellness-tips h3 {
+      color: var(--primary);
+      font-weight: 900;
+      margin-bottom: 1.5rem;
+    }
+
+    .tip-card {
+      background: var(--bg-light);
+      padding: 1.5rem;
+      border-radius: 15px;
+      margin-bottom: 1rem;
+      border-left: 6px solid var(--accent);
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .tip-card:hover {
+      transform: translateX(5px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .video-container {
+      position: relative;
+      width: 100%;
+      max-width: 640px;
+      margin: 0 auto 2rem;
+      background: var(--text-dark);
+      border-radius: 25px;
+      overflow: hidden;
+      border: 4px solid var(--primary);
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+    }
+
+    #video {
+      width: 100%;
+      display: block;
+      transform: scaleX(-1);
+    }
+
+    .analysis-result {
+      background: white;
+      padding: 2.5rem;
+      border-radius: 25px;
+      margin-top: 2rem;
+      border: 4px solid var(--bg-light);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    .analysis-result h3 {
+      color: var(--primary);
+      margin-bottom: 1.5rem;
+      font-weight: 900;
+    }
+
+    .emotion-bar {
+      margin-bottom: 1.5rem;
+    }
+
+    .emotion-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text-dark);
+    }
+
+    .emotion-progress {
+      height: 30px;
+      background: var(--bg-light);
+      border-radius: 15px;
+      overflow: hidden;
+      border: 3px solid var(--bg-light);
+    }
+
+    .emotion-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary-light), var(--primary));
+      transition: width 0.5s ease;
+      border-radius: 12px;
+    }
+
+    .therapist-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 2rem;
+    }
+
+    .therapist-card {
+      background: white;
+      padding: 2.5rem;
+      border-radius: 25px;
+      border: 4px solid var(--bg-light);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s;
+    }
+
+    .therapist-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+      border-color: var(--secondary);
+    }
+
+    .therapist-header {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .therapist-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--secondary), var(--purple));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      flex-shrink: 0;
+      box-shadow: 0 4px 15px rgba(28, 176, 246, 0.3);
+    }
+
+    .therapist-card h3 {
+      font-weight: 900;
+      color: var(--text-dark);
+    }
+
+    .therapist-card p {
+      color: var(--text-medium);
+      font-weight: 600;
+    }
+
+    .emergency-section {
+      background: linear-gradient(135deg, var(--danger), var(--accent));
+      color: white;
+      padding: 3rem;
+      border-radius: 25px;
+      margin-bottom: 3rem;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(255, 75, 75, 0.3);
+      border: 4px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .emergency-section h3 {
+      font-weight: 900;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .emergency-btn {
+      background: white;
+      color: var(--danger);
+      padding: 1rem 2rem;
+      border-radius: 50px;
+      border: none;
+      font-weight: 800;
+      cursor: pointer;
+      margin: 0.5rem;
+      transition: all 0.2s;
+      box-shadow: 0 4px 0 rgba(0, 0, 0, 0.1);
+      position: relative;
+      top: 0;
+    }
+
+    .emergency-btn:hover {
+      top: -2px;
+      box-shadow: 0 6px 0 rgba(0, 0, 0, 0.1);
+      transform: scale(1.05);
+    }
+
+    .emergency-btn:active {
+      top: 2px;
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    .spinner {
+      border: 4px solid var(--bg-light);
+      border-top: 4px solid var(--primary);
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 2rem auto;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      color: white;
+      padding: 1.25rem 2rem;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      z-index: 3000;
+      animation: slideInRight 0.3s ease;
+      font-weight: 800;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .toast.success {
+      background: var(--success);
+    }
+
+    .toast.danger {
+      background: var(--danger);
+    }
+
+    .toast.info {
+      background: var(--info);
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 3rem;
+      }
+
+      .stats-grid,
+      .feature-grid,
+      .therapist-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-links {
+        gap: 1rem;
+      }
+
+      .nav-links a {
+        font-size: 0.9rem;
+      }
+
+      .mind-check-section {
+        padding: 1rem;
+      }
+
+      .support-options {
+        gap: 0.25rem;
+      }
+
+      .support-option {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+      }
+    }
+
+    /* Added for details modals */
+    .details-modal {
+      background: white;
+      padding: 2rem;
+      border-radius: 25px;
+      max-width: 600px;
+      width: 90%;
+      margin: 0 auto;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+      border: 4px solid var(--bg-light);
+      max-height: 70vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .details-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .details-item {
+      background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(250,250,250,0.95));
+      padding: 1rem 1rem;
+      margin-bottom: 1rem;
+      border-radius: 12px;
+      border-left: 6px solid rgba(88,204,2,0.12);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:1rem;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+    }
+
+    .modal-header .btn.btn-secondary { font-size:0.95rem }
+
+    /* Profile Styles */
+    .profile-container {
+      max-width: 600px;
+      margin: 2rem auto;
+    }
+
+    .profile-card {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 4px 20px rgba(88, 204, 2, 0.1);
+      border: 2px solid var(--bg-light);
+    }
+
+    .profile-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .profile-avatar {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .profile-header h3 {
+      font-size: 1.5rem;
+      color: var(--primary);
+      font-weight: 800;
+    }
+
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .info-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .info-group label {
+      font-weight: 700;
+      color: var(--text-dark);
+      font-size: 0.95rem;
+    }
+
+    .info-group p {
+      color: var(--text-medium);
+      font-size: 1rem;
+      padding: 0.75rem 1rem;
+      background: var(--bg-light);
+      border-radius: 10px;
+    }
+
+    .profile-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .profile-form.hidden {
+      display: none;
+    }
+
+    #profileViewMode.hidden {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <div class="logo" onclick="showSection('home')">
+      <div class="logo-icon">🧠</div>
+      <div>Aura3.0</div>
+    </div>
+    <div class="nav-links" id="mainNav">
+      <a onclick="showSection('features')">Features</a>
+      <a onclick="showSection('therapists')">Find Therapist</a>
+      <a onclick="showSection('resources')">Resources</a>
+      <button class="btn btn-primary" onclick="showModal('login')">Sign In</button>
+    </div>
+    <div class="nav-links hidden" id="dashboardNav">
+      <a onclick="showSection('dashboard')">Dashboard</a>
+      <a onclick="showSection('vibe-check')">Vibe Check</a>
+      <a onclick="showSection('chat')">Chat</a>
+      <a onclick="showSection('facial-analysis')">Mood Analysis</a>
+      <a onclick="showSection('meditation')">Meditation</a>
+      <a onclick="showSection('therapists')">Therapists</a>
+      <a onclick="showSection('resources')">Resources</a>
+      <a onclick="showSection('profile')">👤 Profile</a>
+      <button class="btn btn-secondary" onclick="logout()">Logout</button>
+    </div>
+    <div class="language-selector">
+      <select id="languageSelect" onchange="changeLanguage(this.value)">
+        <option value="en">🌍 English</option>
+        <option value="es">🇪🇸 Español</option>
+        <option value="fr">🇫🇷 Français</option>
+        <option value="hi">🇮🇳 हिंदी</option>
+      </select>
+    </div>
+  </nav>
+  <section class="hero" id="home">
+    <div class="badge">🌸 Your AI-Powered Mental Health Companion</div>
+    <h1>Find Peace<br>of Mind</h1>
+    <p>Experience a new way of emotional support. Our AI companion is here to listen, understand, and guide you
+      through life's journey with personalized care and 24/7 availability.</p>
+    <div class="mood-section">
+      <h3>How are you feeling today?</h3>
+      <div class="mood-options">
+        <div class="mood-btn" onclick="selectMood(this, 'down')">
+          <div class="mood-icon">😔</div>
+          <div class="mood-label">Down</div>
+        </div>
+        <div class="mood-btn" onclick="selectMood(this, 'content')">
+          <div class="mood-icon">😊</div>
+          <div class="mood-label">Content</div>
+        </div>
+        <div class="mood-btn" onclick="selectMood(this, 'peaceful')">
+          <div class="mood-icon">😌</div>
+          <div class="mood-label">Peaceful</div>
+        </div>
+        <div class="mood-btn" onclick="selectMood(this, 'happy')">
+          <div class="mood-icon">😄</div>
+          <div class="mood-label">Happy</div>
+        </div>
+        <div class="mood-btn" onclick="selectMood(this, 'excited')">
+          <div class="mood-icon">✨</div>
+          <div class="mood-label">Excited</div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="section-container hidden" id="features">
+    <div class="section-header">
+      <h2>Comprehensive Mental Health Support</h2>
+      <p>Everything you need to take care of your mental wellbeing</p>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-card" onclick="handleFeatureClick('chat')">
+        <div class="feature-icon">💬</div>
+        <h3>24/7 AI Companion</h3>
+        <p>Chat with our empathetic AI companion anytime, anywhere. Get instant support and coping strategies.
+        </p>
+      </div>
+      <div class="feature-card" onclick="handleFeatureClick('facial-analysis')">
+        <div class="feature-icon">📊</div>
+        <h3>Facial Emotion Analysis</h3>
+        <p>Advanced AI analyzes your facial expressions to understand your emotional state in real-time.</p>
+      </div>
+      <div class="feature-card" onclick="handleFeatureClick('meditation')">
+        <div class="feature-icon">🧘</div>
+        <h3>Guided Meditation</h3>
+        <p>Access meditation sessions tailored to your needs. Reduce stress and improve sleep.</p>
+      </div>
+      <div class="feature-card" onclick="showSection('therapists')">
+        <div class="feature-icon">👨‍⚕️</div>
+        <h3>Find Therapists</h3>
+        <p>Connect with licensed mental health professionals near you.</p>
+      </div>
+      <div class="feature-card" onclick="handleFeatureClick('resources')">
+        <div class="feature-icon">📚</div>
+        <h3>Wellness Library</h3>
+        <p>Access articles, videos, and resources about mental health and self-care.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <h3>Goal Tracking</h3>
+        <p>Set personal wellness goals and track your progress with smart reminders.</p>
+      </div>
+    </div>
+  </section>
+  <section class="section-container hidden" id="dashboard">
+    <div class="dashboard-header">
+      <h1>Welcome Back! 🌸</h1>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card" onclick="showMoodHistory()">
+        <div class="stat-icon">📊</div>
+        <div class="stat-label">Mood Check-ins</div>
+        <div class="stat-value" id="moodCheckinsValue">0</div>
+      </div>
+      <div class="stat-card" onclick="showChatHistory()">
+        <div class="stat-icon">💬</div>
+        <div class="stat-label">Chat Sessions</div>
+        <div class="stat-value" id="chatSessionsValue">0</div>
+      </div>
+      <div class="stat-card" onclick="showMeditationHistory()">
+        <div class="stat-icon">🧘</div>
+        <div class="stat-label">Meditation Minutes</div>
+        <div class="stat-value" id="meditationMinutesValue">0</div>
+      </div>
+      <div class="stat-card" onclick="showStreakDetails()">
+        <div class="stat-icon">🔥</div>
+        <div class="stat-label">Day Streak</div>
+        <div class="stat-value" id="dayStreakValue">0</div>
+      </div>
+    </div>
+    <div class="wellness-tips">
+      <h3>💡 Daily Wellness Tips</h3>
+      <div class="tip-card">
+        <strong>🌅 Morning Routine:</strong> Start your day with 5 minutes of deep breathing to set a calm tone.
+      </div>
+      <div class="tip-card">
+        <strong>💧 Stay Hydrated:</strong> Drink water regularly. Dehydration can affect your mood and energy.
+      </div>
+      <div class="tip-card">
+        <strong>🚶 Move Your Body:</strong> Even a 10-minute walk can boost your mental clarity and mood.
+      </div>
+    </div>
+    <div class="analysis-result" id="progressReport" style="margin-top: 2rem;">
+      <h3>📈 Your Progress Report</h3>
+      <canvas id="progressChart" style="max-height: 300px;"></canvas>
+      <div style="display:flex;align-items:center;gap:0.75rem;">
+        <div id="progressSummary" style="flex:1"></div>
+        <button class="btn btn-secondary" onclick="downloadProgressReport()" style="padding:0.5rem 0.8rem;">Download</button>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="generateProgressReport()" style="margin-top: 1rem;">Generate Progress
+      Report</button>
+  </section>
+  <section class="section-container hidden" id="vibe-check">
+    <div class="section-header">
+      <h2>🧠 Daily Vibe Check</h2>
+      <p>Take a moment to reflect and unlock personalized insights. This is required for tailored support.</p>
+    </div>
+    <div class="mind-check-section">
+      <h3>🧠 Your Magical Mind Moments</h3>
+      <form id="vibeCheckForm" onsubmit="completeVibeCheck(event)">
+        <div class="mind-check-question">
+          <label>1) How many hours did you sleep last night?</label>
+          <div class="radio-group">
+            <label><input type="radio" name="q1" value="A" required> A) More than 8 hours (feeling well-rested)</label>
+            <label><input type="radio" name="q1" value="B"> B) 7–8 hours (about normal)</label>
+            <label><input type="radio" name="q1" value="C"> C) 5–6 hours (a bit short)</label>
+            <label><input type="radio" name="q1" value="D"> D) Less than 5 hours (very little sleep)</label>
+            <label><input type="radio" name="q1" value="E"> E) I had trouble sleeping or barely slept at all</label>
+          </div>
+        </div>
+        <div class="mind-check-question">
+          <label>2) How would you rate your ability to concentrate on tasks recently?</label>
+          <div class="radio-group">
+            <label><input type="radio" name="q2" value="A" required> A) Very good – I focus easily</label>
+            <label><input type="radio" name="q2" value="B"> B) Good – mostly no issues</label>
+            <label><input type="radio" name="q2" value="C"> C) Average – some distraction</label>
+            <label><input type="radio" name="q2" value="D"> D) Poor – hard to stay focused</label>
+            <label><input type="radio" name="q2" value="E"> E) Very poor – can’t concentrate at all</label>
+          </div>
+        </div>
+        <div class="mind-check-question">
+          <label>3) In the last week, how often have you felt nervous, anxious, or on edge?</label>
+          <div class="radio-group">
+            <label><input type="radio" name="q3" value="A" required> A) Not at all</label>
+            <label><input type="radio" name="q3" value="B"> B) A few days</label>
+            <label><input type="radio" name="q3" value="C"> C) More than half the days</label>
+            <label><input type="radio" name="q3" value="D"> D) Nearly every day</label>
+            <label><input type="radio" name="q3" value="E"> E) Prefer not to say</label>
+          </div>
+        </div>
+        <div class="mind-check-question">
+          <label>4) How confident do you feel about handling daily problems or stress right now?</label>
+          <div class="radio-group">
+            <label><input type="radio" name="q4" value="A" required> A) Very confident – I feel in control</label>
+            <label><input type="radio" name="q4" value="B"> B) Fairly confident</label>
+            <label><input type="radio" name="q4" value="C"> C) Somewhat confident</label>
+            <label><input type="radio" name="q4" value="D"> D) Not very confident</label>
+            <label><input type="radio" name="q4" value="E"> E) Not confident at all</label>
+          </div>
+        </div>
+        <div class="mind-check-question">
+          <label>5) In the past two weeks, how often have you experienced physical symptoms like headaches, stomach issues, or muscle tension without a clear medical cause?</label>
+          <div class="radio-group">
+            <label><input type="radio" name="q5" value="A" required> A) Never</label>
+            <label><input type="radio" name="q5" value="B"> B) Rarely</label>
+            <label><input type="radio" name="q5" value="C"> C) Sometimes</label>
+            <label><input type="radio" name="q5" value="D"> D) Often</label>
+            <label><input type="radio" name="q5" value="E"> E) Almost constantly</label>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">🌟 Complete & Unlock Insights!</button>
+      </form>
+    </div>
+  </section>
+  <section class="section-container hidden" id="chat">
+    <div class="section-header">
+      <h2>AI Companion Chat</h2>
+      <p>Share your thoughts and feelings in a safe, judgment-free space</p>
+    </div>
+    <div class="chat-container">
+      <div class="chat-header">
+        <div style="font-weight:800; color:var(--primary);">AI Companion</div>
+        <div>
+          <button class="btn btn-secondary" style="padding:0.5rem 1rem; font-weight:700;" onclick="clearChat()">Clear Screen</button>
+        </div>
+      </div>
+      <div class="chat-messages" id="chatMessages">
+        <div class="message">
+          <div class="message-avatar">🤖</div>
+          <div class="message-content">
+            Hello! I'm here to listen and support you. How are you feeling today?
+          </div>
+        </div>
+      </div>
+      <div class="chat-input-area">
+        <input type="text" class="chat-input" id="chatInput" placeholder="Type your message..."
+          onkeypress="handleChatKeypress(event)">
+        <button class="send-btn" onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+  </section>
+  <section class="section-container hidden" id="facial-analysis">
+    <div class="section-header">
+      <h2>AI Facial Emotion Analysis</h2>
+      <p>Let our AI analyze your facial expressions to understand your emotional state</p>
+    </div>
+    <div class="video-container">
+      <video id="video" autoplay playsinline></video>
+    </div>
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <button class="btn btn-primary" onclick="startCamera()">Start Camera</button>
+      <button class="btn btn-secondary" onclick="stopCamera()">Stop Camera</button>
+    </div>
+    <div class="analysis-result" id="emotionResults">
+      <h3>Detected Emotions</h3>
+      <div class="emotion-bar">
+        <div class="emotion-label">
+          <span>😊 Happy</span>
+          <span id="happyPercent">0%</span>
+        </div>
+        <div class="emotion-progress">
+          <div class="emotion-fill" id="happyBar" style="width: 0%"></div>
+        </div>
+      </div>
+      <div class="emotion-bar">
+        <div class="emotion-label">
+          <span>😢 Sad</span>
+          <span id="sadPercent">0%</span>
+        </div>
+        <div class="emotion-progress">
+          <div class="emotion-fill" id="sadBar" style="width: 0%"></div>
+        </div>
+      </div>
+      <div class="emotion-bar">
+        <div class="emotion-label">
+          <span>😠 Angry</span>
+          <span id="angryPercent">0%</span>
+        </div>
+        <div class="emotion-progress">
+          <div class="emotion-fill" id="angryBar" style="width: 0%"></div>
+        </div>
+      </div>
+      <div class="emotion-bar">
+        <div class="emotion-label">
+          <span>😨 Fearful</span>
+          <span id="fearfulPercent">0%</span>
+        </div>
+        <div class="emotion-progress">
+          <div class="emotion-fill" id="fearfulBar" style="width: 0%"></div>
+        </div>
+      </div>
+      <div class="emotion-bar">
+        <div class="emotion-label">
+          <span>😮 Surprised</span>
+          <span id="surprisedPercent">0%</span>
+        </div>
+        <div class="emotion-progress">
+          <div class="emotion-fill" id="surprisedBar" style="width: 0%"></div>
+        </div>
+      </div>
+      <div class="emotion-bar">
+        <div class="emotion-label">
+          <span>🤢 Disgusted</span>
+          <span id="disgustedPercent">0%</span>
+        </div>
+        <div class="emotion-progress">
+          <div class="emotion-fill" id="disgustedBar" style="width: 0%"></div>
+        </div>
+      </div>
+      <div class="emotion-bar">
+        <div class="emotion-label">
+          <span>😐 Neutral</span>
+          <span id="neutralPercent">0%</span>
+        </div>
+        <div class="emotion-progress">
+          <div class="emotion-fill" id="neutralBar" style="width: 0%"></div>
+        </div>
+      </div>
+    </div>
+    <div class="analysis-result hidden" id="stressAnalysisResults">
+      <h3>🧠 Advanced Stress & Anxiety Analysis</h3>
+      <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 15px; margin-bottom: 1.5rem;">
+        <div
+          style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 1rem;">
+          <div>
+            <div style="color: var(--text-medium); font-size: 0.9rem; font-weight: 700;">Stress Level</div>
+            <div style="font-size: 2rem; font-weight: 900; color: var(--accent);" id="stressLevel">0%</div>
+          </div>
+          <div>
+            <div style="color: var(--text-medium); font-size: 0.9rem; font-weight: 700;">Anxiety Index</div>
+            <div style="font-size: 2rem; font-weight: 900; color: var(--accent);" id="anxietyIndex">0%</div>
+          </div>
+          <div>
+            <div style="color: var(--text-medium); font-size: 0.9rem; font-weight: 700;">Verhulst Score
+            </div>
+            <div style="font-size: 2rem; font-weight: 900; color: var(--primary);" id="verhulstScore">0.0
+            </div>
+          </div>
+        </div>
+        <div id="stressStatus" style="padding: 1rem; border-radius: 10px; font-weight: 700; text-align: center;"></div>
+      </div>
+      <div
+        style="background: white; padding: 1.5rem; border-radius: 15px; margin-bottom: 1.5rem; border: 3px solid var(--bg-light);">
+        <h4 style="color: var(--primary); margin-bottom: 1rem; font-weight: 900;">Stress & Anxiety Trend</h4>
+        <canvas id="stressChart" style="max-height: 300px;"></canvas>
+      </div>
+      <div id="aiRecommendations"
+        style="background: rgba(88, 204, 2, 0.1); padding: 1.5rem; border-radius: 15px; border-left: 6px solid var(--primary);">
+        <h4 style="color: var(--primary); margin-bottom: 1rem; font-weight: 900;">💡 AI Recommendations</h4>
+        <div id="recommendationsList"></div>
+      </div>
+    </div>
+  </section>
+  <section class="section-container hidden" id="meditation">
+    <div class="section-header">
+      <h2>🧘 Guided Meditation & Exercises</h2>
+      <p>Start a meditation session to relax, learn exercises, and track your minutes.</p>
+    </div>
+    
+    <!-- Timer Section -->
+    <div style="text-align: center; margin: 2rem 0; background: linear-gradient(135deg, rgba(88, 204, 2, 0.1), rgba(28, 176, 246, 0.1)); padding: 2rem; border-radius: 25px;">
+      <div style="margin-bottom:1rem; font-weight: 700; font-size: 1.1rem;">Choose Duration:</div>
+      <div style="display:flex; gap:0.5rem; justify-content:center; flex-wrap:wrap; margin-bottom:1rem;">
+        <button class="btn btn-secondary" data-minutes="5" onclick="selectMeditationPreset(this)">5 min</button>
+        <button class="btn btn-secondary" data-minutes="10" onclick="selectMeditationPreset(this)">10 min</button>
+        <button class="btn btn-secondary" data-minutes="15" onclick="selectMeditationPreset(this)">15 min</button>
+        <button class="btn btn-secondary" data-minutes="30" onclick="selectMeditationPreset(this)">30 min</button>
+      </div>
+      <div style="margin-bottom:1rem;">
+        <button class="btn btn-primary" id="startMeditation" style="padding: 1rem 2.5rem; font-size: 1.1rem;">▶️ Start Meditation</button>
+        <button class="btn btn-secondary" id="stopMeditation" style="display: none; padding: 1rem 2.5rem; font-size: 1.1rem;">⏹️ Stop</button>
+      </div>
+      <p id="timerDisplay" style="font-size: 2.5rem; margin-top: 1rem; font-weight: 800; color: var(--primary);">00:00</p>
+    </div>
+    
+    <!-- Beginner-Friendly Video Guide -->
+    <div style="max-width:1000px; margin: 2rem auto;">
+      <h3 style="color:var(--primary); font-weight:800; text-align:center; margin-bottom:1rem;">📺 STEP-BY-STEP MEDITATION TUTORIAL FOR BEGINNERS</h3>
+      <p style="text-align: center; margin-bottom: 1.5rem; color: var(--text-medium); font-size: 0.95rem;">🙏 Watch this complete 15-minute guide and follow along with the exercises below. Perfect for complete beginners!</p>
+      
+      <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); background: #000;">
+        <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; border-radius: 20px;" src="https://www.youtube.com/embed/3rTdYCWrm8c?rel=0&showinfo=0" title="Complete Beginner Yoga and Meditation Guide" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+      
+      <div style="background: linear-gradient(135deg, rgba(88, 204, 2, 0.05), rgba(28, 176, 246, 0.05)); padding: 1.5rem; border-radius: 15px; margin-top: 1.5rem; border-left: 4px solid var(--primary);">
+        <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 0.75rem;">✅ What You'll Learn:</h4>
+        <ul style="color: var(--text-medium); font-size: 0.95rem; margin: 0; padding-left: 1.5rem;">
+          <li>How to sit properly for meditation</li>
+          <li>Basic breathing techniques (4-4-4 technique)</li>
+          <li>Gentle stretching and warm-up exercises</li>
+          <li>Simple yoga poses for beginners</li>
+          <li>How to focus your mind and relax</li>
+          <li>Cool-down and body awareness exercises</li>
+        </ul>
+      </div>
+    </div>
+    
+    <!-- Exercise Guide Section -->
+    <div style="max-width:1000px; margin: 3rem auto;">
+      <h3 style="color:var(--primary); font-weight:800; text-align:center; margin-bottom:0.5rem;">💪 DETAILED EXERCISE INSTRUCTIONS</h3>
+      <p style="text-align: center; color: var(--text-medium); margin-bottom: 2rem; font-size: 0.95rem;">Follow these step-by-step guides. Do each exercise slowly and mindfully. Hold poses for 30 seconds unless stated otherwise.</p>
+      
+      <!-- Exercise 1: Deep Breathing -->
+      <div style="background: white; padding: 2rem; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); margin-bottom: 2rem; border-top: 5px solid #4CAF50;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center;">
+          <div>
+            <h4 style="color: #4CAF50; font-weight: 800; font-size: 1.2rem; margin-bottom: 1rem;">🫁 DEEP BREATHING (4-4-4 TECHNIQUE)</h4>
+            <p style="color: var(--text-medium); margin-bottom: 1rem; font-size: 0.95rem;"><strong>Difficulty:</strong> ⭐ Beginner | <strong>Duration:</strong> 3-5 minutes</p>
+            
+            <h5 style="color: var(--primary); font-weight: 700; margin-bottom: 0.5rem;">STEP-BY-STEP INSTRUCTIONS:</h5>
+            <ol style="color: var(--text-medium); font-size: 0.9rem; padding-left: 1.5rem; line-height: 1.8;">
+              <li><strong>Sit comfortably</strong> - Keep your back straight, shoulders relaxed</li>
+              <li><strong>Inhale through nose</strong> - Count to 4 slowly (1...2...3...4)</li>
+              <li><strong>Hold your breath</strong> - Count to 4 (1...2...3...4)</li>
+              <li><strong>Exhale through mouth</strong> - Count to 4 slowly (1...2...3...4)</li>
+              <li><strong>Repeat</strong> - Do this 5-10 times or as long as comfortable</li>
+            </ol>
+            <p style="color: #4CAF50; font-weight: 700; margin-top: 1rem; font-size: 0.9rem;">✅ Benefits: Reduces stress, increases oxygen, calms nervous system</p>
+          </div>
+          <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=400&h=400&fit=crop" alt="Deep Breathing" style="width: 100%; height: 300px; object-fit: cover; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+        </div>
+      </div>
+      
+      <!-- Exercise 2: Neck & Shoulder Stretch -->
+      <div style="background: white; padding: 2rem; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); margin-bottom: 2rem; border-top: 5px solid #2196F3;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center;">
+          <img src="https://images.unsplash.com/photo-1552196881-acbed25395b7?w=400&h=400&fit=crop" alt="Stretching" style="width: 100%; height: 300px; object-fit: cover; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+          <div>
+            <h4 style="color: #2196F3; font-weight: 800; font-size: 1.2rem; margin-bottom: 1rem;">🧘 NECK & SHOULDER STRETCH</h4>
+            <p style="color: var(--text-medium); margin-bottom: 1rem; font-size: 0.95rem;"><strong>Difficulty:</strong> ⭐ Beginner | <strong>Duration:</strong> 2-3 minutes</p>
+            
+            <h5 style="color: var(--primary); font-weight: 700; margin-bottom: 0.5rem;">STEP-BY-STEP INSTRUCTIONS:</h5>
+            <ol style="color: var(--text-medium); font-size: 0.9rem; padding-left: 1.5rem; line-height: 1.8;">
+              <li><strong>Sit up straight</strong> - Feet flat on floor, shoulders relaxed</li>
+              <li><strong>Neck tilts</strong> - Gently tilt head to right, hold 15 seconds, return, repeat left</li>
+              <li><strong>Shoulder rolls</strong> - Roll shoulders backward 5 times slowly</li>
+              <li><strong>Roll forward</strong> - Now roll shoulders forward 5 times</li>
+              <li><strong>Neck rotation</strong> - Slowly turn head to look over each shoulder, hold 10 seconds</li>
+            </ol>
+            <p style="color: #2196F3; font-weight: 700; margin-top: 1rem; font-size: 0.9rem;">✅ Benefits: Releases tension, improves posture, reduces neck pain</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Exercise 3: Child's Pose -->
+      <div style="background: white; padding: 2rem; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); margin-bottom: 2rem; border-top: 5px solid #FF9800;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center;">
+          <div>
+            <h4 style="color: #FF9800; font-weight: 800; font-size: 1.2rem; margin-bottom: 1rem;">🧘‍♀️ CHILD'S POSE</h4>
+            <p style="color: var(--text-medium); margin-bottom: 1rem; font-size: 0.95rem;"><strong>Difficulty:</strong> ⭐ Beginner | <strong>Duration:</strong> 30-60 seconds</p>
+            
+            <h5 style="color: var(--primary); font-weight: 700; margin-bottom: 0.5rem;">STEP-BY-STEP INSTRUCTIONS:</h5>
+            <ol style="color: var(--text-medium); font-size: 0.9rem; padding-left: 1.5rem; line-height: 1.8;">
+              <li><strong>Kneel on the floor</strong> - Use a yoga mat for comfort</li>
+              <li><strong>Sit hips back</strong> - Lower your hips toward your heels</li>
+              <li><strong>Stretch arms forward</strong> - Extend arms on the mat, palms down</li>
+              <li><strong>Lower forehead</strong> - Rest your forehead on the mat gently</li>
+              <li><strong>Breathe deeply</strong> - Hold for 30-60 seconds, breathing slowly</li>
+            </ol>
+            <p style="color: #FF9800; font-weight: 700; margin-top: 1rem; font-size: 0.9rem;">✅ Benefits: Stretches spine, calms mind, reduces stress and anxiety</p>
+          </div>
+          <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=400&h=400&fit=crop" alt="Child's Pose" style="width: 100%; height: 300px; object-fit: cover; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+        </div>
+      </div>
+      
+      <!-- Exercise 4: Mindful Walking -->
+      <div style="background: white; padding: 2rem; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); margin-bottom: 2rem; border-top: 5px solid #9C27B0;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center;">
+          <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&h=400&fit=crop" alt="Mindful Walking" style="width: 100%; height: 300px; object-fit: cover; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+          <div>
+            <h4 style="color: #9C27B0; font-weight: 800; font-size: 1.2rem; margin-bottom: 1rem;">🚶 MINDFUL WALKING MEDITATION</h4>
+            <p style="color: var(--text-medium); margin-bottom: 1rem; font-size: 0.95rem;"><strong>Difficulty:</strong> ⭐ Beginner | <strong>Duration:</strong> 5-10 minutes</p>
+            
+            <h5 style="color: var(--primary); font-weight: 700; margin-bottom: 0.5rem;">STEP-BY-STEP INSTRUCTIONS:</h5>
+            <ol style="color: var(--text-medium); font-size: 0.9rem; padding-left: 1.5rem; line-height: 1.8;">
+              <li><strong>Find a space to walk</strong> - Indoor or outdoor, quiet area preferred</li>
+              <li><strong>Walk slowly</strong> - At 1/3 your normal speed</li>
+              <li><strong>Focus on each step</strong> - Notice your feet touching the ground</li>
+              <li><strong>Synchronized breathing</strong> - Breathe in for 2 steps, out for 2 steps</li>
+              <li><strong>Clear your mind</strong> - If thoughts come, gently return to steps and breathing</li>
+            </ol>
+            <p style="color: #9C27B0; font-weight: 700; margin-top: 1rem; font-size: 0.9rem;">✅ Benefits: Mental clarity, stress relief, grounding, improved awareness</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Exercise 5: Body Scan -->
+      <div style="background: white; padding: 2rem; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); margin-bottom: 2rem; border-top: 5px solid #E91E63;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center;">
+          <div>
+            <h4 style="color: #E91E63; font-weight: 800; font-size: 1.2rem; margin-bottom: 1rem;">🧠 BODY SCAN MEDITATION</h4>
+            <p style="color: var(--text-medium); margin-bottom: 1rem; font-size: 0.95rem;"><strong>Difficulty:</strong> ⭐⭐ Beginner-Intermediate | <strong>Duration:</strong> 10-15 minutes</p>
+            
+            <h5 style="color: var(--primary); font-weight: 700; margin-bottom: 0.5rem;">STEP-BY-STEP INSTRUCTIONS:</h5>
+            <ol style="color: var(--text-medium); font-size: 0.9rem; padding-left: 1.5rem; line-height: 1.8;">
+              <li><strong>Lie down flat</strong> - Or sit comfortably, legs extended</li>
+              <li><strong>Close eyes</strong> - Take 3 deep breaths</li>
+              <li><strong>Focus on toes</strong> - Notice any tension, then relax them</li>
+              <li><strong>Move upward</strong> - Slowly scan: feet → legs → belly → chest → arms → neck → head</li>
+              <li><strong>Release tension</strong> - As you scan each area, consciously relax the muscles</li>
+            </ol>
+            <p style="color: #E91E63; font-weight: 700; margin-top: 1rem; font-size: 0.9rem;">✅ Benefits: Progressive relaxation, body awareness, stress relief, better sleep</p>
+          </div>
+          <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=400&h=400&fit=crop" alt="Body Scan" style="width: 100%; height: 300px; object-fit: cover; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+        </div>
+      </div>
+      
+      <!-- Exercise 6: Hydration -->
+      <div style="background: linear-gradient(135deg, #E3F2FD, #F3E5F5); padding: 2rem; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); border-top: 5px solid #00BCD4;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center;">
+          <img src="https://images.unsplash.com/photo-1551632786-de41ec16a83c?w=400&h=400&fit=crop" alt="Hydration" style="width: 100%; height: 300px; object-fit: cover; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+          <div>
+            <h4 style="color: #00BCD4; font-weight: 800; font-size: 1.2rem; margin-bottom: 1rem;">💧 MINDFUL HYDRATION BREAK</h4>
+            <p style="color: var(--text-medium); margin-bottom: 1rem; font-size: 0.95rem;"><strong>Difficulty:</strong> ⭐ Beginner | <strong>Duration:</strong> 2-3 minutes</p>
+            
+            <h5 style="color: var(--primary); font-weight: 700; margin-bottom: 0.5rem;">STEP-BY-STEP INSTRUCTIONS:</h5>
+            <ol style="color: var(--text-medium); font-size: 0.9rem; padding-left: 1.5rem; line-height: 1.8;">
+              <li><strong>Take a water bottle</strong> - Use room temperature or warm water</li>
+              <li><strong>Pause mindfully</strong> - Stop exercising, take 2-3 deep breaths</li>
+              <li><strong>Drink slowly</strong> - Take small sips, notice the taste and sensation</li>
+              <li><strong>Feel the hydration</strong> - Notice how water refreshes your body</li>
+              <li><strong>Resume exercises</strong> - Continue with renewed energy</li>
+            </ol>
+            <p style="color: #00BCD4; font-weight: 700; margin-top: 1rem; font-size: 0.9rem;">✅ Benefits: Maintains hydration, improves focus, prevents fatigue, aids recovery</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <audio id="meditationAudio" loop volume="0.3">
+      <!-- Peaceful meditation and relaxation music -->
+      <source src="https://cdn.pixabay.com/download/audio/2022/02/15/audio_d654c5b630.mp3" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
+  </section>
+  <section class="section-container hidden" id="profile">
+    <div class="section-header">
+      <h2>👤 User Profile</h2>
+      <p>View and manage your personal information</p>
+    </div>
+    <div class="profile-container">
+      <div class="profile-card">
+        <div class="profile-header">
+          <div class="profile-avatar">👤</div>
+          <h3 id="profileName">Loading...</h3>
+        </div>
+        <div class="profile-info" id="profileViewMode">
+          <div class="info-group">
+            <label>Full Name:</label>
+            <p id="displayName">-</p>
+          </div>
+          <div class="info-group">
+            <label>Email:</label>
+            <p id="displayEmail">-</p>
+          </div>
+          <div class="info-group">
+            <label>Age:</label>
+            <p id="displayAge">-</p>
+          </div>
+          <div class="info-group">
+            <label>Sex:</label>
+            <p id="displaySex">-</p>
+          </div>
+          <button class="btn btn-primary" onclick="toggleEditProfile()" style="width: 100%; margin-top: 1rem;">✏️ Edit Profile</button>
+        </div>
+        <form id="profileEditMode" class="profile-form hidden" onsubmit="updateProfile(event)">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="editName" required placeholder="Enter your full name">
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="editEmail" required placeholder="your@email.com">
+          </div>
+          <div class="form-group">
+            <label>Age</label>
+            <input type="number" id="editAge" min="13" max="120" placeholder="Your age">
+          </div>
+          <div class="form-group">
+            <label>Sex</label>
+            <select id="editSex">
+              <option value="">Select...</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div style="display: flex; gap: 1rem;">
+            <button type="submit" class="btn btn-primary" style="flex: 1;">💾 Save Changes</button>
+            <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="toggleEditProfile()">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+  <section class="section-container" id="therapists">
+    <div class="emergency-section">
+      <h3>🆘 Need Immediate Help?</h3>
+      <p>If you're in crisis, please reach out immediately</p>
+      <a href="tel:9152987821" class="emergency-btn">Suicide Helpline: 9152987821</a>
+      <a href="tel:08046110007" class="emergency-btn">Mental Health: 08046110007</a>
+    </div>
+    <div class="section-header">
+      <h2>Find Mental Health Professionals</h2>
+      <p>Connect with licensed therapists in your area</p>
+    </div>
+    <div id="therapistLoading" class="spinner"></div>
+    <div class="therapist-grid" id="therapistGrid"></div>
+  </section>
+  <section class="section-container hidden" id="resources">
+    <div class="section-header">
+      <h2>Wellness Resources</h2>
+      <p>Educational content to support your mental health journey</p>
+    </div>
+    <div id="resourcesLoading" class="spinner"></div>
+    <div id="resourceGrid"></div>
+  </section>
+  <div class="modal" id="loginModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>🌟 Welcome Back to Aura!</h2>
+        <button class="close-btn" onclick="closeModal('login')">×</button>
+      </div>
+      <form onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="loginEmail" required placeholder="your@email.com">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="loginPassword" required placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">✨ Sign In & Spark Your
+          Journey</button>
+        <div style="margin: 1.5rem 0; display: flex; align-items: center; gap: 1rem;">
+          <div style="flex: 1; height: 2px; background: var(--bg-light);"></div>
+          <span style="color: var(--text-light); font-weight: 600;">Or</span>
+          <div style="flex: 1; height: 2px; background: var(--bg-light);"></div>
+        </div>
+        <button type="button" class="btn btn-google" onclick="loginWithGoogle()" style="width: 100%; background: #4285F4; color: white; display: flex; align-items: center; justify-content: center; gap: 0.75rem;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M12 6v6m3-3H9"></path>
+          </svg>
+          🔐 Sign in with Google
+        </button>
+        <p style="text-align: center; margin-top: 1rem; font-weight: 600;">
+          New here?
+          <a href="#" onclick="showModal('register'); return false;"
+            style="color: var(--primary); font-weight: 800;">Create Your Aura Account</a>
+        </p>
+      </form>
+    </div>
+  </div>
+  <div class="modal" id="registerModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Create Account</h2>
+        <button class="close-btn" onclick="closeModal('register')">×</button>
+      </div>
+      <form onsubmit="handleRegister(event)">
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" id="registerName" required placeholder="Your name">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="registerEmail" required placeholder="your@email.com">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="registerPassword" required placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Create Account</button>
+      </form>
+    </div>
+  </div>
+  <!-- Added details modals -->
+  <div class="modal" id="moodHistoryModal">
+    <div class="modal-content details-modal">
+      <div class="modal-header">
+        <h2>Mood Check-in History</h2>
+        <div style="display:flex;gap:0.5rem;align-items:center">
+          <button class="btn btn-secondary" style="padding:0.35rem 0.6rem;font-weight:800" onclick="removeAllMoodEntries()">Clear All</button>
+          <button class="close-btn" onclick="closeAllModals()">×</button>
+        </div>
+      </div>
+      <ul class="details-list" id="moodHistoryList"></ul>
+    </div>
+  </div>
+  <div class="modal" id="chatHistoryModal">
+    <div class="modal-content details-modal">
+      <div class="modal-header">
+        <h2>Chat Sessions History</h2>
+        <div style="display:flex;gap:0.5rem;align-items:center">
+          <button class="btn btn-secondary" style="padding:0.35rem 0.6rem;font-weight:800" onclick="removeAllChatEntries()">Clear All</button>
+          <button class="close-btn" onclick="closeAllModals()">×</button>
+        </div>
+      </div>
+      <ul class="details-list" id="chatHistoryList"></ul>
+    </div>
+  </div>
+  <div class="modal" id="meditationHistoryModal">
+    <div class="modal-content details-modal">
+      <div class="modal-header">
+        <h2>Meditation History</h2>
+        <div style="display:flex;gap:0.5rem;align-items:center">
+          <button class="btn btn-secondary" style="padding:0.35rem 0.6rem;font-weight:800" onclick="removeAllMeditationEntries()">Clear All</button>
+          <button class="close-btn" onclick="closeAllModals()">×</button>
+        </div>
+      </div>
+      <ul class="details-list" id="meditationHistoryList"></ul>
+    </div>
+  </div>
+  <div class="modal" id="streakDetailsModal">
+    <div class="modal-content details-modal">
+      <div class="modal-header">
+        <h2>Day Streak Details</h2>
+        <div style="display:flex;gap:0.5rem;align-items:center">
+          <button class="btn btn-secondary" style="padding:0.35rem 0.6rem;font-weight:800" onclick="removeAllStreakEntries()">Clear All</button>
+          <button class="close-btn" onclick="closeAllModals()">×</button>
+        </div>
+      </div>
+      <ul class="details-list" id="streakDetailsList"></ul>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <script>
+    let isLoggedIn = false;
+    let currentUserId = null; // Stores the MongoDB _id of the logged-in user
+    let videoStream = null;
+    let analysisInterval = null;
+    let scanStartTime = null;
+    let emotionHistory = [];
+    let stressChart = null;
+    let currentSection = 'home';
+    let vibeCheckCompleted = localStorage.getItem('vibeCheckCompleted') === 'true'; // Track completion
+    let watchId = null;
+    let model = null;
+    let faceApiModelsLoaded = false;
+    let userHistory = JSON.parse(localStorage.getItem('userHistory')) || [];
+    let progressChart = null;
+
+    // === UPDATED: Save to MongoDB with token support ===
+    async function saveToMongoDB(collection, data) {
+      if (!currentUserId) return;
+      data.userId = currentUserId;
+      data.timestamp = new Date().toISOString();
+      const token = localStorage.getItem('authToken'); // Retrieve token
+
+      try {
+        const response = await fetch('http://localhost:5000/api/save-data', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-auth-token': token || ''   // Send token
+          },
+          body: JSON.stringify({ collection, data })
+        });
+        if (!response.ok) {
+          const errText = await response.text();
+          throw new Error('Save failed');
+        }
+      } catch (err) {
+        console.error('MongoDB save failed:', err);
+        showToast('Saved locally (offline)', 'info');
+        // Fallback to localStorage (your original code)
+        let local = JSON.parse(localStorage.getItem(`mongo_${collection}`) || '{}');
+        if (!local[currentUserId]) local[currentUserId] = [];
+        local[currentUserId].push(data);
+        localStorage.setItem(`mongo_${collection}`, JSON.stringify(local));
+      }
+    }
+
+    const allResources = [
+      {
+        "category": "Understanding Anxiety",
+        "title": "Anxiety Disorders Overview",
+        "description": "Learn about symptoms like excessive worry, rapid heartbeat; triggers like stress or genetics; coping like CBT therapy.",
+        "buttonText": "Read More",
+        "url": "https://www.nimh.nih.gov/health/topics/anxiety-disorders",
+        "type": "article",
+        "source": "NIMH (National Institute of Mental Health)"
+      },
+      {
+        "category": "Understanding Anxiety",
+        "title": "Tips for Coping with Anxiety",
+        "description": "Identify triggers, practice relaxation, limit caffeine/alcohol; includes journaling and therapy strategies.",
+        "buttonText": "Read More",
+        "url": "https://adaa.org/tips",
+        "type": "article",
+        "source": "ADAA (Anxiety and Depression Association of America)"
+      },
+      {
+        "category": "Understanding Anxiety",
+        "title": "Coping Strategies from Mayo Clinic",
+        "description": "Breathing exercises, visualization, and when to seek help for persistent anxiety.",
+        "buttonText": "Read More",
+        "url": "https://www.mayoclinichealthsystem.org/hometown-health/speaking-of-health/11-tips-for-coping-with-an-anxiety-disorder",
+        "type": "article",
+        "source": "Mayo Clinic"
+      },
+      {
+        "category": "Meditation Library",
+        "title": "Guided Meditations for Stress & Sleep",
+        "description": "Free sessions for stress reduction, better sleep, focus; includes body scans and breathing.",
+        "buttonText": "Listen Now",
+        "url": "https://www.uclahealth.org/uclamindful/guided-meditations",
+        "type": "audio",
+        "source": "UCLA Mindful (free downloads)"
+      },
+      {
+        "category": "Meditation Library",
+        "title": "Headspace Meditation Basics",
+        "description": "Guided audios for anxiety, focus, emotional balance; start with free trials or basics course.",
+        "buttonText": "Listen Now",
+        "url": "https://www.headspace.com/meditation",
+        "type": "audio",
+        "source": "Headspace"
+      },
+      {
+        "category": "Meditation Library",
+        "title": "Mayo Clinic Meditation Guide",
+        "description": "Quick techniques anywhere for stress relief, including walking meditation.",
+        "buttonText": "Read More",
+        "url": "https://www.mayoclinic.org/tests-procedures/meditation/in-depth/meditation/art-20045858",
+        "type": "article/audio",
+        "source": "Mayo Clinic"
+      },
+      {
+        "category": "Building Resilience",
+        "title": "Resilience Roadmap from APA",
+        "description": "Adapt to challenges; build through mindset, social support, coping skills like reframing.",
+        "buttonText": "Start Learning",
+        "url": "https://www.apa.org/topics/resilience",
+        "type": "article",
+        "source": "American Psychological Association"
+      },
+      {
+        "category": "Building Resilience",
+        "title": "19 Resilience Exercises",
+        "description": "Activities like journaling, gratitude, and cognitive reframing to bounce back stronger.",
+        "buttonText": "Start Learning",
+        "url": "https://positivepsychology.com/resilience-activities-exercises/",
+        "type": "guide",
+        "source": "PositivePsychology.com"
+      },
+      {
+        "category": "Building Resilience",
+        "title": "6 Daily Exercises for Mental Strength",
+        "description": "Neuroscientist tips: Embrace mistakes, spend time in nature, practice mindfulness.",
+        "buttonText": "Start Learning",
+        "url": "https://www.cnbc.com/2021/08/31/do-these-exercises-every-day-to-build-resilience-and-mental-strength-says-neuroscientist.html",
+        "type": "article",
+        "source": "CNBC (based on neuroscientist Wendi Suzuki)"
+      },
+      {
+        "category": "Sleep Better",
+        "title": "Sleep Hygiene Tips",
+        "description": "Consistent schedule, no screens before bed, exercise; aim for 7-9 hours.",
+        "buttonText": "Read More",
+        "url": "https://www.sleepfoundation.org/sleep-hygiene",
+        "type": "article",
+        "source": "Sleep Foundation"
+      },
+      {
+        "category": "Sleep Better",
+        "title": "Harvard Health Sleep Practices",
+        "description": "Wind down routine, avoid caffeine/alcohol; track patterns for better rest.",
+        "buttonText": "Read More",
+        "url": "https://www.health.harvard.edu/staying-healthy/sleep-hygiene-simple-practices-for-better-rest",
+        "type": "article",
+        "source": "Harvard Health"
+      },
+      {
+        "category": "Sleep Better",
+        "title": "Mayo Clinic 6 Steps to Better Sleep",
+        "description": "Daily routines, environment tweaks for quality sleep impacting mental health.",
+        "buttonText": "Read More",
+        "url": "https://www.mayoclinic.org/healthy-lifestyle/adult-health/in-depth/sleep/art-20048379",
+        "type": "article",
+        "source": "Mayo Clinic"
+      },
+      {
+        "category": "Self-Care Guide",
+        "title": "NIMH Caring for Mental Health",
+        "description": "Daily gratitude, positivity, connections; small acts for physical/mental boost.",
+        "buttonText": "View Guide",
+        "url": "https://www.nimh.nih.gov/health/topics/caring-for-your-mental-health",
+        "type": "guide",
+        "source": "NIMH"
+      },
+      {
+        "category": "Self-Care Guide",
+        "title": "5 Types of Self-Care",
+        "description": "Physical (exercise/sleep), emotional (journaling), social, etc., for balance.",
+        "buttonText": "View Guide",
+        "url": "https://www.verywellmind.com/self-care-strategies-overall-stress-reduction-3144729",
+        "type": "guide",
+        "source": "Verywell Mind"
+      },
+      {
+        "category": "Self-Care Guide",
+        "title": "20+ Self-Care Practices",
+        "description": "Exercise, mindfulness, hobbies; prioritize for well-being.",
+        "buttonText": "View Guide",
+        "url": "https://www.calm.com/blog/self-care-practices",
+        "type": "article",
+        "source": "Calm Blog"
+      },
+      {
+        "category": "Support Groups",
+        "title": "ADAA Online Peer Support",
+        "description": "Free, moderated forums for anxiety/depression; share experiences safely.",
+        "buttonText": "Join Community",
+        "url": "https://adaa.org/find-help/support",
+        "type": "group",
+        "source": "ADAA"
+      },
+      {
+        "category": "Support Groups",
+        "title": "NAMI Support Groups",
+        "description": "Virtual/in-person for mental health conditions; open to all.",
+        "buttonText": "Join Community",
+        "url": "https://www.nami.org/support-education/support-groups/",
+        "type": "group",
+        "source": "NAMI (National Alliance on Mental Illness)"
+      },
+      {
+        "category": "Support Groups",
+        "title": "DBSA Online Groups",
+        "description": "For depression/bipolar; safe space to discuss coping and hope.",
+        "buttonText": "Join Community",
+        "url": "https://www.dbsalliance.org/support/chapters-and-support-groups/online-support-groups/",
+        "type": "group",
+        "source": "DBSA (Depression and Bipolar Support Alliance)"
+      },
+      {
+        "category": "Crisis & Suicide Prevention Chats",
+        "title": "988 Suicide & Crisis Lifeline",
+        "description": "Free, 24/7 confidential chat, text, or call support for emotional distress or suicidal thoughts.",
+        "buttonText": "Chat Now",
+        "url": "https://988lifeline.org/chat/",
+        "type": "crisis-chat",
+        "details": "Also text 988 or call 988",
+        "source": "Official U.S. Suicide & Crisis Lifeline"
+      },
+      {
+        "category": "Crisis & Suicide Prevention Chats",
+        "title": "Crisis Text Line",
+        "description": "Text-based support for any crisis; trained volunteers help de-escalate and connect to resources.",
+        "buttonText": "Text HOME to 741741",
+        "url": "https://www.crisistextline.org/",
+        "type": "crisis-text",
+        "details": "Available in US, Canada, UK, Ireland",
+        "source": "Crisis Text Line"
+      },
+      {
+        "category": "Crisis & Suicide Prevention Chats",
+        "title": "The Trevor Project (LGBTQ+ Youth)",
+        "description": "Specialized crisis chat for LGBTQ+ young people under 25 facing suicidal thoughts or identity issues.",
+        "buttonText": "Chat Now",
+        "url": "https://www.thetrevorproject.org/get-help/",
+        "type": "crisis-chat",
+        "details": "Also text START to 678-678",
+        "source": "The Trevor Project"
+      },
+      {
+        "category": "General Mental Health Support Chats",
+        "title": "7 Cups",
+        "description": "Anonymous emotional support chat with trained listeners; optional paid therapy upgrade.",
+        "buttonText": "Start Chat",
+        "url": "https://www.7cups.com/",
+        "type": "support-chat",
+        "details": "Global, free listener chats available 24/7",
+        "source": "7 Cups"
+      },
+      {
+        "category": "General Mental Health Support Chats",
+        "title": "NAMI Helpline Chat",
+        "description": "Information, referrals, and support for mental health conditions from National Alliance on Mental Illness.",
+        "buttonText": "Chat Now",
+        "url": "https://www.nami.org/help",
+        "type": "support-chat",
+        "details": "Limited hours; check website for availability",
+        "source": "NAMI"
+      },
+      {
+        "category": "General Mental Health Support Chats",
+        "title": "SAMHSA Behavioral Health Chat",
+        "description": "Confidential web chat for substance use or mental health treatment locator and information.",
+        "buttonText": "Chat Now",
+        "url": "https://www.samhsa.gov/find-help/helplines",
+        "type": "support-chat",
+        "source": "SAMHSA (U.S. Substance Abuse and Mental Health Services Administration)"
+      },
+      {
+        "category": "Peer Support & Community Chats",
+        "title": "Togetherall",
+        "description": "Anonymous peer-to-peer moderated community chat for mental health; clinically supervised.",
+        "buttonText": "Join Chat",
+        "url": "https://togetherall.com/",
+        "type": "peer-community",
+        "details": "Free via some universities/employers",
+        "source": "Togetherall"
+      },
+      {
+        "category": "Peer Support & Community Chats",
+        "title": "HearMe",
+        "description": "Peer support chat app for empathy and venting; non-professional listeners.",
+        "buttonText": "Download & Chat",
+        "url": "https://hearme.app/",
+        "type": "peer-chat",
+        "source": "HearMe"
+      },
+      {
+        "category": "Peer Support & Community Chats",
+        "title": "ADAA Online Support",
+        "description": "Peer forums and chat resources specifically for anxiety and depression.",
+        "buttonText": "Join Community",
+        "url": "https://adaa.org/find-help/support",
+        "type": "peer-forum",
+        "source": "Anxiety and Depression Association of America"
+      }
+    ];
+
+    function getIconForType(type) {
+      if (type.includes('crisis')) return '🚨';
+      if (type.includes('chat') || type.includes('forum') || type.includes('group')) return '👥';
+      if (type.includes('audio')) return '🎧';
+      if (type.includes('article') || type.includes('guide')) return '📖';
+      return '🔗';
+    }
+
+    function renderResources() {
+      const grid = document.getElementById('resourceGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+      document.getElementById('resourcesLoading').classList.add('hidden');
+      const resourcesByCategory = allResources.reduce((acc, resource) => {
+        acc[resource.category] = acc[resource.category] || [];
+        acc[resource.category].push(resource);
+        return acc;
+      }, {});
+      for (const category in resourcesByCategory) {
+        const categoryHeader = document.createElement('div');
+        categoryHeader.className = 'category-header-container';
+        categoryHeader.innerHTML = `
+                    <div class="section-header" style="text-align: left;">
+                        <h2 style="font-size: 2rem; margin-top: 3rem; margin-bottom: 0.5rem; color: var(--accent);">${category}</h2>
+                        <p style="text-align: left; margin-bottom: 2rem;">Explore guides, tools, and support groups related to ${category.toLowerCase()}.</p>
+                    </div>
+                `;
+        grid.appendChild(categoryHeader);
+        const categoryContainer = document.createElement('div');
+        categoryContainer.className = 'feature-grid';
+        resourcesByCategory[category].forEach(resource => {
+          const card = document.createElement('div');
+          card.className = 'feature-card';
+          card.style.cursor = 'default';
+          card.innerHTML = `
+                        <div>
+                            <div class="feature-icon">${getIconForType(resource.type)}</div>
+                            <h3>${resource.title}</h3>
+                            <p style="margin-bottom: 1rem;">${resource.description}</p>
+                            <div style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-light); font-weight: 600;">Source: ${resource.source}</div>
+                        </div>
+                        <a href="${resource.url}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="margin-top: 1.5rem; padding: 0.75rem 1.5rem; display: block; text-decoration: none; border-color: var(--primary); color: var(--primary);">
+                          Read More &rarr;
+                        </a>
+                    `;
+          categoryContainer.appendChild(card);
+        });
+        grid.appendChild(categoryContainer);
+      }
+    }
+    function showSection(id) {
+      if (isLoggedIn && !vibeCheckCompleted && id !== 'vibe-check') {
+        showToast('Please complete your Daily Vibe Check first to unlock full access!', 'danger');
+        showSection('vibe-check');
+        return;
+      }
+      document.querySelectorAll('section').forEach(section => {
+        section.classList.add('hidden');
+      });
+      document.getElementById(id).classList.remove('hidden');
+      currentSection = id;
+      document.querySelectorAll('.nav-links a').forEach(link => {
+        link.classList.remove('active');
+        if (link.textContent.toLowerCase().includes(id.toLowerCase())) {
+          link.classList.add('active');
+        }
+      });
+      if (id === 'resources') {
+        renderResources();
+      }
+      if (id === 'therapists') {
+        renderTherapists();
+      }
+      if (id === 'dashboard') {
+        updateDashboardStats();
+      }
+      if (id === 'chat') {
+        incrementChatSessions();
+      }
+      if (id === 'profile') {
+        loadUserProfile();
+      }
+      if (id === 'meditation') {
+        // Load meditation if needed
+      }
+
+      // Log page view when user explores sections
+      if (isLoggedIn) {
+        saveToMongoDB('activity', { type: 'page_view', page: id });
+      }
+    }
+    function showModal(type) {
+      const modalId = type + 'Modal';
+      document.getElementById(modalId).classList.add('active');
+    }
+    function closeModal(type) {
+      const modalId = type + 'Modal';
+      document.getElementById(modalId).classList.remove('active');
+    }
+    function closeAllModals() {
+      document.querySelectorAll('.modal').forEach(modal => {
+        modal.classList.remove('active');
+      });
+    }
+    function selectMood(element, mood) {
+      document.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('active'));
+      element.classList.add('active');
+      showToast(`Mood logged: ${mood.charAt(0).toUpperCase() + mood.slice(1)}!`, 'success');
+
+      // Save mood to MongoDB
+      if (isLoggedIn) {
+        saveToMongoDB('moods', { mood });
+      }
+    }
+
+    async function handleLogin(event) {
+      event.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      try {
+        const response = await fetch('http://localhost:5000/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const result = await response.json();
+        if (result.success && result.userId) {
+          currentUserId = result.userId;
+          localStorage.setItem('authToken', result.token); // ← ADDED: store token
+          localStorage.setItem('currentUserId', currentUserId); // optional persistence
+
+          closeModal('login');
+          isLoggedIn = true;
+          document.getElementById('mainNav').classList.add('hidden');
+          document.getElementById('dashboardNav').classList.remove('hidden');
+          startGeofencing();
+          updateDailyStreak();
+          if (!vibeCheckCompleted) {
+            showSection('vibe-check');
+          } else {
+            showSection('dashboard');
+          }
+          showToast('Welcome back to Aura3.0!', 'success');
+          // Save login activity
+          saveToMongoDB('activity', { type: 'login', email });
+        } else {
+          showToast(result.message || 'Login failed', 'danger');
+        }
+      } catch (err) {
+        showToast('Login error – check backend server', 'danger');
+      }
+    }
+
+    // === UPDATED: handleRegister with token storage ===
+    async function handleRegister(event) {
+      event.preventDefault();
+      const name = document.getElementById('registerName').value.trim();
+      const email = document.getElementById('registerEmail').value.trim();
+      const password = document.getElementById('registerPassword').value;
+      try {
+        const response = await fetch('http://localhost:5000/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password })
+        });
+        const result = await response.json();
+        if (result.success && result.userId) {
+          currentUserId = result.userId;
+          localStorage.setItem('authToken', result.token); // ← ADDED: store token
+          localStorage.setItem('currentUserId', currentUserId);
+
+          closeModal('register');
+          isLoggedIn = true;
+          document.getElementById('mainNav').classList.add('hidden');
+          document.getElementById('dashboardNav').classList.remove('hidden');
+          startGeofencing();
+          updateDailyStreak();
+          if (!vibeCheckCompleted) {
+            showSection('vibe-check');
+          } else {
+            showSection('dashboard');
+          }
+          showToast('Account created successfully! Welcome!', 'success');
+          // Save registration activity
+          saveToMongoDB('activity', { type: 'register', name, email });
+        } else {
+          showToast(result.message || 'Registration failed', 'danger');
+        }
+      } catch (err) {
+        showToast('Registration error – check backend', 'danger');
+      }
+    }
+
+    // === UPDATED: logout with token clear ===
+    function logout() {
+      // Save logout activity
+      if (isLoggedIn) {
+        saveToMongoDB('activity', { type: 'logout' });
+      }
+      isLoggedIn = false;
+      currentUserId = null;
+      vibeCheckCompleted = false;
+      localStorage.removeItem('vibeCheckCompleted');
+      localStorage.removeItem('authToken'); // ← ADDED: clear token
+      localStorage.removeItem('currentUserId');
+      if (watchId) navigator.geolocation.clearWatch(watchId);
+      document.getElementById('dashboardNav').classList.add('hidden');
+      document.getElementById('mainNav').classList.remove('hidden');
+      showSection('home');
+      showToast('You have been logged out.', 'info');
+    }
+
+    // Language Selection
+    function changeLanguage(lang) {
+      localStorage.setItem('selectedLanguage', lang);
+      showToast(`Language changed to ${lang.toUpperCase()}`, 'success');
+      // In a full implementation, this would translate all content
+      // For now, we'll just show a notification
+      console.log('Language changed to:', lang);
+    }
+
+    // Google Login Handler
+    async function loginWithGoogle() {
+      try {
+        showToast('Redirecting to Google Sign-In...', 'info');
+        // In production, implement Google OAuth 2.0
+        // For now, show a placeholder
+        const email = prompt('Enter your email for demo purposes:');
+        if (!email) return;
+        
+        // Simulate Google login by creating a user with Google OAuth
+        const response = await fetch('http://localhost:5000/api/google-login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, provider: 'google' })
+        });
+
+        const result = await response.json();
+        if (result.success && result.userId) {
+          currentUserId = result.userId;
+          localStorage.setItem('authToken', result.token);
+          localStorage.setItem('currentUserId', currentUserId);
+
+          closeModal('login');
+          isLoggedIn = true;
+          document.getElementById('mainNav').classList.add('hidden');
+          document.getElementById('dashboardNav').classList.remove('hidden');
+          startGeofencing();
+          updateDailyStreak();
+          if (!vibeCheckCompleted) {
+            showSection('vibe-check');
+          } else {
+            showSection('dashboard');
+          }
+          showToast('🎉 Google Sign-In Successful!', 'success');
+          saveToMongoDB('activity', { type: 'google_login', email });
+        } else {
+          showToast(result.message || 'Google Sign-In failed', 'danger');
+        }
+      } catch (err) {
+        showToast('Google Sign-In error – please try again', 'danger');
+        console.error('Google login error:', err);
+      }
+    }
+
+    // Load and display user profile
+    async function loadUserProfile() {
+      try {
+        const token = localStorage.getItem('authToken');
+        const response = await fetch('http://localhost:5000/api/profile', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-auth-token': token || ''
+          }
+        });
+
+        const result = await response.json();
+        if (result.success && result.user) {
+          const user = result.user;
+          document.getElementById('profileName').textContent = user.name;
+          document.getElementById('displayName').textContent = user.name || '-';
+          document.getElementById('displayEmail').textContent = user.email || '-';
+          document.getElementById('displayAge').textContent = user.age ? user.age + ' years' : '-';
+          document.getElementById('displaySex').textContent = user.sex || '-';
+
+          // Fill edit form
+          document.getElementById('editName').value = user.name || '';
+          document.getElementById('editEmail').value = user.email || '';
+          document.getElementById('editAge').value = user.age || '';
+          document.getElementById('editSex').value = user.sex || '';
+        }
+      } catch (err) {
+        console.error('Error loading profile:', err);
+        showToast('Error loading profile', 'danger');
+      }
+    }
+
+    // Toggle between view and edit modes
+    function toggleEditProfile() {
+      const viewMode = document.getElementById('profileViewMode');
+      const editMode = document.getElementById('profileEditMode');
+
+      viewMode.classList.toggle('hidden');
+      editMode.classList.toggle('hidden');
+    }
+
+    // Update user profile
+    async function updateProfile(event) {
+      event.preventDefault();
+
+      const name = document.getElementById('editName').value.trim();
+      const email = document.getElementById('editEmail').value.trim();
+      const age = document.getElementById('editAge').value;
+      const sex = document.getElementById('editSex').value;
+
+      if (!name || !email) {
+        showToast('Name and email are required', 'danger');
+        return;
+      }
+
+      try {
+        const token = localStorage.getItem('authToken');
+        const response = await fetch('http://localhost:5000/api/profile/update', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-auth-token': token || ''
+          },
+          body: JSON.stringify({ name, email, age: age ? parseInt(age) : null, sex })
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          showToast('✅ Profile updated successfully!', 'success');
+          toggleEditProfile();
+          loadUserProfile();
+        } else {
+          showToast(result.message || 'Update failed', 'danger');
+        }
+      } catch (err) {
+        console.error('Update error:', err);
+        showToast('Error updating profile', 'danger');
+      }
+    }
+
+    // === ADDED: Auto-login on page load ===
+    async function checkAutoLogin() {
+      const token = localStorage.getItem('authToken');
+      const savedUserId = localStorage.getItem('currentUserId');
+      if (token && savedUserId) {
+        try {
+          const response = await fetch('http://localhost:5000/api/auth/user', {
+            headers: { 'x-auth-token': token }
+          });
+          const result = await response.json();
+          if (result.success) {
+            currentUserId = savedUserId;
+            isLoggedIn = true;
+            document.getElementById('mainNav').classList.add('hidden');
+            document.getElementById('dashboardNav').classList.remove('hidden');
+            startGeofencing();
+            updateDailyStreak();
+            if (!vibeCheckCompleted) {
+              showSection('vibe-check');
+            } else {
+              showSection('dashboard');
+            }
+            showToast('Welcome back!', 'success');
+          } else {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('currentUserId');
+          }
+        } catch (err) {
+          console.warn('Auto-login failed – backend may be offline');
+        }
+      }
+    }
+
+    // ... ALL YOUR REMAINING ORIGINAL FUNCTIONS UNCHANGED BELOW ...
+    function handleFeatureClick(sectionId) {
+      if (isLoggedIn) {
+        showSection(sectionId);
+      } else {
+        showToast('Please sign in to access this feature.', 'danger');
+        showModal('login');
+      }
+    }
+    function addMessage(sender, text) {
+      const chatMessages = document.getElementById('chatMessages');
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${sender}`;
+      messageDiv.innerHTML = `
+                <div class="message-avatar">${sender === 'user' ? '👤' : '🤖'}</div>
+                <div class="message-content">${text}</div>
+            `;
+      chatMessages.appendChild(messageDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    async function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const message = input.value.trim();
+      if (message === '') return;
+      addMessage('user', message);
+      input.value = '';
+      const typingDiv = document.createElement('div');
+      typingDiv.className = 'message';
+      typingDiv.id = 'typingIndicator';
+      typingDiv.innerHTML = `
+                <div class="message-avatar">🤖</div>
+                <div class="message-content">
+                    <div class="spinner" style="width: 20px; height: 20px; margin: 0;"></div>
+                </div>
+            `;
+      document.getElementById('chatMessages').appendChild(typingDiv);
+      try {
+        const aiResponse = await generateAiResponse(message);
+        document.getElementById('typingIndicator')?.remove();
+        addMessage('ai', aiResponse);
+        saveChatMessage(message, aiResponse);
+
+        // Save chat to MongoDB
+        await saveToMongoDB('chats', { userMessage: message, aiResponse });
+      } catch (error) {
+        document.getElementById('typingIndicator')?.remove();
+        addMessage('ai', "I apologize, but I'm having trouble connecting right now. Please try again in a moment.");
+        console.error('Chat error:', error);
+      }
+    }
+    async function generateAiResponse(userMessage) {
+      try {
+        const response = await fetch('http://localhost:5000/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: userMessage })
+        });
+        if (!response.ok) {
+          throw new Error(`Backend error: ${response.status}`);
+        }
+        const data = await response.json();
+        return data.reply;
+      } catch (error) {
+        console.error('Connection error:', error);
+        return "I'm having trouble connecting right now. Please make sure the backend server is running and try again in a moment. 🌸";
+      }
+    }
+    function handleChatKeypress(event) {
+      if (event.key === 'Enter') {
+        sendMessage();
+      }
+    }
+    function clearChat() {
+      const chatMessages = document.getElementById('chatMessages');
+      chatMessages.innerHTML = '';
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'message';
+      messageDiv.innerHTML = `
+                <div class="message-avatar">🤖</div>
+                <div class="message-content">Hello! I'm here to listen and support you. How are you feeling today?</div>
+            `;
+      chatMessages.appendChild(messageDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    // === FIXED FACE-API MODEL LOADING ===
+    async function loadFaceApiModels() {
+      if (!faceApiModelsLoaded) {
+        await Promise.all([
+          faceapi.nets.tinyFaceDetector.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.15/model'),
+          faceapi.nets.faceLandmark68Net.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.15/model'),
+          faceapi.nets.faceRecognitionNet.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.15/model'),
+          faceapi.nets.faceExpressionNet.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.15/model')
+        ]);
+        faceApiModelsLoaded = true;
+        console.log('All face-api models loaded successfully');
+      }
+    }
+    async function startCamera() {
+      const video = document.getElementById('video');
+      try {
+        await loadFaceApiModels();
+        videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = videoStream;
+        scanStartTime = Date.now();
+        document.getElementById('stressAnalysisResults').classList.remove('hidden');
+        document.getElementById('recommendationsList').innerHTML = '<div>Analyzing your expressions in real-time...</div>';
+        showToast('Camera started – real AI analysis active! 🌟', 'success');
+        if (!analysisInterval) {
+          analysisInterval = setInterval(performEmotionAnalysis, 1000);
+        }
+      } catch (err) {
+        console.error('Camera or model error:', err);
+        showToast('Unable to start camera. Run via localhost/Live Server and allow permissions.', 'danger');
+      }
+    }
+    async function performEmotionAnalysis() {
+      const video = document.getElementById('video');
+      const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
+        .withFaceExpressions();
+      if (detections.length > 0) {
+        const expressions = detections[0].expressions;
+        const emotionData = {
+          happy: expressions.happy * 100,
+          sad: expressions.sad * 100,
+          angry: expressions.angry * 100,
+          fearful: expressions.fearful * 100,
+          disgusted: expressions.disgusted * 100,
+          surprised: expressions.surprised * 100,
+          neutral: expressions.neutral * 100
+        };
+        Object.keys(emotionData).forEach(e => {
+          const percent = Math.round(emotionData[e]);
+          document.getElementById(`${e}Percent`).textContent = `${percent}%`;
+          document.getElementById(`${e}Bar`).style.width = `${percent}%`;
+        });
+        const stressLevel = (emotionData.angry + emotionData.fearful + emotionData.disgusted) / 3;
+        const anxietyIndex = (emotionData.fearful + emotionData.sad) / 2;
+        const verhulstScore = (1 - (emotionData.happy + emotionData.neutral) / 200).toFixed(2);
+        document.getElementById('stressLevel').textContent = `${Math.round(stressLevel)}%`;
+        document.getElementById('anxietyIndex').textContent = `${Math.round(anxietyIndex)}%`;
+        document.getElementById('verhulstScore').textContent = verhulstScore;
+        let statusText = '';
+        let statusColor = '';
+        if (anxietyIndex > 50) {
+          statusText = 'HIGH STRESS ALERT. Take a break.';
+          statusColor = '#e73c7e';
+        } else if (anxietyIndex > 30) {
+          statusText = 'Elevated stress. Try breathing exercises.';
+          statusColor = '#ee7752';
+        } else {
+          statusText = 'Low stress levels. Great job!';
+          statusColor = '#1ba885';
+        }
+        document.getElementById('stressStatus').textContent = statusText;
+        document.getElementById('stressStatus').style.backgroundColor = statusColor + '20';
+        document.getElementById('stressStatus').style.color = statusColor;
+        emotionHistory.push({ stress: stressLevel, time: (Date.now() - scanStartTime) / 60000 });
+        if (emotionHistory.length > 20) emotionHistory.shift();
+        updateStressChart();
+        updateRecommendations(stressLevel);
+      }
+    }
+    function stopCamera() {
+      if (videoStream) {
+        videoStream.getTracks().forEach(track => track.stop());
+        videoStream = null;
+      }
+      if (analysisInterval) {
+        clearInterval(analysisInterval);
+        analysisInterval = null;
+      }
+      document.getElementById('video').srcObject = null;
+      if (emotionHistory.length > 0) {
+        saveSessionToHistory();
+      }
+      showToast('Analysis stopped. Session saved!', 'info');
+    }
+    function updateRecommendations(stressLevel) {
+      const list = document.getElementById('recommendationsList');
+      list.innerHTML = '';
+      let recommendations = [];
+      if (stressLevel > 60) {
+        recommendations = [
+          "Immediate: Try 4-7-8 breathing (inhale 4s, hold 7s, exhale 8s).",
+          "Grounding: Name 5 things you see, 4 you touch, 3 you hear.",
+          "Break: Step away for 5 minutes."
+        ];
+      } else if (stressLevel > 30) {
+        recommendations = [
+          "Breathe deeply for 1 minute.",
+          "Drink water – hydration helps stress.",
+          "Reframe one negative thought positively."
+        ];
+      } else {
+        recommendations = [
+          "Keep it up! Schedule relaxation today.",
+          "Connect with someone you care about.",
+          "Eat a balanced meal for sustained energy."
+        ];
+      }
+      recommendations.forEach(rec => {
+        const div = document.createElement('div');
+        div.style.marginBottom = '0.5rem';
+        div.innerHTML = `• ${rec}`;
+        list.appendChild(div);
+      });
+    }
+    function updateStressChart() {
+      const ctx = document.getElementById('stressChart').getContext('2d');
+      const data = {
+        labels: emotionHistory.map(h => `${Math.floor(h.time)}m`),
+        datasets: [{
+          label: 'Stress Level (%)',
+          data: emotionHistory.map(h => h.stress),
+          borderColor: 'rgb(231, 60, 126)',
+          backgroundColor: 'rgba(231, 60, 126, 0.1)',
+          tension: 0.3,
+          fill: true
+        }]
+      };
+      const config = {
+        type: 'line',
+        data: data,
+        options: {
+          responsive: true,
+          scales: { y: { min: 0, max: 100 } },
+          plugins: { legend: { display: false } }
+        }
+      };
+      if (stressChart) {
+        stressChart.data = data;
+        stressChart.update();
+      } else {
+        stressChart = new Chart(ctx, config);
+      }
+    }
+    function saveSessionToHistory() {
+      if (emotionHistory.length === 0) return;
+      const averageStress = emotionHistory.reduce((a, b) => a + b.stress, 0) / emotionHistory.length;
+      const session = {
+        date: new Date().toISOString(),
+        averageStress: Math.round(averageStress),
+        duration: Math.round((Date.now() - scanStartTime) / 60000)
+      };
+      userHistory.push(session);
+      localStorage.setItem('userHistory', JSON.stringify(userHistory));
+    }
+    function generateProgressReport() {
+      if (userHistory.length === 0) {
+        showToast('No session history yet.', 'info');
+        return;
+      }
+      const ctx = document.getElementById('progressChart').getContext('2d');
+      const labels = userHistory.map(s => new Date(s.date).toLocaleDateString());
+      const data = {
+        labels: labels,
+        datasets: [{
+          label: 'Avg Stress (%)',
+          data: userHistory.map(s => s.averageStress),
+          borderColor: 'rgb(88, 204, 2)',
+          backgroundColor: 'rgba(88, 204, 2, 0.1)',
+          tension: 0.3,
+          fill: true
+        }]
+      };
+      const config = {
+        type: 'line',
+        data: data,
+        options: {
+          responsive: true,
+          scales: { y: { min: 0, max: 100 } }
+        }
+      };
+      if (progressChart) progressChart.destroy();
+      progressChart = new Chart(ctx, config);
+      const trend = userHistory[userHistory.length - 1].averageStress < userHistory[0].averageStress ? 'improving' : 'needs attention';
+      document.getElementById('progressSummary').innerHTML = `<p style="margin-top: 1rem; font-weight: 700;">Your average stress trend is <strong>${trend}</strong>. Keep going! ✨</p>`;
+    }
+
+    function downloadProgressReport() {
+      if (!userHistory || userHistory.length === 0) {
+        showToast('No progress data to download.', 'info');
+        return;
+      }
+      const payload = {
+        generatedAt: new Date().toISOString(),
+        history: userHistory
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `aura_progress_${new Date().toISOString().slice(0,10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      showToast('Progress report downloaded.', 'success');
+    }
+    function callEmergency(type) {
+      const numbers = {
+        suicide: '9152987821',
+        mental: '08046110007'
+      };
+      const number = numbers[type];
+      showToast('Connecting to helpline: ' + number, 'danger');
+      // Initiate actual phone call on supported devices
+      setTimeout(() => {
+        window.location.href = 'tel:' + number;
+      }, 500);
+    }
+    function showToast(message, type = 'info') {
+      const toast = document.createElement('div');
+      toast.className = 'toast ' + type;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => {
+        toast.remove();
+      }, 3000);
+    }
+    // Enhanced therapist database with complete location info
+    const therapistDatabase = [
+      { name: "Dr. Maya Sharma, Ph.D.", title: "Licensed Clinical Psychologist", specialization: "CBT for anxiety and trauma. Focus on mindfulness integration.", icon: "👩‍⚕️", lat: 28.6139, lon: 77.2090, address: "Delhi - CBD Area", availability: "Mon-Sat 9AM-7PM", rating: 4.8, reviews: 245, phone: "+91-9876543210" },
+      { name: "Mr. Alex Chen, LCSW", title: "Licensed Clinical Social Worker", specialization: "Expert in couples counseling and depression support.", icon: "👨‍⚕️", lat: 19.0760, lon: 72.8777, address: "Mumbai - Marine Drive", availability: "Tue-Sun 2PM-9PM", rating: 4.7, reviews: 189, phone: "+91-9876543211" },
+      { name: "Ms. Lena Patel, LMFT", title: "Marriage and Family Therapist", specialization: "Works with teens and families on communication issues.", icon: "🧘", lat: 12.9716, lon: 77.5946, address: "Bangalore - Whitefield", availability: "Mon-Fri 10AM-6PM", rating: 4.6, reviews: 167, phone: "+91-9876543212" },
+      { name: "Dr. Rajesh Kumar, MD", title: "Psychiatric & Wellness Specialist", specialization: "Holistic mental health with stress management.", icon: "🧑‍⚕️", lat: 28.5355, lon: 77.3910, address: "Delhi - Noida", availability: "Daily 8AM-8PM", rating: 4.9, reviews: 312, phone: "+91-9876543213" },
+      { name: "Ms. Priya Singh, LPC", title: "Licensed Professional Counselor", specialization: "Trauma-informed care and anxiety management.", icon: "👩‍⚕️", lat: 19.1136, lon: 72.8697, address: "Mumbai - Bandra", availability: "Mon-Sat 11AM-8PM", rating: 4.7, reviews: 198, phone: "+91-9876543214" }
+    ];
+
+    let userLocation = null;
+    let geofenceRadius = 5; // kilometers
+
+    async function renderTherapists() {
+      const grid = document.getElementById('therapistGrid');
+      if (!grid) return;
+      
+      setTimeout(async () => {
+        document.getElementById('therapistLoading').classList.add('hidden');
+        grid.innerHTML = '';
+        
+        try {
+          const position = await getCurrentPosition();
+          userLocation = { lat: position.coords.latitude, lon: position.coords.longitude };
+          
+          // Calculate distances for all therapists
+          therapistDatabase.forEach(t => {
+            t.distance = calculateDistance(userLocation.lat, userLocation.lon, t.lat, t.lon);
+            t.isWithinGeofence = t.distance <= geofenceRadius;
+          });
+          
+          // Sort by distance (nearest first)
+          therapistDatabase.sort((a, b) => a.distance - b.distance);
+          
+          showToast(`📍 Found ${therapistDatabase.length} therapists near you!`, 'success');
+        } catch (err) {
+          console.error('Geolocation error:', err);
+          showToast('Unable to access location. Enable location permissions to find nearest therapists.', 'info');
+        }
+        
+        // Render therapist cards with enhanced info
+        therapistDatabase.forEach((therapist, index) => {
+          const card = document.createElement('div');
+          card.className = 'therapist-card';
+          
+          // Highlight nearest therapist with border
+          if (index === 0 && userLocation) {
+            card.style.border = '3px solid #58cc02';
+            card.style.boxShadow = '0 0 20px rgba(88, 204, 2, 0.4)';
+          }
+          
+          const distanceInfo = therapist.distance 
+            ? `<div style="color: #58cc02; font-weight: 800; margin: 0.5rem 0;">📍 ${therapist.distance.toFixed(2)} km away</div>`
+            : '';
+          
+          const nearestBadge = index === 0 && userLocation 
+            ? '<div style="background: #58cc02; color: white; padding: 0.3rem 0.8rem; border-radius: 20px; font-weight: 800; font-size: 0.85rem; display: inline-block; margin-bottom: 0.5rem;">⭐ NEAREST</div>'
+            : '';
+          
+          const geofenceBadge = therapist.isWithinGeofence && userLocation
+            ? '<div style="background: #1cb0f6; color: white; padding: 0.3rem 0.8rem; border-radius: 20px; font-weight: 800; font-size: 0.85rem; display: inline-block; margin-left: 0.5rem;">🎯 IN GEOFENCE</div>'
+            : '';
+          
+          card.innerHTML = `
+            <div style="margin-bottom: 1rem;">
+              ${nearestBadge}${geofenceBadge}
+            </div>
+            <div class="therapist-header">
+              <div class="therapist-avatar">${therapist.icon}</div>
+              <div style="flex: 1;">
+                <h3 style="margin-bottom: 0.25rem;">${therapist.name}</h3>
+                <p style="color: var(--text-medium); font-size: 0.9rem; margin-bottom: 0.25rem;">${therapist.title}</p>
+                <div style="color: #58cc02; font-weight: 700;">⭐ ${therapist.rating}/5 • ${therapist.reviews} reviews</div>
+              </div>
+            </div>
+            <div style="margin: 1rem 0; padding: 1rem; background: #f7f7f7; border-radius: 15px; font-size: 0.95rem;">
+              <p style="margin-bottom: 0.5rem;"><strong>📍 ${therapist.address}</strong></p>
+              <p style="color: var(--text-medium); margin-bottom: 0.5rem;">⏰ ${therapist.availability}</p>
+              <p style="color: var(--text-medium); margin-bottom: 0.5rem;">📞 ${therapist.phone}</p>
+              ${distanceInfo}
+            </div>
+            <p style="margin-bottom: 1rem; color: var(--text-dark);">${therapist.specialization}</p>
+            <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+              <button class="btn btn-primary" style="flex: 1; margin: 0;" onclick="bookTherapist('${therapist.name}', '${therapist.phone}')">
+                📅 Book
+              </button>
+              <button class="btn btn-secondary" style="flex: 1; margin: 0;" onclick="callTherapist('${therapist.name}', '${therapist.phone}')">
+                📞 Call
+              </button>
+              <button class="btn btn-secondary" style="flex: 1; margin: 0;" onclick="showTherapistLocation('${therapist.name}', ${therapist.lat}, ${therapist.lon})">
+                🗺️ Map
+              </button>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+      }, 1000);
+    }
+    function startGeofencing() {
+      if (navigator.geolocation) {
+        watchId = navigator.geolocation.watchPosition(
+          checkGeofences, 
+          geoError, 
+          { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 }
+        );
+        showToast('🎯 Geofencing activated! Monitoring therapist locations...', 'success');
+      } else {
+        showToast('Geolocation not supported on this device.', 'danger');
+      }
+    }
+
+    function checkGeofences(position) {
+      const userLat = position.coords.latitude;
+      const userLon = position.coords.longitude;
+      userLocation = { lat: userLat, lon: userLon };
+      
+      const notifiedTherapists = JSON.parse(localStorage.getItem('notifiedTherapists') || '[]');
+      
+      therapistDatabase.forEach(therapist => {
+        const distance = calculateDistance(userLat, userLon, therapist.lat, therapist.lon);
+        const therapistKey = `${therapist.name}-${therapist.lat}-${therapist.lon}`;
+        
+        // Check if within geofence and not yet notified
+        if (distance <= geofenceRadius && !notifiedTherapists.includes(therapistKey)) {
+          showToast(
+            `🎯 You're near ${therapist.name}! (${distance.toFixed(2)}km away)\n⏰ Hours: ${therapist.availability}\n📞 Call: ${therapist.phone}`, 
+            'success'
+          );
+          
+          // Store notification to prevent duplicate alerts
+          notifiedTherapists.push(therapistKey);
+          localStorage.setItem('notifiedTherapists', JSON.stringify(notifiedTherapists));
+          
+          // Optional: Log geofence event
+          if (isLoggedIn) {
+            saveToMongoDB('geofence-events', {
+              therapistName: therapist.name,
+              distance: distance,
+              userLocation: { lat: userLat, lon: userLon },
+              timestamp: new Date().toISOString()
+            });
+          }
+        }
+        
+        // Remove notification flag if user leaves geofence
+        if (distance > geofenceRadius * 1.2) {
+          const index = notifiedTherapists.indexOf(therapistKey);
+          if (index > -1) {
+            notifiedTherapists.splice(index, 1);
+            localStorage.setItem('notifiedTherapists', JSON.stringify(notifiedTherapists));
+          }
+        }
+      });
+    }
+
+    function geoError(err) {
+      console.error('Geofencing error:', err);
+      let errorMsg = 'Geolocation error';
+      switch(err.code) {
+        case err.PERMISSION_DENIED:
+          errorMsg = 'Location permission denied. Please enable in settings.';
+          break;
+        case err.POSITION_UNAVAILABLE:
+          errorMsg = 'Location unavailable. Please check your device.';
+          break;
+        case err.TIMEOUT:
+          errorMsg = 'Location request timed out.';
+          break;
+      }
+      showToast(errorMsg, 'danger');
+    }
+
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371; // Earth's radius in km
+      const dLat = toRad(lat2 - lat1);
+      const dLon = toRad(lon2 - lon1);
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    }
+
+    function toRad(v) {
+      return v * Math.PI / 180;
+    }
+
+    function getCurrentPosition() {
+      return new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, { 
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
+        });
+      });
+    }
+
+    // Additional helper functions for therapist interaction
+    function bookTherapist(name, phone) {
+      showToast(`📅 Booking appointment with ${name}...`, 'info');
+      setTimeout(() => {
+        showToast(`✅ Request sent to ${name}! They will contact you at the phone number in your profile.`, 'success');
+      }, 2000);
+    }
+
+    function callTherapist(name, phone) {
+      if (!phone) {
+        showToast('Phone number not available.', 'danger');
+        return;
+      }
+      showToast(`📞 Calling ${name}...`, 'info');
+      try {
+        if (navigator.userAgent && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+          window.location.href = `tel:${phone}`;
+        } else {
+          // Desktop: open dialer if available
+          window.open(`tel:${phone}`);
+        }
+      } catch (e) {
+        showToast(`You can call ${name} at ${phone}`, 'info');
+      }
+    }
+
+    function showTherapistLocation(name, lat, lon) {
+      const mapsUrl = `https://www.google.com/maps?q=${lat},${lon}`;
+      showToast(`🗺️ Opening location of ${name}...`, 'info');
+      window.open(mapsUrl, '_blank');
+    }
+
+    function getNearestTherapist() {
+      if (!userLocation) {
+        showToast('Location not available. Enable location access first.', 'danger');
+        return null;
+      }
+      
+      const therapistsWithDistance = therapistDatabase.map(t => ({
+        ...t,
+        distance: calculateDistance(userLocation.lat, userLocation.lon, t.lat, t.lon)
+      }));
+      
+      const nearest = therapistsWithDistance.sort((a, b) => a.distance - b.distance)[0];
+      return nearest;
+    }
+
+    function highlightGeofencedTherapists() {
+      if (!userLocation) {
+        showToast('Location not available.', 'danger');
+        return;
+      }
+      
+      const geofencedCount = therapistDatabase.filter(t => {
+        const distance = calculateDistance(userLocation.lat, userLocation.lon, t.lat, t.lon);
+        return distance <= geofenceRadius;
+      }).length;
+      
+      const msg = geofencedCount > 0 
+        ? `🎯 ${geofencedCount} therapist(s) within ${geofenceRadius}km geofence!`
+        : `No therapists within ${geofenceRadius}km. Try expanding your search radius.`;
+      
+      showToast(msg, geofencedCount > 0 ? 'success' : 'info');
+    }
+    // Bi-LSTM with HAN hybrid model simulation for mental health status recognition
+    async function initModel() {
+      // Simulated Bi-LSTM with HAN model initialization using TF.js
+      // In a real scenario, load a pre-trained model or train on dataset
+      // HAN adds hierarchical attention to Bi-LSTM for better text understanding
+      model = tf.sequential();
+      model.add(tf.layers.embedding({ inputDim: 10000, outputDim: 16, inputLength: 100 })); // Word embedding
+      model.add(tf.layers.bidirectional({ layer: tf.layers.lstm({ units: 32 }) })); // Bi-LSTM layer
+      // Simulated HAN attention (in practice, implement custom layer for word/sentence attention)
+      // Here, we use a dense layer as placeholder for attention mechanism
+      model.add(tf.layers.dense({ units: 32, activation: 'softmax' })); // Attention-like
+      model.add(tf.layers.dense({ units: 1, activation: 'sigmoid' })); // Output for binary classification (distress/no distress)
+      model.compile({ optimizer: 'adam', loss: 'binaryCrossentropy', metrics: ['accuracy'] });
+      // No actual training here; in production, train on mental health text dataset
+      console.log('Bi-LSTM with HAN model initialized (simulated).');
+    }
+    function analyzeMentalHealth(text) {
+      // Simulated prediction using the model
+      // In real: Preprocess text (tokenize, pad), then model.predict
+      // Here, simulate with keyword-based + placeholder model call
+      const lower = text.toLowerCase();
+      let status = 'neutral';
+      if (lower.includes('sad') || lower.includes('depressed') || lower.includes('anxious') || lower.includes('suicide') || lower.includes('hopeless')) {
+        status = 'potential signs of distress - recommend professional help';
+      } else if (lower.includes('happy') || lower.includes('good') || lower.includes('excited')) {
+        status = 'positive mental state - encourage continuation';
+      }
+      // Placeholder for model prediction (since no real input prep)
+      // const prediction = model.predict(tf.tensor2d([...])); // Would return [0-1] score
+      console.log(`Bi-LSTM HAN analysis: ${status}`);
+      return status;
+    }
+    // Initialize sliders for vibe check
+    function initializeSliders() {
+      const stressSlider = document.getElementById('stressLevel');
+      const stressValue = document.getElementById('stressValue');
+      if (stressSlider && stressValue) {
+        stressValue.textContent = stressSlider.value;
+        stressSlider.addEventListener('input', function () {
+          stressValue.textContent = this.value;
+        });
+      }
+      const energySlider = document.getElementById('energyLevel');
+      const energyValue = document.getElementById('energyValue');
+      if (energySlider && energyValue) {
+        energyValue.textContent = energySlider.value;
+        energySlider.addEventListener('input', function () {
+          energyValue.textContent = this.value;
+        });
+      }
+    }
+    window.onclick = function (event) {
+      if (event.target.classList.contains('modal')) {
+        closeAllModals();
+      }
+    }
+
+
+    // ... all other functions (startCamera, performEmotionAnalysis, etc.) remain exactly as original ...
+
+    // New Dashboard Stats Functions
+    function updateDashboardStats() {
+      document.getElementById('moodCheckinsValue').textContent = JSON.parse(localStorage.getItem('moodHistory'))?.length || 0;
+      document.getElementById('chatSessionsValue').textContent = JSON.parse(localStorage.getItem('chatHistory'))?.length || 0;
+      document.getElementById('meditationMinutesValue').textContent = localStorage.getItem('meditationMinutes') || 0;
+      document.getElementById('dayStreakValue').textContent = localStorage.getItem('dayStreak') || 0;
+    }
+    function incrementMoodCheckins() {
+      updateDashboardStats();
+    }
+    function saveChatMessage(userMsg, aiResponse) {
+      let chatHistory = JSON.parse(localStorage.getItem('chatHistory')) || [];
+      chatHistory.push({
+        user: userMsg,
+        ai: aiResponse,
+        timestamp: new Date().toLocaleString()
+      });
+      localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+      updateDashboardStats();
+    }
+    function incrementChatSessions() {
+      updateDashboardStats();
+    }
+    // Meditation Timer with presets, tutorial video, and soft background audio
+    let meditationTimerInterval = null;
+    let meditationRemainingSeconds = 0;
+    let selectedMeditationMinutes = 10; // default preset
+    const meditationAudio = document.getElementById('meditationAudio');
+
+    function selectMeditationPreset(el) {
+      document.querySelectorAll('[data-minutes]').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+      selectedMeditationMinutes = parseInt(el.getAttribute('data-minutes')) || 10;
+      document.getElementById('timerDisplay').textContent = `${selectedMeditationMinutes.toString().padStart(2, '0')}:00`;
+    }
+
+    function updateMeditationTimerDisplay() {
+      const mins = Math.floor(meditationRemainingSeconds / 60);
+      const secs = meditationRemainingSeconds % 60;
+      document.getElementById('timerDisplay').textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    function startMeditationSession() {
+      // If already running, ignore
+      if (meditationTimerInterval) return;
+      meditationRemainingSeconds = selectedMeditationMinutes * 60;
+      updateMeditationTimerDisplay();
+      document.getElementById('startMeditation').style.display = 'none';
+      document.getElementById('stopMeditation').style.display = 'inline-block';
+      // Try to play audio; may require user gesture in some browsers
+      try { meditationAudio.currentTime = 0; meditationAudio.play().catch(() => {}); } catch (e) { }
+      meditationTimerInterval = setInterval(async () => {
+        meditationRemainingSeconds--;
+        updateMeditationTimerDisplay();
+        if (meditationRemainingSeconds <= 0) {
+          clearInterval(meditationTimerInterval);
+          meditationTimerInterval = null;
+          // stop audio
+          try { meditationAudio.pause(); meditationAudio.currentTime = 0; } catch (e) { }
+          // save minutes
+          let totalMinutes = parseInt(localStorage.getItem('meditationMinutes') || 0) + selectedMeditationMinutes;
+          localStorage.setItem('meditationMinutes', totalMinutes);
+          let meditationHistory = JSON.parse(localStorage.getItem('meditationHistory')) || [];
+          const sessionData = { duration: selectedMeditationMinutes, timestamp: new Date().toLocaleString() };
+          meditationHistory.push(sessionData);
+          localStorage.setItem('meditationHistory', JSON.stringify(meditationHistory));
+          updateDashboardStats();
+          document.getElementById('startMeditation').style.display = 'inline-block';
+          document.getElementById('stopMeditation').style.display = 'none';
+          document.getElementById('timerDisplay').textContent = '00:00';
+          showToast('Meditation complete — minutes added.', 'success');
+          // Save meditation to MongoDB
+          await saveToMongoDB('meditations', { duration: sessionData.duration });
+        }
+      }, 1000);
+    }
+
+    function stopMeditationSession() {
+      if (meditationTimerInterval) {
+        clearInterval(meditationTimerInterval);
+        meditationTimerInterval = null;
+      }
+      try { meditationAudio.pause(); meditationAudio.currentTime = 0; } catch (e) { }
+      document.getElementById('startMeditation').style.display = 'inline-block';
+      document.getElementById('stopMeditation').style.display = 'none';
+      document.getElementById('timerDisplay').textContent = '00:00';
+      showToast('Meditation stopped.', 'info');
+    }
+
+    document.getElementById('startMeditation')?.addEventListener('click', startMeditationSession);
+    document.getElementById('stopMeditation')?.addEventListener('click', stopMeditationSession);
+    function updateDailyStreak() {
+      // Use YYYY-MM-DD keys to avoid locale differences
+      const todayKey = new Date().toISOString().slice(0, 10);
+      const lastDayKey = localStorage.getItem('lastActiveDay');
+      let streak = parseInt(localStorage.getItem('dayStreak') || 0);
+      if (lastDayKey === todayKey) {
+        // Same day already recorded — nothing to do
+        updateDashboardStats();
+        return;
+      }
+      // Check if yesterday
+      const yesterdayKey = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+      if (lastDayKey === yesterdayKey) {
+        streak = (isNaN(streak) ? 0 : streak) + 1;
+      } else {
+        streak = 1;
+      }
+      localStorage.setItem('dayStreak', streak);
+      localStorage.setItem('lastActiveDay', todayKey);
+      // Only add to streak history when this date isn't already present
+      let streakHistory = JSON.parse(localStorage.getItem('streakHistory')) || [];
+      const already = streakHistory.some(e => e.date === todayKey);
+      if (!already) {
+        streakHistory.push({ date: todayKey, streak: streak });
+        localStorage.setItem('streakHistory', JSON.stringify(streakHistory));
+      }
+      updateDashboardStats();
+    }
+    // Show History Functions
+    function showMoodHistory() {
+      const history = JSON.parse(localStorage.getItem('moodHistory')) || [];
+      const list = document.getElementById('moodHistoryList');
+      list.innerHTML = '';
+      history.forEach((item, idx) => {
+        const li = document.createElement('li');
+        li.className = 'details-item';
+        li.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;width:100%"><div><strong>${item.timestamp}</strong><br>Sleep: ${item.sleepSchedule}<br>State: ${item.currentState}<br>Stress: ${item.stressLevel}<br>Support: ${item.supportPref}<br>Feeling: ${item.mindFeeling}<br>Gratitude: ${item.gratitude}<br>Goal: ${item.dailyGoal}<br>Energy: ${item.energyLevel}</div><button class="btn btn-secondary" style="padding:0.35rem 0.6rem;font-weight:800" onclick="removeMoodEntry(${idx})">Clear</button></div>`;
+        list.appendChild(li);
+      });
+      document.getElementById('moodHistoryModal').classList.add('active');
+    }
+    function showChatHistory() {
+      const history = JSON.parse(localStorage.getItem('chatHistory')) || [];
+      const list = document.getElementById('chatHistoryList');
+      list.innerHTML = '';
+      history.forEach((item, idx) => {
+        const li = document.createElement('li');
+        li.className = 'details-item';
+        li.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;width:100%"><div><strong>${item.timestamp}</strong><br>You: ${item.user}<br>Aura: ${item.ai}</div><button class="btn btn-secondary" style="padding:0.35rem 0.6rem;font-weight:800" onclick="removeChatEntry(${idx})">Clear</button></div>`;
+        list.appendChild(li);
+      });
+      document.getElementById('chatHistoryModal').classList.add('active');
+    }
+    function showMeditationHistory() {
+      const history = JSON.parse(localStorage.getItem('meditationHistory')) || [];
+      const list = document.getElementById('meditationHistoryList');
+      list.innerHTML = '';
+      history.forEach((item, idx) => {
+        const li = document.createElement('li');
+        li.className = 'details-item';
+        li.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;width:100%"><div>${item.timestamp}: ${item.duration} minutes</div><button class="btn btn-secondary" style="padding:0.35rem 0.6rem;font-weight:800" onclick="removeMeditationEntry(${idx})">Clear</button></div>`;
+        list.appendChild(li);
+      });
+      document.getElementById('meditationHistoryModal').classList.add('active');
+    }
+    // Remove single entries and Clear All handlers for histories
+    function removeMoodEntry(index) {
+      let arr = JSON.parse(localStorage.getItem('moodHistory')) || [];
+      if (index >= 0 && index < arr.length) arr.splice(index,1);
+      localStorage.setItem('moodHistory', JSON.stringify(arr));
+      showMoodHistory();
+      showToast('Removed mood entry.', 'info');
+    }
+    function removeAllMoodEntries() {
+      localStorage.removeItem('moodHistory');
+      showMoodHistory();
+      showToast('Cleared mood history.', 'info');
+    }
+    function removeChatEntry(index) {
+      let arr = JSON.parse(localStorage.getItem('chatHistory')) || [];
+      if (index >= 0 && index < arr.length) arr.splice(index,1);
+      localStorage.setItem('chatHistory', JSON.stringify(arr));
+      showChatHistory();
+      showToast('Removed chat entry.', 'info');
+    }
+    function removeAllChatEntries() {
+      localStorage.removeItem('chatHistory');
+      showChatHistory();
+      showToast('Cleared chat history.', 'info');
+    }
+    function removeMeditationEntry(index) {
+      let arr = JSON.parse(localStorage.getItem('meditationHistory')) || [];
+      if (index >= 0 && index < arr.length) arr.splice(index,1);
+      localStorage.setItem('meditationHistory', JSON.stringify(arr));
+      showMeditationHistory();
+      showToast('Removed meditation entry.', 'info');
+    }
+    function removeAllMeditationEntries() {
+      localStorage.removeItem('meditationHistory');
+      showMeditationHistory();
+      showToast('Cleared meditation history.', 'info');
+    }
+
+    // Vibe check handler: score responses and decide emergency
+    function completeVibeCheck(event) {
+      event.preventDefault();
+      const form = document.getElementById('vibeCheckForm');
+      const answers = {
+        q1: form.q1.value,
+        q2: form.q2.value,
+        q3: form.q3.value,
+        q4: form.q4.value,
+        q5: form.q5.value
+      };
+      // Map A-E to severity 0-4
+      const map = { A: 0, B: 1, C: 2, D: 3, E: 4 };
+      let score = 0;
+      let severeCount = 0;
+      let extremeCount = 0;
+      Object.keys(answers).forEach(k => {
+        const v = answers[k];
+        const s = map[v] ?? 0;
+        score += s;
+        if (s >= 3) severeCount++;
+        if (s >= 4) extremeCount++;
+      });
+      // Save vibe check summary locally and mark completed
+      const summary = { timestamp: new Date().toISOString(), answers, score };
+      let vibeHistory = JSON.parse(localStorage.getItem('vibeHistory') || '[]');
+      vibeHistory.push(summary);
+      localStorage.setItem('vibeHistory', JSON.stringify(vibeHistory));
+      localStorage.setItem('vibeCheckCompleted', 'true');
+      vibeCheckCompleted = true;
+      showToast('Vibe Check complete — insights unlocked!', 'success');
+      // Save to backend if logged in
+      if (isLoggedIn) saveToMongoDB('vibeChecks', summary);
+      // If all answers are 'E' (highest severity), ask for parent number and alert parent
+      const allExtreme = Object.values(answers).every(v => v === 'E');
+      if (allExtreme) {
+        let parentNumber = prompt('We detected high risk across all questions. Please enter a parent/guardian phone number to notify:');
+        if (parentNumber) {
+          parentNumber = parentNumber.trim();
+          localStorage.setItem('parentContact', parentNumber);
+          // Attempt to send an SMS alert (may open SMS app or be blocked in desktop)
+          const msg = encodeURIComponent(`Alert: Your child may be experiencing serious mental health difficulties. Please check in with them and seek help if needed.`);
+          try {
+            if (navigator && navigator.userAgent && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+              // mobile: use sms: scheme
+              window.location.href = `sms:${parentNumber}?body=${msg}`;
+            } else {
+              // desktop: open tel: to call or mailto as fallback
+              window.open('tel:' + parentNumber);
+            }
+          } catch (e) { console.warn('Parent notify failed to open link', e); }
+          // Log parent notification
+          if (isLoggedIn) saveToMongoDB('activity', { type: 'parent-notify', parentNumber, summary });
+          showToast('Parent notification attempted.', 'danger');
+        } else {
+          showToast('Parent number not provided. Please add later in settings.', 'info');
+        }
+      }
+
+      // If severe or extreme results, call emergency and attempt to call parent
+      if (extremeCount >= 1 || severeCount >= 2) {
+        // Trigger helpline and parent contact
+        showToast('High distress detected — contacting emergency contacts...', 'danger');
+        // Call emergency helpline
+        try { callEmergency('mental'); } catch (e) { console.warn(e); }
+        // Attempt to call parent if number is configured
+        try { callParent(); } catch (e) { console.warn(e); }
+      }
+      // Redirect to dashboard
+      setTimeout(() => showSection('dashboard'), 800);
+    }
+
+    function callParent() {
+      const parentNumber = localStorage.getItem('parentContact');
+      if (parentNumber) {
+        showToast('Notifying parent: ' + parentNumber, 'danger');
+        const msg = encodeURIComponent('Alert: Your child may be experiencing mental health difficulties. Please check in and seek help if needed.');
+        try {
+          if (navigator && navigator.userAgent && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+            window.location.href = `sms:${parentNumber}?body=${msg}`;
+          } else {
+            window.open('tel:' + parentNumber);
+          }
+        } catch (e) { console.warn('Parent notify failed to open link', e); }
+        if (isLoggedIn) saveToMongoDB('activity', { type: 'parent-notify', parentNumber });
+      } else {
+        showToast('No parent contact configured. Please add parent number in settings.', 'info');
+      }
+    }
+    function showStreakDetails() {
+      const history = JSON.parse(localStorage.getItem('streakHistory')) || [];
+      const list = document.getElementById('streakDetailsList');
+      list.innerHTML = '';
+      history.forEach((item, idx) => {
+        const li = document.createElement('li');
+        li.className = 'details-item';
+        // Add a per-entry clear button
+        li.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;gap:1rem"><span>${item.date}: Streak of ${item.streak} days</span><button class="btn btn-secondary" style="padding:0.35rem 0.6rem;font-weight:800" onclick="removeStreakEntry(${idx})">Clear</button></div>`;
+        list.appendChild(li);
+      });
+      document.getElementById('streakDetailsModal').classList.add('active');
+    }
+
+    function removeStreakEntry(index) {
+      let streakHistory = JSON.parse(localStorage.getItem('streakHistory')) || [];
+      if (index >= 0 && index < streakHistory.length) {
+        streakHistory.splice(index, 1);
+        localStorage.setItem('streakHistory', JSON.stringify(streakHistory));
+      }
+      // Refresh view
+      showStreakDetails();
+      showToast('Removed streak entry.', 'info');
+    }
+
+    function removeAllStreakEntries() {
+      localStorage.removeItem('streakHistory');
+      // Also reset dayStreak and lastActiveDay optionally
+      // localStorage.removeItem('dayStreak');
+      // localStorage.removeItem('lastActiveDay');
+      showStreakDetails();
+      showToast('All streak history cleared.', 'info');
+    }
+
+    // Language Translation System
+    const translations = {
+      en: {
+        // Navigation
+        "dashboard": "Dashboard",
+        "vibe-check": "Vibe Check",
+        "chat": "Chat",
+        "mood-analysis": "Mood Analysis",
+        "meditation": "Meditation",
+        "therapists": "Therapists",
+        "resources": "Resources",
+        "profile": "Profile",
+        "logout": "Logout",
+        
+        // Meditation Section
+        "meditation-title": "🧘 Guided Meditation & Exercises",
+        "meditation-desc": "Start a meditation session to relax, learn exercises, and track your minutes.",
+        "choose-duration": "Choose Duration:",
+        "start-meditation": "▶️ Start Meditation",
+        "stop": "⏹️ Stop",
+        "beginners-guide": "📺 Beginner's Meditation & Yoga Guide",
+        "essential-exercises": "💪 Essential Exercises Guide",
+        
+        // Toast Messages
+        "location-enabled": "📍 Geofencing activated!",
+        "booking": "📅 Booking appointment with",
+        "language-changed": "✅ Language changed to English!",
+      },
+      es: {
+        "dashboard": "Panel",
+        "vibe-check": "Verificación de Energía",
+        "chat": "Chat",
+        "mood-analysis": "Análisis de Humor",
+        "meditation": "Meditación",
+        "therapists": "Terapeutas",
+        "resources": "Recursos",
+        "profile": "Perfil",
+        "logout": "Cerrar Sesión",
+        "meditation-title": "🧘 Meditación Guiada y Ejercicios",
+        "meditation-desc": "Inicia una sesión de meditación para relajarte, aprender ejercicios y registrar tus minutos.",
+        "choose-duration": "Elegir Duración:",
+        "start-meditation": "▶️ Iniciar Meditación",
+        "stop": "⏹️ Detener",
+        "beginners-guide": "📺 Guía de Meditación y Yoga para Principiantes",
+        "essential-exercises": "💪 Guía Esencial de Ejercicios",
+        "language-changed": "✅ ¡Idioma cambiado al español!",
+      },
+      hi: {
+        "dashboard": "डैशबोर्ड",
+        "vibe-check": "वाइब चेक",
+        "chat": "चैट",
+        "mood-analysis": "मूड विश्लेषण",
+        "meditation": "ध्यान",
+        "therapists": "चिकित्सक",
+        "resources": "संसाधन",
+        "profile": "प्रोफ़ाइल",
+        "logout": "लॉग आउट",
+        "meditation-title": "🧘 निर्देशित ध्यान और व्यायाम",
+        "meditation-desc": "ध्यान सत्र शुरू करें, अपने मिनटों को ट्रैक करें।",
+        "choose-duration": "अवधि चुनें:",
+        "start-meditation": "▶️ ध्यान शुरू करें",
+        "stop": "⏹️ रोकें",
+        "beginners-guide": "📺 शुरुआत के लिए ध्यान और योग गाइड",
+        "essential-exercises": "💪 आवश्यक व्यायाम गाइड",
+        "language-changed": "✅ भाषा हिंदी में बदल दी गई है!",
+      },
+      fr: {
+        "dashboard": "Tableau de Bord",
+        "vibe-check": "Vérification Énergétique",
+        "chat": "Chat",
+        "mood-analysis": "Analyse d'Humeur",
+        "meditation": "Méditation",
+        "therapists": "Thérapeutes",
+        "resources": "Ressources",
+        "profile": "Profil",
+        "logout": "Déconnexion",
+        "meditation-title": "🧘 Méditation Guidée et Exercices",
+        "meditation-desc": "Commencez une session de méditation pour vous détendre et suivre vos minutes.",
+        "choose-duration": "Choisir la Durée:",
+        "start-meditation": "▶️ Commencer la Méditation",
+        "stop": "⏹️ Arrêter",
+        "beginners-guide": "📺 Guide de Méditation et Yoga pour Débutants",
+        "essential-exercises": "💪 Guide Essentiel des Exercices",
+        "language-changed": "✅ Langue changée en français!",
+      }
+    };
+
+    let currentLanguage = localStorage.getItem('selectedLanguage') || 'en';
+
+    function changeLanguage(lang) {
+      currentLanguage = lang;
+      localStorage.setItem('selectedLanguage', lang);
+      
+      // Update UI text based on language
+      updateLanguageUI(lang);
+      
+      // Show toast notification
+      const langNames = {
+        en: 'English',
+        es: 'Español',
+        fr: 'Français',
+        hi: 'हिंदी'
+      };
+      
+      showToast(`✅ Language changed to ${langNames[lang]}!`, 'success');
+    }
+
+    function updateLanguageUI(lang) {
+      const t = translations[lang] || translations['en'];
+      
+      // Update navigation links
+      const navLinks = document.querySelectorAll('.nav-links a');
+      navLinks.forEach(link => {
+        const text = link.textContent.toLowerCase();
+        const key = text.replace('👤 ', '').replace('features', 'dashboard').toLowerCase();
+        if (t[key]) {
+          if (key === 'profile') {
+            link.textContent = '👤 ' + t[key];
+          } else {
+            link.textContent = t[key];
+          }
+        }
+      });
+      
+      // Update meditation section
+      const meditationTitle = document.querySelector('#meditation h2');
+      const meditationDesc = document.querySelector('#meditation .section-header p');
+      const meditationChoose = document.querySelector('#meditation > div > div:nth-child(2) > div:nth-child(1)');
+      
+      if (meditationTitle) meditationTitle.textContent = t['meditation-title'] || meditationTitle.textContent;
+      if (meditationDesc) meditationDesc.textContent = t['meditation-desc'] || meditationDesc.textContent;
+      if (meditationChoose) meditationChoose.textContent = t['choose-duration'] || meditationChoose.textContent;
+      
+      // Update buttons in meditation section
+      const meditationBtn = document.getElementById('startMeditation');
+      const stopBtn = document.getElementById('stopMeditation');
+      if (meditationBtn && meditationBtn.style.display !== 'none') {
+        meditationBtn.textContent = t['start-meditation'] || meditationBtn.textContent;
+      }
+      if (stopBtn && stopBtn.style.display !== 'none') {
+        stopBtn.textContent = t['stop'] || stopBtn.textContent;
+      }
+    }
+
+    // Initialize language on page load
+    window.addEventListener('load', () => {
+      updateLanguageUI(currentLanguage);
+      initializeSliders();
+      initModel();
+      showSection('home');
+      updateDashboardStats();
+      updateDailyStreak();
+      checkAutoLogin();
+      initMeditationAudio();
+    }, { once: true });
+
+    // Meditation Timer Functions
+    let meditationTime = 0;
+    let meditationInterval = null;
+    let isMeditating = false;
+
+    function initMeditationAudio() {
+      const audio = document.getElementById('meditationAudio');
+      if (audio) {
+        audio.volume = 0.25; // Set to 25% volume - much lower than video
+        audio.loop = true;
+      }
+    }
+
+    function selectMeditationPreset(button) {
+      const minutes = parseInt(button.getAttribute('data-minutes'));
+      meditationTime = minutes * 60; // Convert to seconds
+      document.querySelectorAll('[data-minutes]').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      button.classList.add('active');
+      updateTimerDisplay();
+    }
+
+    function updateTimerDisplay() {
+      const mins = Math.floor(meditationTime / 60);
+      const secs = meditationTime % 60;
+      const display = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      const timerDisplay = document.getElementById('timerDisplay');
+      if (timerDisplay) timerDisplay.textContent = display;
+    }
+
+    function startMeditation() {
+      if (meditationTime <= 0) {
+        showToast('Please select a duration first!', 'warning');
+        return;
+      }
+
+      isMeditating = true;
+      const startBtn = document.getElementById('startMeditation');
+      const stopBtn = document.getElementById('stopMeditation');
+      
+      if (startBtn) startBtn.style.display = 'none';
+      if (stopBtn) stopBtn.style.display = 'block';
+
+      // Play background music at lower volume
+      const audio = document.getElementById('meditationAudio');
+      if (audio) {
+        audio.volume = 0.25; // Keep low volume
+        audio.play().catch(e => {
+          console.log('Audio autoplay prevented:', e);
+          showToast('🔊 Background music available - click play if needed', 'info');
+        });
+      }
+
+      // Start countdown
+      meditationInterval = setInterval(() => {
+        meditationTime--;
+        updateTimerDisplay();
+
+        if (meditationTime <= 0) {
+          stopMeditation();
+          showToast('🎉 Meditation session complete! Great job!', 'success');
+        }
+      }, 1000);
+
+      showToast('🧘 Meditation started. Breathe deeply and relax...', 'success');
+    }
+
+    function stopMeditation() {
+      isMeditating = false;
+      
+      if (meditationInterval) {
+        clearInterval(meditationInterval);
+        meditationInterval = null;
+      }
+
+      // Stop background music
+      const audio = document.getElementById('meditationAudio');
+      if (audio) {
+        audio.pause();
+        audio.currentTime = 0;
+      }
+
+      const startBtn = document.getElementById('startMeditation');
+      const stopBtn = document.getElementById('stopMeditation');
+      
+      if (startBtn) startBtn.style.display = 'block';
+      if (stopBtn) stopBtn.style.display = 'none';
+
+      // Save meditation session
+      const minutesMeditated = Math.floor((meditationTime / 60));
+      const totalMinutes = (parseInt(JSON.parse(localStorage.getItem('meditationMinutes') || '0')) || 0) + minutesMeditated;
+      localStorage.setItem('meditationMinutes', totalMinutes);
+
+      showToast('✅ Meditation session saved!', 'info');
+    }
+
+  </script>
+</body>
+
+</html>
