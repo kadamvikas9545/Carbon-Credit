@@ -1,0 +1,35 @@
+{
+  "model_type": "PLSR (AS7341 Optimized)",
+  "source": "AS7341",
+  "sensor": "AMS AS7341",
+  "n_channels": 11,
+  "wavelengths_nm": [
+    410,
+    440,
+    470,
+    510,
+    550,
+    590,
+    630,
+    680,
+    730,
+    850,
+    940
+  ],
+  "n_components": 6,
+  "n_training_samples": 160,
+  "n_test_samples": 40,
+  "train_r2": 0.4268120996683924,
+  "test_r2": -0.05118047441474505,
+  "test_rmse": 0.5888433036043939,
+  "test_mae": 0.46000234469998824,
+  "trained_at": "2026-04-04T10:40:33.157074",
+  "data_description": "AS7341 11-channel spectral data (350-1000nm)",
+  "target": "SOC percentage (0.5-8.0%)",
+  "nir_bands": [
+    730,
+    850,
+    940
+  ],
+  "soc_relationship": "Lower NIR reflectance = Higher SOC"
+}

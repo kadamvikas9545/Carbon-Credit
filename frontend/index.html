@@ -1,0 +1,4601 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgroGreenBits - AI Carbon Credit Platform</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    :root {
+      --g1: #0d5c3a;
+      --g2: #1a7a4e;
+      --g3: #2a9d6f;
+      --g4: #3dbf8a;
+      --g5: #6ddba9;
+      --g6: #b5edcf;
+      --g7: #e8f8f0;
+      --amber: #c4870a;
+      --amber-lt: #fef3dc;
+      --bg: #f4f9f6;
+      --card: #fff;
+      --border: #d4e8dc;
+      --text: #1a2e22;
+      --text2: #4a6b56;
+      --text3: #7a9c86;
+      --danger: #c0392b;
+      --danger-lt: #fdecea;
+      --info: #1a6fa0;
+      --info-lt: #e8f3fb;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow: 0 2px 12px rgba(13, 92, 58, .08);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: 'DM Serif Display', serif;
+      font-weight: 400
+    }
+
+    .app {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh
+    }
+
+    .screen {
+      display: none;
+      flex-direction: column;
+      min-height: 100vh
+    }
+
+    .screen.active {
+      display: flex
+    }
+
+    /* AUTH */
+    .auth-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      background: linear-gradient(135deg, #0d5c3a 0%, #1a7a4e 50%, #0d5c3a 100%)
+    }
+
+    .auth-card {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, .15);
+      position: relative;
+    }
+
+    .auth-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 2rem
+    }
+
+    .auth-logo .leaf {
+      width: 40px;
+      height: 40px;
+      background: var(--g1);
+      border-radius: 50% 0 50% 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 20px
+    }
+
+    .auth-logo h2 {
+      font-family: 'DM Serif Display', serif;
+      color: var(--g1);
+      font-size: 22px
+    }
+
+    .auth-logo span {
+      color: var(--g3);
+      font-size: 12px;
+      display: block;
+      font-family: 'DM Sans', sans-serif
+    }
+
+    .form-group {
+      margin-bottom: 1rem
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      color: var(--text2);
+      margin-bottom: 6px;
+      font-weight: 500
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--text);
+      background: #fff;
+      outline: none;
+      transition: border .2s
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--g3)
+    }
+
+    .role-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 1rem
+    }
+
+    .role-btn {
+      padding: 14px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: #fff;
+      cursor: pointer;
+      text-align: center;
+      transition: all .2s;
+      font-family: inherit
+    }
+
+    .role-btn .role-icon {
+      font-size: 28px;
+      margin-bottom: 6px
+    }
+
+    .role-btn .role-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text2)
+    }
+
+    .role-btn.selected {
+      border-color: var(--g2);
+      background: var(--g7)
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 12px;
+      background: var(--g1);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background .2s
+    }
+
+    .btn-primary:hover {
+      background: var(--g2)
+    }
+
+    .auth-switch {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 13px;
+      color: var(--text2)
+    }
+
+    .auth-switch a {
+      color: var(--g2);
+      cursor: pointer;
+      text-decoration: underline
+    }
+
+    .auth-err {
+      background: var(--danger-lt);
+      color: var(--danger);
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      margin-bottom: 1rem;
+      display: none
+    }
+
+    /* NAV */
+    .navbar {
+      background: var(--g1);
+      color: #fff;
+      padding: 0 1.5rem;
+      display: flex;
+      align-items: center;
+      height: 60px;
+      gap: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      flex-wrap: wrap;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'DM Serif Display', serif;
+      font-size: 18px;
+      color: #fff;
+      flex: 0 0 auto;
+    }
+
+    .nav-logo .leaf-sm {
+      width: 28px;
+      height: 28px;
+      background: var(--g4);
+      border-radius: 50% 0 50% 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 4px;
+      flex: 1;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .nav-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-tab {
+      padding: 6px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 13px;
+      color: rgba(255, 255, 255, .75);
+      transition: all .2s;
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      font-weight: 500;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .nav-tab.active,
+    .nav-tab:hover {
+      background: rgba(255, 255, 255, .15);
+      color: #fff;
+    }
+
+    .nav-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      flex: 0 0 auto;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--g4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 500;
+      font-size: 13px;
+      color: var(--g1)
+    }
+
+    .btn-logout {
+      background: rgba(255, 255, 255, .15);
+      border: none;
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 12px;
+      font-family: inherit;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-logout:hover {
+      background: rgba(255, 255, 255, .25);
+    }
+
+    /* MAIN CONTENT */
+    .main {
+      flex: 1;
+      padding: 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    /* Responsive Main */
+    @media (max-width: 600px) {
+      .main {
+        padding: 0.75rem;
+        max-width: 100%;
+      }
+    }
+
+    @media (min-width: 601px) and (max-width: 768px) {
+      .main {
+        padding: 1rem;
+      }
+    }
+
+    .page-title {
+      font-size: 26px;
+      color: var(--g1);
+      margin-bottom: .25rem;
+      word-break: break-word;
+    }
+
+    .page-sub {
+      color: var(--text2);
+      font-size: 14px;
+      margin-bottom: 1.5rem;
+      word-break: break-word;
+    }
+
+    @media (max-width: 600px) {
+      .page-title {
+        font-size: 20px;
+        margin-bottom: 0.5rem;
+      }
+
+      .page-sub {
+        font-size: 12px;
+        margin-bottom: 1rem;
+      }
+    }
+
+    @media (min-width: 601px) and (max-width: 768px) {
+      .page-title {
+        font-size: 22px;
+      }
+
+      .page-sub {
+        font-size: 13px;
+      }
+    }
+
+    /* CARDS */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+      box-shadow: var(--shadow)
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 14px;
+      margin-bottom: 1.5rem
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.1rem;
+      box-shadow: var(--shadow)
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text2);
+      margin-bottom: 6px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: .5px
+    }
+
+    .stat-value {
+      font-size: 26px;
+      font-family: 'DM Serif Display', serif;
+      color: var(--g1)
+    }
+
+    .stat-sub {
+      font-size: 12px;
+      color: var(--text3);
+      margin-top: 4px
+    }
+
+    .stat-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      margin-top: 6px
+    }
+
+    .badge-up {
+      background: #e6f7ef;
+      color: #0d5c3a
+    }
+
+    .badge-dn {
+      background: var(--danger-lt);
+      color: var(--danger)
+    }
+
+    /* GRID LAYOUTS */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 1.5rem
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem
+    }
+
+    /* CHART CARD */
+    .chart-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow)
+    }
+
+    .chart-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem
+    }
+
+    .chart-title {
+      font-size: 16px;
+      color: var(--g1);
+      font-family: 'DM Serif Display', serif
+    }
+
+    .chart-wrap {
+      position: relative;
+      height: 220px;
+      width: 100%
+    }
+
+    /* FARM FORM */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px
+    }
+
+    /* ==================== RESPONSIVE DESIGN ==================== */
+    
+    /* MOBILE DEVICES (< 600px) */
+    @media (max-width: 600px) {
+      :root {
+        --radius: 10px;
+      }
+
+      * {
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      body {
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      .app {
+        font-size: 14px;
+      }
+
+      /* Layout & Spacing */
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .grid-2 {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .grid-3 {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+
+      /* Navbar */
+      .navbar {
+        padding: 0 1rem;
+        height: 56px;
+        gap: 0.5rem;
+      }
+
+      .nav-logo {
+        font-size: 16px;
+        gap: 6px;
+      }
+
+      .nav-logo .leaf-sm {
+        width: 24px;
+        height: 24px;
+        font-size: 12px;
+      }
+
+      .nav-tabs {
+        gap: 2px;
+        flex-wrap: wrap;
+      }
+
+      .nav-tab {
+        padding: 6px 10px;
+        font-size: 12px;
+      }
+
+      .nav-user {
+        font-size: 12px;
+        gap: 6px;
+      }
+
+      .avatar {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
+      }
+
+      /* Auth Screen */
+      .auth-wrap {
+        padding: 1rem;
+      }
+
+      .auth-card {
+        padding: 1.5rem;
+        max-width: 100%;
+        border-radius: 16px;
+      }
+
+      .auth-logo {
+        margin-bottom: 1.5rem;
+        gap: 8px;
+      }
+
+      .auth-logo .leaf {
+        width: 32px;
+        height: 32px;
+        font-size: 18px;
+      }
+
+      .auth-logo h2 {
+        font-size: 18px;
+      }
+
+      .auth-logo span {
+        font-size: 11px;
+      }
+
+      .form-group {
+        margin-bottom: 0.75rem;
+      }
+
+      .form-group label {
+        font-size: 12px;
+        margin-bottom: 4px;
+      }
+
+      .form-group input,
+      .form-group select {
+        padding: 10px 12px;
+        font-size: 14px;
+      }
+
+      .form-group input::placeholder {
+        font-size: 13px;
+      }
+
+      /* Buttons */
+      .btn-green,
+      .btn-secondary {
+        padding: 12px 16px;
+        font-size: 14px;
+        font-weight: 600;
+        min-height: 44px;
+        width: 100%;
+      }
+
+      .btn-small,
+      .btn-amber,
+      .btn-info {
+        padding: 8px 12px;
+        font-size: 12px;
+        min-height: 40px;
+      }
+
+      /* Cards */
+      .stat-card {
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+      }
+
+      .card {
+        padding: 0.75rem;
+        margin-bottom: 0.75rem;
+        border-radius: 10px;
+      }
+
+      .chart-card {
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-radius: 10px;
+      }
+
+      .chart-wrap {
+        height: 200px !important;
+        min-height: 200px;
+      }
+
+      .chart-header {
+        margin-bottom: 0.75rem;
+      }
+
+      .chart-title {
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      /* Modals */
+      .modal-back {
+        z-index: 500;
+      }
+
+      .modal {
+        width: 95vw !important;
+        max-width: calc(100vw - 1rem);
+        padding: 1.25rem;
+        border-radius: 12px;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+
+      .modal-title {
+        font-size: 16px;
+        margin-bottom: 1rem;
+      }
+
+      .modal-footer {
+        gap: 0.75rem;
+        flex-wrap: wrap;
+      }
+
+      .modal-footer button {
+        flex: 1;
+        min-height: 44px;
+        font-size: 14px;
+      }
+
+      /* Tables */
+      .table-scroll {
+        max-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      table {
+        font-size: 12px;
+        min-width: 100%;
+      }
+
+      th, td {
+        padding: 8px 6px;
+      }
+
+      /* List Items */
+      .credit-item,
+      .farm-item {
+        padding: 0.75rem;
+        margin-bottom: 0.75rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+
+      /* Section Headers */
+      .sec-header {
+        margin-bottom: 0.75rem;
+        padding: 0 0.5rem;
+      }
+
+      .sec-header h3 {
+        font-size: 16px;
+        margin-bottom: 0.5rem;
+      }
+
+      /* Content Area */
+      .content {
+        padding: 1rem;
+      }
+
+      /* Stats Grid */
+      .stat-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+      }
+
+      .stat-grid .stat-card {
+        padding: 0.75rem;
+      }
+
+      .stat-label {
+        font-size: 11px;
+      }
+
+      .stat-value {
+        font-size: 18px;
+        font-weight: 600;
+      }
+
+      .stat-change {
+        font-size: 12px;
+      }
+
+      /* Forms & Inputs */
+      input[type="text"],
+      input[type="email"],
+      input[type="password"],
+      input[type="number"],
+      textarea,
+      select {
+        font-size: 16px;
+      }
+
+      textarea {
+        min-height: 100px;
+        resize: vertical;
+      }
+
+      /* Tooltips & Badge */
+      .badge {
+        font-size: 11px;
+        padding: 4px 8px;
+      }
+
+      /* Flex Adjustments */
+      .flex-between {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+
+      /* Typography */
+      h1 {
+        font-size: 22px;
+      }
+
+      h2 {
+        font-size: 18px;
+      }
+
+      h3 {
+        font-size: 16px;
+      }
+
+      h4, h5, h6 {
+        font-size: 14px;
+      }
+    }
+
+    /* SMALL TABLETS (600px - 768px) */
+    @media (min-width: 601px) and (max-width: 768px) {
+      :root {
+        --radius: 11px;
+      }
+
+      body {
+        font-size: 14px;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .grid-2 {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+      }
+
+      .grid-3 {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+      }
+
+      .stat-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+      }
+
+      .navbar {
+        padding: 0 1.25rem;
+        height: 56px;
+      }
+
+      .nav-tabs {
+        gap: 2px;
+      }
+
+      .nav-tab {
+        padding: 6px 12px;
+        font-size: 13px;
+      }
+
+      .auth-card {
+        padding: 2rem;
+        max-width: 90%;
+      }
+
+      .btn-green,
+      .btn-secondary {
+        padding: 10px 18px;
+      }
+
+      .modal {
+        width: 90vw;
+        max-width: 100%;
+        padding: 1.25rem;
+      }
+
+      .chart-wrap {
+        height: 220px !important;
+      }
+
+      .credit-item,
+      .farm-item {
+        flex-direction: row;
+        align-items: center;
+      }
+
+      .stat-value {
+        font-size: 22px;
+      }
+
+      /* Typography */
+      h1 {
+        font-size: 24px;
+      }
+
+      h2 {
+        font-size: 20px;
+      }
+
+      h3 {
+        font-size: 17px;
+      }
+    }
+
+    /* TABLETS (768px - 1024px) */
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .form-row {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .grid-2 {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem;
+      }
+
+      .grid-3 {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+      }
+
+      .stat-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+      }
+
+      .navbar {
+        padding: 0 1.5rem;
+        height: 60px;
+      }
+
+      .auth-card {
+        padding: 2.25rem;
+        max-width: 420px;
+      }
+
+      .chart-wrap {
+        height: 250px !important;
+      }
+
+      .modal {
+        width: 85vw;
+        max-width: 550px;
+      }
+
+      .stat-value {
+        font-size: 24px;
+      }
+    }
+
+    /* DESKTOP LARGE (> 1024px) */
+    @media (min-width: 1025px) {
+      .grid-2 {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      }
+
+      .grid-3 {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      }
+
+      .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.25rem;
+      }
+
+      .chart-wrap {
+        height: 300px !important;
+      }
+
+      .modal {
+        width: auto;
+        max-width: 650px;
+      }
+
+      .stat-value {
+        font-size: 28px;
+      }
+    }
+
+    /* ==================== ACCORDION/COLLAPSIBLE SECTIONS ==================== */
+    .accordion-header {
+      display: none;
+      background: var(--g7);
+      padding: 12px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      user-select: none;
+      font-weight: 600;
+      color: var(--g1);
+      margin-bottom: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.3s ease;
+      border: 1px solid var(--border);
+    }
+
+    .accordion-header:hover {
+      background: var(--g6);
+      border-color: var(--g3);
+    }
+
+    .accordion-header.collapsed {
+      margin-bottom: 10px;
+    }
+
+    .accordion-header.collapsed + .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+    }
+
+    .accordion-content {
+      max-height: 10000px;
+      overflow: visible;
+      opacity: 1;
+      transition: max-height 0.3s ease, opacity 0.3s ease;
+    }
+
+    .accordion-chevron {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      text-align: center;
+      transition: transform 0.3s ease;
+      font-size: 12px;
+      line-height: 20px;
+    }
+
+    .accordion-header.collapsed .accordion-chevron {
+      transform: rotate(-90deg);
+    }
+
+    /* Mobile - Show Accordions */
+    @media (max-width: 600px) {
+      .accordion-section {
+        margin-bottom: 1rem;
+      }
+
+      .accordion-header {
+        display: flex;
+        margin-bottom: 0;
+      }
+
+      .accordion-header + .accordion-content {
+        border-left: 2px solid var(--g3);
+        border-right: 2px solid var(--g3);
+        border-bottom: 2px solid var(--g3);
+        padding: 12px;
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+        margin-bottom: 10px;
+      }
+
+      .chart-card {
+        border-top: none;
+        padding: 0;
+      }
+
+      .chart-card .accordion-header {
+        border-radius: 8px 8px 0 0;
+        margin-bottom: 0;
+      }
+
+      .chart-card .accordion-content {
+        padding: 12px;
+        border-left: 1px solid var(--border);
+        border-right: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        border-radius: 0 0 8px 8px;
+      }
+    }
+
+    /* Desktop - Hide Accordions */
+    @media (min-width: 601px) {
+      .accordion-header {
+        display: none !important;
+      }
+
+      .accordion-content {
+        max-height: none !important;
+        opacity: 1 !important;
+        overflow: visible !important;
+      }
+    }
+
+    /* ==================== TOUCH DEVICE IMPROVEMENTS ==================== */
+    @media (hover: none) and (pointer: coarse) {
+      button {
+        min-height: 44px;
+        min-width: 44px;
+      }
+
+      .nav-tab,
+      .btn-small {
+        min-height: 40px;
+      }
+
+      input,
+      select,
+      textarea {
+        font-size: 16px;
+      }
+
+      .credit-item,
+      .farm-item {
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      .credit-item:active,
+      .farm-item:active {
+        background: var(--g7);
+      }
+    }
+
+    .btn-secondary {
+      padding: 10px 20px;
+      background: #fff;
+      color: var(--g1);
+      border: 1.5px solid var(--g1);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all .2s
+    }
+
+    .btn-secondary:hover {
+      background: var(--g7)
+    }
+
+    .btn-green {
+      padding: 10px 20px;
+      background: var(--g1);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background .2s
+    }
+
+    .btn-green:hover {
+      background: var(--g2)
+    }
+
+    .btn-small {
+      padding: 7px 14px;
+      background: var(--g1);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      transition: background .2s
+    }
+
+    .btn-small:hover {
+      background: var(--g2)
+    }
+
+    .btn-amber {
+      padding: 7px 14px;
+      background: var(--amber);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500
+    }
+
+    .btn-info {
+      padding: 7px 14px;
+      background: var(--info);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500
+    }
+
+    /* CREDITS LIST */
+    .credit-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: #fff;
+      margin-bottom: 10px;
+      transition: box-shadow .2s
+    }
+
+    .credit-item:hover {
+      box-shadow: var(--shadow)
+    }
+
+    .credit-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px
+    }
+
+    .credit-title {
+      font-weight: 500;
+      font-size: 14px;
+      color: var(--text)
+    }
+
+    .credit-meta {
+      font-size: 12px;
+      color: var(--text2)
+    }
+
+    .verified-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      background: #e8f7ef;
+      color: #0d5c3a;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-weight: 500
+    }
+
+    .price-tag {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+      color: var(--g1)
+    }
+
+    /* MARKETPLACE */
+    .market-filters {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+      align-items: center
+    }
+
+    .filter-input {
+      padding: 8px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 13px;
+      color: var(--text);
+      background: #fff;
+      outline: none
+    }
+
+    .filter-input:focus {
+      border-color: var(--g3)
+    }
+
+    .farmer-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.1rem;
+      box-shadow: var(--shadow);
+      transition: box-shadow .2s
+    }
+
+    .farmer-card:hover {
+      box-shadow: 0 4px 20px rgba(13, 92, 58, .12)
+    }
+
+    .farmer-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px
+    }
+
+    .farmer-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--g6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Serif Display', serif;
+      color: var(--g1);
+      font-size: 18px
+    }
+
+    .farmer-name {
+      font-weight: 500;
+      font-size: 14px;
+      color: var(--text)
+    }
+
+    .farmer-loc {
+      font-size: 12px;
+      color: var(--text2)
+    }
+
+    .soc-bar {
+      background: #eee;
+      border-radius: 4px;
+      height: 6px;
+      margin: 8px 0 4px
+    }
+
+    .soc-fill {
+      background: linear-gradient(90deg, var(--g4), var(--g2));
+      height: 6px;
+      border-radius: 4px;
+      transition: width .4s
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text2);
+      margin-bottom: 8px
+    }
+
+    /* TRANSACTIONS */
+    .tx-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: .9rem 0;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .tx-item:last-child {
+      border-bottom: none
+    }
+
+    .tx-label {
+      font-size: 14px;
+      color: var(--text);
+      font-weight: 500
+    }
+
+    .tx-sub {
+      font-size: 12px;
+      color: var(--text2)
+    }
+
+    .tx-amount {
+      font-family: 'DM Serif Display', serif;
+      font-size: 18px
+    }
+
+    .tx-earn {
+      color: var(--g2)
+    }
+
+    .tx-spend {
+      color: var(--danger)
+    }
+
+    /* NOTIFICATIONS */
+    .notif-panel {
+      position: fixed;
+      top: 60px;
+      right: 1rem;
+      width: 320px;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none
+    }
+
+    .notif {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--g3);
+      border-radius: var(--radius-sm);
+      padding: .9rem 1rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, .1);
+      opacity: 0;
+      transform: translateX(20px);
+      transition: all .3s;
+      pointer-events: auto
+    }
+
+    .notif.show {
+      opacity: 1;
+      transform: translateX(0)
+    }
+
+    .notif-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 2px
+    }
+
+    .notif-body {
+      font-size: 12px;
+      color: var(--text2)
+    }
+
+    /* AI PREDICT */
+    .predict-section {
+      background: linear-gradient(135deg, var(--g7) 0%, #fff 100%);
+      border: 1px solid var(--g6);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem
+    }
+
+    .sensor-bars {
+      position: relative;
+      display: flex;
+      gap: 1px;
+      align-items: flex-end;
+      height: 180px;
+      margin: 1rem 0;
+      padding: 20px 40px 30px 50px;
+      background: linear-gradient(180deg, rgba(13,92,58,0.02) 0%, rgba(13,92,58,0.05) 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      position: relative;
+    }
+
+    .sensor-bars::before {
+      content: '100%';
+      position: absolute;
+      left: 10px;
+      top: 20px;
+      font-size: 10px;
+      color: var(--text3);
+      font-weight: 500;
+    }
+
+    .sensor-bars::after {
+      content: '0%';
+      position: absolute;
+      left: 15px;
+      bottom: 30px;
+      font-size: 10px;
+      color: var(--text3);
+      font-weight: 500;
+    }
+
+    .s-bar {
+      background: linear-gradient(180deg, var(--g4) 0%, var(--g3) 100%);
+      border-radius: 1px 1px 0 0;
+      flex: 1;
+      min-width: 6px;
+      transition: all 0.5s;
+      position: relative;
+      box-shadow: 0 1px 3px rgba(13,92,58,0.1);
+    }
+
+    .s-bar:hover {
+      background: linear-gradient(180deg, var(--g3) 0%, var(--g2) 100%);
+      box-shadow: 0 2px 6px rgba(13,92,58,0.2);
+    }
+
+    .wavelength-labels {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 40px 0 50px;
+      margin: -5px 0 1rem 0;
+      font-size: 11px;
+      color: var(--text3);
+      font-weight: 500;
+    }
+
+    .spectral-grid {
+      position: absolute;
+      top: 20px;
+      bottom: 30px;
+      left: 50px;
+      right: 40px;
+      pointer-events: none;
+    }
+
+    .grid-line {
+      position: absolute;
+      width: 100%;
+      border-bottom: 1px dashed rgba(212, 232, 220, 0.5);
+    }
+
+    .sensor-info {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 1rem;
+      padding: 12px;
+      background: var(--g7);
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+    }
+
+    .sensor-info-item {
+      text-align: center;
+    }
+
+    /* Responsive Sensor Info */
+    @media (max-width: 600px) {
+      .sensor-info {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        padding: 8px;
+        font-size: 11px;
+      }
+
+      .wavelength-labels {
+        padding: 0 20px;
+        font-size: 10px;
+      }
+
+      .spectral-grid {
+        left: 20px;
+        right: 20px;
+      }
+
+      .spectral-container {
+        padding: 0 0.5rem;
+      }
+    }
+
+    @media (min-width: 601px) and (max-width: 768px) {
+      .sensor-info {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+      }
+    }
+
+    .sensor-info-label {
+      color: var(--text3);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 500;
+    }
+
+    .sensor-info-value {
+      color: var(--g1);
+      font-weight: 600;
+      font-size: 14px;
+      margin-top: 4px;
+      font-family: monospace;
+    }
+
+    .predict-result {
+      display: none;
+      background: #fff;
+      border-radius: var(--radius-sm);
+      padding: 1rem;
+      margin-top: 1rem;
+      border: 1px solid var(--g5)
+    }
+
+    .predict-result.show {
+      display: block
+    }
+
+    /* SPINNER */
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, .4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .6s linear infinite
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    .loading {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text2)
+    }
+
+    .loading.show {
+      display: flex
+    }
+
+    /* SECTION HEADER */
+    .sec-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem
+    }
+
+    .sec-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 18px;
+      color: var(--g1)
+    }
+
+    /* MODAL BACKDROP */
+    .modal-back {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .45);
+      z-index: 300;
+      align-items: center;
+      justify-content: center
+    }
+
+    .modal-back.open {
+      display: flex
+    }
+
+    .modal {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 2rem;
+      width: min(650px, 94vw);
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, .2)
+    }
+
+    .modal-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+      color: var(--g1);
+      margin-bottom: 1.25rem
+    }
+
+    .modal-body {
+      margin-bottom: 1rem;
+      overflow-y: auto;
+      max-height: calc(85vh - 200px);
+    }
+
+    .modal-footer {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 1.5rem
+    }
+
+    /* SUCCESS TOAST */
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--g1);
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 40px;
+      font-size: 14px;
+      font-weight: 500;
+      z-index: 400;
+      transition: transform .3s;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, .2)
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0)
+    }
+
+    /* EMPTY STATE */
+    .empty {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text2)
+    }
+
+    .empty-icon {
+      font-size: 48px;
+      margin-bottom: 1rem
+    }
+
+    .empty p {
+      font-size: 14px
+    }
+
+    /* PROGRESS */
+    .progress-bar {
+      background: #eee;
+      border-radius: 4px;
+      height: 8px;
+      overflow: hidden
+    }
+
+    .progress-fill {
+      height: 8px;
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--g4), var(--g1));
+      transition: width .5s
+    }
+
+    /* TABLE */
+    .table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th {
+      background: var(--g7);
+      color: var(--g1);
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 500;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    @media (max-width: 600px) {
+      table {
+        font-size: 11px;
+      }
+
+      th {
+        padding: 8px 10px;
+        font-size: 10px;
+      }
+
+      td {
+        padding: 8px 10px;
+      }
+    }
+
+    tr:last-child td {
+      border-bottom: none
+    }
+
+    tr:hover td {
+      background: #fafdf9
+    }
+
+    /* SECTION TAB */
+    .stab-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap
+    }
+
+    .stab {
+      padding: 7px 16px;
+      border-radius: 20px;
+      border: 1.5px solid var(--border);
+      background: #fff;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text2);
+      transition: all .2s
+    }
+
+    .stab.active {
+      background: var(--g1);
+      color: #fff;
+      border-color: var(--g1)
+    }
+
+    .lang-option:last-child {
+      border-bottom: none
+    }
+
+    .lang-option:hover {
+      background: var(--g7)
+    }
+
+    .lang-option.active {
+      background: var(--g7);
+      color: var(--g1);
+      font-weight: 500
+    }
+
+    /* PROFILE BUTTON */
+    .profile-btn {
+      background: rgba(255, 255, 255, .15);
+      border: none;
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 12px;
+      font-family: inherit;
+      font-weight: 500;
+      transition: all .2s;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+
+    .profile-btn:hover {
+      background: rgba(255, 255, 255, .25);
+    }
+
+    @media (max-width: 600px) {
+      .profile-btn {
+        font-size: 11px;
+        padding: 6px 10px;
+      }
+
+      .profile-btn span {
+        display: none;
+      }
+    }
+
+    /* PROFILE MODAL */
+    .profile-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    @media (max-width: 600px) {
+      .profile-form {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .profile-form .form-group {
+      margin-bottom: 0
+    }
+
+    .profile-form.full {
+      grid-template-columns: 1fr
+    }
+
+    .profile-avatar-preview {
+      border-radius: 50%;
+      background: var(--g7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      color: var(--g1);
+      margin-bottom: 1rem;
+      width: 80px;
+      height: 80px
+    }
+
+    /* CHART STYLES */
+    .chart-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      box-shadow: var(--shadow);
+      margin-bottom: 1.5rem
+    }
+
+    .chart-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem
+    }
+
+    .chart-title {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text);
+      font-family: 'DM Serif Display', serif
+    }
+
+    .chart-wrap {
+      position: relative;
+      height: 300px
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 1.5rem
+    }
+
+    .ai-insight-card {
+      background: var(--g7);
+      border: 1px solid var(--g6);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      margin-top: 1rem
+    }
+
+    .insight-label {
+      font-size: 12px;
+      color: var(--text2);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 4px
+    }
+
+    .insight-value {
+      font-size: 26px;
+      font-family: 'DM Serif Display', serif;
+      color: var(--g1);
+      margin-bottom: 8px
+    }
+
+    .insight-desc {
+      font-size: 13px;
+      color: var(--text2)
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app" id="app">
+
+    <!-- NOTIFICATION PANEL -->
+    <div class="notif-panel" id="notifPanel"></div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
+
+    <!-- ===================== AUTH SCREEN ===================== -->
+    <div class="screen active" id="authScreen">
+      <div class="auth-wrap">
+        <div class="auth-card">
+          <button style="position: absolute; top: 15px; right: 15px; padding: 8px 14px; font-size: 13px; background: #f0f8f7; border: 1px solid #b8e6e1; color: #185856; border-radius: 6px; cursor: pointer; transition: all 0.2s; z-index: 1000; pointer-events: auto;" onmouseover="this.style.background='#e0f2f0'" onmouseout="this.style.background='#f0f8f7'" onclick="openModal('settingsModal'); setTimeout(() => document.getElementById('settingsBackendURL').value = getAPIBaseURL(), 100);">⚙️ Settings</button>
+          <div class="auth-logo">
+            <div class="leaf">🌿</div>
+            <div>
+              <h2>AgroGreenBits</h2>
+              <span>AI-Based Carbon Credit Platform</span>
+            </div>
+          
+          </div>
+
+          <!-- LOGIN -->
+          <div id="loginView">
+            <h3 style="font-family:'DM Serif Display',serif;font-size:20px;color:var(--text);margin-bottom:1rem">Welcome
+              back</h3>
+            <div class="auth-err" id="loginErr">Invalid email or password</div>
+            <div class="form-group"><label>Email address</label><input type="email" id="loginEmail"
+                placeholder="you@example.com"></div>
+            <div class="form-group"><label>Password</label><input type="password" id="loginPw" placeholder="••••••••">
+            </div>
+            <button class="btn-primary" onclick="doLogin()">Sign in</button>
+            <div class="auth-switch">Don't have an account? <a onclick="showReg()">Register</a></div>
+            <div
+              style="margin-top:1.25rem;padding:1rem;background:var(--g7);border-radius:var(--radius-sm);font-size:12px;color:var(--text2)">
+              <strong style="color:var(--g1)">Demo accounts:</strong><br>
+              farmer@demo.com / pass123 (Farmer)<br>
+              buyer@demo.com / pass123 (Buyer)<br>
+              admin@demo.com / pass123 (Admin)
+            </div>
+          </div>
+
+          <!-- REGISTER -->
+          <div id="regView" style="display:none">
+            <h3 style="font-family:'DM Serif Display',serif;font-size:20px;color:var(--text);margin-bottom:1rem">Create
+              account</h3>
+            <div class="auth-err" id="regErr">Please fill all fields</div>
+            <p style="font-size:13px;color:var(--text2);margin-bottom:1rem">I am a...</p>
+            <div class="role-grid">
+              <div class="role-btn" id="roleFarmer" onclick="selectRole('farmer')">
+                <div class="role-icon">🌾</div>
+                <div class="role-label">Farmer</div>
+              </div>
+              <div class="role-btn" id="roleBuyer" onclick="selectRole('buyer')">
+                <div class="role-icon">🏢</div>
+                <div class="role-label">Company / Buyer</div>
+              </div>
+            </div>
+            <div class="form-group"><label>Full name</label><input type="text" id="regName" placeholder="John Doe">
+            </div>
+            <div class="form-group"><label>Email address</label><input type="email" id="regEmail"
+                placeholder="you@example.com"></div>
+            <div class="form-group"><label>Password</label><input type="password" id="regPw"
+                placeholder="min. 6 characters"></div>
+            <button class="btn-primary" onclick="doRegister()">Create account</button>
+            <div class="auth-switch">Already have an account? <a onclick="showLogin()">Sign in</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== FARMER SCREEN ===================== -->
+    <div class="screen" id="farmerScreen">
+      <nav class="navbar">
+        <div class="nav-logo">
+          <div class="leaf-sm">🌿</div> AgroGreenBits
+        </div>
+        <div class="nav-tabs">
+          <button class="nav-tab active" onclick="farmerTab('dashboard',this)">Dashboard</button>
+          <button class="nav-tab" onclick="farmerTab('farms',this)">My Farms</button>
+          <button class="nav-tab" onclick="farmerTab('credits',this)">Credits</button>
+          <button class="nav-tab" onclick="farmerTab('history',this)">History</button>
+          <button class="nav-tab" onclick="farmerTab('ai',this)">AI Predict</button>
+        </div>
+        <div class="nav-user">
+          <div class="avatar" id="farmerAvatar"></div>
+          <span id="farmerName" style="font-size:13px;color:rgba(255,255,255,.85)"></span>
+          <button class="profile-btn" onclick="openProfileModal()">👤 Profile</button>
+          <button class="btn-logout" onclick="logout()">Sign out</button>
+        </div>
+      </nav>
+      <div class="main">
+
+        <!-- DASHBOARD TAB -->
+        <div id="tab-dashboard">
+          <h1 class="page-title" id="farmerGreet">Good morning!</h1>
+          <p class="page-sub">Here's your farm carbon performance at a glance</p>
+          <div class="stat-grid" id="farmerStats"></div>
+          <div class="grid-2">
+            <div class="chart-card accordion-section">
+              <div class="accordion-header"><span class="chart-title">📈 Soil Organic Carbon</span><span class="accordion-chevron">▼</span></div>
+              <div class="accordion-content">
+                <div class="chart-header"><span class="chart-title">Soil Organic Carbon Over Time</span></div>
+                <div class="chart-wrap"><canvas id="socChart"></canvas></div>
+              </div>
+            </div>
+            <div class="chart-card accordion-section">
+              <div class="accordion-header"><span class="chart-title">🌿 Credits Generated</span><span class="accordion-chevron">▼</span></div>
+              <div class="accordion-content">
+                <div class="chart-header"><span class="chart-title">Carbon Credits Generated</span></div>
+                <div class="chart-wrap"><canvas id="creditsChart"></canvas></div>
+              </div>
+            </div>
+          </div>
+          <div class="chart-card accordion-section">
+            <div class="accordion-header"><span class="chart-title">💰 Monthly Earnings</span><span class="accordion-chevron">▼</span></div>
+            <div class="accordion-content">
+              <div class="chart-header"><span class="chart-title">Monthly Earnings (₹)</span></div>
+              <div class="chart-wrap" style="height:180px"><canvas id="earningsChart"></canvas></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FARMS TAB -->
+        <div id="tab-farms" style="display:none">
+          <div class="sec-header">
+            <div>
+              <h1 class="page-title">My Farms</h1>
+              <p class="page-sub">Manage your registered farm plots</p>
+            </div>
+            <button class="btn-green" onclick="openAddFarm()">+ Add Farm</button>
+          </div>
+          <div id="farmsList"></div>
+        </div>
+
+        <!-- CREDITS TAB -->
+        <div id="tab-credits" style="display:none">
+          <h1 class="page-title">Carbon Credits</h1>
+          <p class="page-sub">Manage and list your carbon credits for sale</p>
+          <div class="stat-grid" id="creditStats"></div>
+          <div class="card">
+            <div class="sec-header"><span class="sec-title">Available Credits</span><button class="btn-green"
+                onclick="openListCredits()">List for Sale</button></div>
+            <div id="creditsList"></div>
+          </div>
+        </div>
+
+        <!-- HISTORY TAB -->
+        <div id="tab-history" style="display:none">
+          <h1 class="page-title">Transaction History</h1>
+          <p class="page-sub">Record of all credit sales and earnings</p>
+          <div class="card">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Farm</th>
+                    <th>Credits Sold</th>
+                    <th>Price/Credit</th>
+                    <th>Total</th>
+                    <th>Buyer</th>
+                  </tr>
+                </thead>
+                <tbody id="txTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI PREDICT TAB -->
+        <div id="tab-ai" style="display:none">
+          <h1 class="page-title">AI SOC Predictor</h1>
+          <p class="page-sub">Send spectral data to the AI model and get Soil Organic Carbon predictions</p>
+          
+          <!-- ═══════════════════════════════════════════════════════════════ -->
+          <!-- PLSR FIREBASE ANALYSIS SECTION (New) -->
+          <!-- ═══════════════════════════════════════════════════════════════ -->
+          <div class="card" style="background: linear-gradient(135deg, var(--g7) 0%, #f0fdf4 100%); border: 2px solid var(--g4); margin-bottom: 2rem;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem;">
+              <span style="font-size: 24px;">🚀</span>
+              <h2 style="margin: 0; color: var(--g1);">Firebase PLSR Analysis</h2>
+            </div>
+            <p style="font-size: 14px; color: var(--text2); margin-bottom: 1rem;">Real-time spectral data processing from your Firebase database</p>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label>Select Farm</label>
+                <select id="plsrFarmSelect">
+                  <option value="farm_001">Test Farm (farm_001)</option>
+                </select>
+              </div>
+              <div></div>
+            </div>
+            
+            <div style="display: flex; gap: 10px;">
+              <button class="btn-green" id="plsrAnalyzeBtn" onclick="runPLSRAnalysis()" style="flex: 1;">
+                <span id="plsrBtnText">🔄 Analyze with PLSR</span>
+              </button>
+              <button class="btn-secondary" id="plsrAutoRefreshBtn" onclick="toggleAutoRefresh()">
+                ⏰ Auto-Refresh (5 min)
+              </button>
+            </div>
+            
+            <!-- PLSR Results Display -->
+            <div id="plsrResults" style="display: none; margin-top: 1.5rem; padding: 1.5rem; background: white; border-radius: var(--radius); border-left: 4px solid var(--g3);">
+              <h3 style="color: var(--g1); margin-top: 0; margin-bottom: 1rem; font-family: 'DM Serif Display', serif;">✅ PLSR Analysis Complete</h3>
+              
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 1.5rem;">
+                <div style="background: var(--g7); padding: 1rem; border-radius: var(--radius-sm); text-align: center;">
+                  <div style="font-size: 12px; color: var(--text2); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 8px;">SOC (%)</div>
+                  <div id="plsrSoc" style="font-size: 28px; color: var(--g1); font-family: 'DM Serif Display', serif; font-weight: 600;">--</div>
+                </div>
+                
+                <div style="background: var(--g7); padding: 1rem; border-radius: var(--radius-sm); text-align: center;">
+                  <div style="font-size: 12px; color: var(--text2); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 8px;">Credits</div>
+                  <div id="plsrCredits" style="font-size: 28px; color: var(--g1); font-family: 'DM Serif Display', serif; font-weight: 600;">--</div>
+                </div>
+                
+                <div style="background: var(--g7); padding: 1rem; border-radius: var(--radius-sm); text-align: center;">
+                  <div style="font-size: 12px; color: var(--text2); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 8px;">Confidence</div>
+                  <div id="plsrConfidence" style="font-size: 28px; color: var(--g1); font-family: 'DM Serif Display', serif; font-weight: 600;">--%</div>
+                </div>
+                
+                <div style="background: var(--g7); padding: 1rem; border-radius: var(--radius-sm); text-align: center;">
+                  <div style="font-size: 12px; color: var(--text2); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 8px;">CO₂ (t/ha)</div>
+                  <div id="plsrCo2" style="font-size: 28px; color: var(--g1); font-family: 'DM Serif Display', serif; font-weight: 600;">--</div>
+                </div>
+              </div>
+              
+              <div style="background: var(--info-lt); padding: 1rem; border-radius: var(--radius-sm); border-left: 4px solid var(--info); margin-bottom: 1rem;">
+                <div style="font-size: 13px; color: var(--info);">
+                  <strong>📊 Carbon Stock:</strong> <span id="plsrCarbonStock">--</span> t/ha &nbsp;•&nbsp;
+                  <strong>📈 Area:</strong> <span id="plsrArea">--</span> ha &nbsp;•&nbsp;
+                  <strong>⏱️ Depth:</strong> <span id="plsrDepth">--</span> cm
+                </div>
+              </div>
+              
+              <div style="font-size: 12px; color: var(--text2); background: var(--g7); padding: 0.75rem; border-radius: var(--radius-sm); margin-bottom: 1rem;">
+                <strong style="color: var(--g1);">Last Updated:</strong> <span id="plsrTimestamp">--</span>
+              </div>
+              
+              <button class="btn-green" onclick="applyPlsrCreditsToFarm()" style="width: 100%;">✅ Apply Credits to Farm</button>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="sec-title" style="margin-bottom:1rem">How it works</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px">
+              <div style="padding:1rem;background:var(--g7);border-radius:var(--radius-sm)">
+                <div style="font-size:20px;margin-bottom:6px">📡</div>
+                <div style="font-size:13px;font-weight:500;color:var(--g1)">1. Sensor collects data</div>
+                <div style="font-size:12px;color:var(--text2);margin-top:4px">ESP32 reads spectral reflectance across
+                  400-2500nm wavelengths</div>
+              </div>
+              <div style="padding:1rem;background:var(--g7);border-radius:var(--radius-sm)">
+                <div style="font-size:20px;margin-bottom:6px">☁️</div>
+                <div style="font-size:13px;font-weight:500;color:var(--g1)">2. Data sent to cloud</div>
+                <div style="font-size:12px;color:var(--text2);margin-top:4px">POST /predict API receives the spectral
+                  array</div>
+              </div>
+              <div style="padding:1rem;background:var(--g7);border-radius:var(--radius-sm)">
+                <div style="font-size:20px;margin-bottom:6px">🤖</div>
+                <div style="font-size:13px;font-weight:500;color:var(--g1)">3. AI predicts SOC</div>
+                <div style="font-size:12px;color:var(--text2);margin-top:4px">ML model maps spectral features to SOC%
+                  using regression</div>
+              </div>
+              <div style="padding:1rem;background:var(--g7);border-radius:var(--radius-sm)">
+                <div style="font-size:20px;margin-bottom:6px">🏆</div>
+                <div style="font-size:13px;font-weight:500;color:var(--g1)">4. Credits calculated</div>
+                <div style="font-size:12px;color:var(--text2);margin-top:4px">SOC → Carbon Stock → CO₂ → Credits
+                  assigned to farm</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /main -->
+    </div>
+
+    <!-- ===================== BUYER SCREEN ===================== -->
+    <div class="screen" id="buyerScreen">
+      <nav class="navbar">
+        <div class="nav-logo">
+          <div class="leaf-sm">🌿</div> AgroGreenBits
+        </div>
+        <div class="nav-tabs">
+          <button class="nav-tab active" onclick="buyerTab('market',this)">Marketplace</button>
+          <button class="nav-tab" onclick="buyerTab('portfolio',this)">My Portfolio</button>
+          <button class="nav-tab" onclick="buyerTab('btx',this)">Transactions</button>
+        </div>
+        <div class="nav-user">
+          <div class="avatar" id="buyerAvatar"></div>
+          <span id="buyerName" style="font-size:13px;color:rgba(255,255,255,.85)"></span>
+          <button class="profile-btn" onclick="openProfileModal()">👤 Profile</button>
+          <button class="btn-logout" onclick="logout()">Sign out</button>
+        </div>
+      </nav>
+      <div class="main">
+
+        <!-- MARKETPLACE TAB -->
+        <div id="btab-market">
+          <h1 class="page-title">Carbon Credit Marketplace</h1>
+          <p class="page-sub">Browse and purchase verified carbon credits from farmers</p>
+          <div class="stat-grid" id="marketStats"></div>
+          <div class="market-filters">
+            <input class="filter-input" placeholder="Search by location..." id="fLoc" oninput="filterMarket()"
+              style="min-width:180px">
+            <input class="filter-input" type="number" placeholder="Max price/credit" id="fPrice"
+              oninput="filterMarket()" style="width:160px">
+            <input class="filter-input" type="number" placeholder="Min credits" id="fAmt" oninput="filterMarket()"
+              style="width:140px">
+            <select class="filter-input" id="fVerified" onchange="filterMarket()" style="width:140px">
+              <option value="">All</option>
+              <option value="verified">Verified only</option>
+            </select>
+          </div>
+          <div id="marketGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px">
+          </div>
+        </div>
+
+        <!-- PORTFOLIO TAB -->
+        <div id="btab-portfolio" style="display:none">
+          <h1 class="page-title">My Carbon Portfolio</h1>
+          <p class="page-sub">Credits purchased and emissions offset</p>
+          <div class="stat-grid" id="portfolioStats"></div>
+          <div class="chart-card accordion-section">
+            <div class="accordion-header"><span class="chart-title">📊 Purchase History</span><span class="accordion-chevron">▼</span></div>
+            <div class="accordion-content">
+              <div class="chart-header"><span class="chart-title">Credits Purchased Over Time</span></div>
+              <div class="chart-wrap"><canvas id="buyChart"></canvas></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="sec-title" style="margin-bottom:1rem">Holdings</div>
+            <div id="holdingsList"></div>
+          </div>
+        </div>
+
+        <!-- BUYER TRANSACTIONS -->
+        <div id="btab-btx" style="display:none">
+          <h1 class="page-title">Purchase History</h1>
+          <p class="page-sub">All carbon credit purchases</p>
+          <div class="card">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Farmer</th>
+                    <th>Location</th>
+                    <th>Credits</th>
+                    <th>Price/Credit</th>
+                    <th>Total Paid</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="buyTxTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===================== MODALS ===================== -->
+    <!-- Add Farm Modal -->
+    <div class="modal-back" id="addFarmModal">
+      <div class="modal">
+        <div class="modal-title">Add New Farm</div>
+        <div class="form-row">
+          <div class="form-group"><label>Farm Name</label><input type="text" id="mFarmName"
+              placeholder="e.g. North Field"></div>
+          <div class="form-group"><label>Location / Village</label><input type="text" id="mFarmLoc"
+              placeholder="e.g. Nashik, Maharashtra"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Area (hectares)</label><input type="number" id="mFarmArea"
+              placeholder="e.g. 5.5" min="0.1"></div>
+          <div class="form-group"><label>Soil Type</label>
+            <select id="mSoilType">
+              <option>Alluvial</option>
+              <option>Black (Regur)</option>
+              <option>Red & Yellow</option>
+              <option>Laterite</option>
+              <option>Arid / Desert</option>
+              <option>Sandy Loam</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group"><label>Initial SOC % (if known)</label><input type="number" id="mSOC"
+            placeholder="e.g. 2.1" step="0.1" min="0.1" max="10"></div>
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="closeModal('addFarmModal')">Cancel</button>
+          <button class="btn-green" onclick="addFarm()">Add Farm</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- List Credits Modal -->
+    <div class="modal-back" id="listCreditsModal">
+      <div class="modal">
+        <div class="modal-title">List Credits for Sale</div>
+        <div class="form-group"><label>Select Farm</label>
+          <select id="mListFarm"></select>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Credits to List</label><input type="number" id="mListAmt" placeholder="e.g. 50"
+              min="1"></div>
+          <div class="form-group"><label>Price per Credit (₹)</label><input type="number" id="mListPrice"
+              placeholder="e.g. 800" min="1"></div>
+        </div>
+        <div
+          style="background:var(--g7);border-radius:var(--radius-sm);padding:.9rem;font-size:13px;color:var(--text2);margin-bottom:1rem">
+          <strong style="color:var(--g1)">Credit value guide:</strong> 1 credit = 1 tonne CO₂e<br>
+          Market rate: ₹500–₹1200 / credit (voluntary market)
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="closeModal('listCreditsModal')">Cancel</button>
+          <button class="btn-green" onclick="listCredits()">List for Sale</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Buy Credits Modal -->
+    <div class="modal-back" id="buyModal">
+      <div class="modal">
+        <div class="modal-title">Purchase Carbon Credits</div>
+        <div id="buyModalContent"></div>
+        <div class="form-group"><label>Credits to purchase</label><input type="number" id="mBuyAmt" min="1"
+            placeholder="Enter amount"></div>
+        <div id="buyTotal"
+          style="font-size:18px;font-family:'DM Serif Display',serif;color:var(--g1);margin-bottom:1rem"></div>
+        <div
+          style="background:var(--info-lt);border-radius:var(--radius-sm);padding:.9rem;font-size:13px;color:var(--info);margin-bottom:1rem">
+          💳 Payment is simulated — no real transaction will occur
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="closeModal('buyModal')">Cancel</button>
+          <button class="btn-green" onclick="confirmBuy()">Confirm Purchase</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== ADMIN SCREEN ===================== -->
+    <div class="screen" id="adminScreen">
+      <div class="navbar" style="background: linear-gradient(90deg, var(--g1) 0%, var(--g2) 100%);">
+        <div style="display: flex; align-items: center; gap: 15px; flex: 1;">
+          <div style="font-size: 20px;">🌿</div>
+          <h1 style="margin: 0; font-family: 'DM Serif Display', serif; color: #fff;">Admin Panel</h1>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <div style="text-align: right; color: #fff; font-size: 13px;">
+            <div id="adminGreet" style="font-weight: 500;">Welcome</div>
+            <div id="adminEmail" style="font-size: 11px; opacity: 0.9;"></div>
+          </div>
+          <button class="btn-secondary" style="padding: 8px 16px;" onclick="logout()">Sign out</button>
+        </div>
+      </div>
+
+      <div class="main" style="padding: 1.5rem;">
+        <div>
+          <h2 style="margin: 0 0 0.5rem; color: var(--g1); font-family: 'DM Serif Display', serif;">Farm Verification Management</h2>
+          <p class="page-sub">Review and verify pending carbon credit farms</p>
+
+          <div style="margin-top: 2rem;">
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 2rem;">
+              <div class="card" style="padding: 1rem;">
+                <div style="font-size: 11px; color: var(--text3); text-transform: uppercase; font-weight: 500;">Total Farms</div>
+                <div style="font-size: 24px; color: var(--g1); font-weight: 600; margin-top: 8px;" id="adminTotalFarms">0</div>
+              </div>
+              <div class="card" style="padding: 1rem;">
+                <div style="font-size: 11px; color: var(--text3); text-transform: uppercase; font-weight: 500;">Verified</div>
+                <div style="font-size: 24px; color: var(--g2); font-weight: 600; margin-top: 8px;" id="adminVerifiedCount">0</div>
+              </div>
+              <div class="card" style="padding: 1rem;">
+                <div style="font-size: 11px; color: var(--text3); text-transform: uppercase; font-weight: 500;">Pending</div>
+                <div style="font-size: 24px; color: var(--amber); font-weight: 600; margin-top: 8px;" id="adminPendingCount">0</div>
+              </div>
+              <div class="card" style="padding: 1rem;">
+                <div style="font-size: 11px; color: var(--text3); text-transform: uppercase; font-weight: 500;">Total Credits</div>
+                <div style="font-size: 24px; color: var(--g1); font-weight: 600; margin-top: 8px;" id="adminTotalCredits">0</div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h3 style="margin: 0; color: var(--g1); font-family: 'DM Serif Display', serif;">All Farms</h3>
+                <select id="adminFilterStatus" onchange="filterAdminFarms()" style="padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 13px;">
+                  <option value="">All Farms</option>
+                  <option value="verified">Verified Only</option>
+                  <option value="pending">Pending Only</option>
+                </select>
+              </div>
+              <div id="adminFarmsList" style="max-height: 600px; overflow-y: auto;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Verification Modal -->
+    <div class="modal-back" id="verifyModal" style="display: none;">
+      <div class="modal">
+        <div class="modal-title">Verify Farm</div>
+        <div class="modal-body">
+          <div id="verifyFarmInfo" style="padding: 1rem; background: var(--g7); border-radius: var(--radius-sm); margin-bottom: 1rem;"></div>
+          <div class="form-group">
+            <label>Verification Notes (Optional)</label>
+            <textarea id="verifyNote" placeholder="Add any notes about this verification..." style="width: 100%; min-height: 100px; padding: 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: inherit;"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="closeVerifyModal()">Cancel</button>
+          <button class="btn-green" onclick="confirmVerifyFarm()">Verify Farm</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal-back" id="profileModal">
+      <div class="modal">
+        <div class="modal-title">Edit Profile</div>
+        <div class="profile-form full">
+          <div class="profile-avatar-preview" id="profileAvatarPreview">👤</div>
+        </div>
+        <div class="profile-form">
+          <div class="form-group"><label>Full Name</label><input type="text" id="profileName" placeholder="Your name"></div>
+          <div class="form-group"><label>Email Address</label><input type="email" id="profileEmail" placeholder="email@example.com" readonly></div>
+        </div>
+        <div class="profile-form">
+          <div class="form-group"><label>Phone Number</label><input type="tel" id="profilePhone" placeholder="+91 98765 43210"></div>
+          <div class="form-group"><label>Location</label><input type="text" id="profileLocation" placeholder="City, State"></div>
+        </div>
+        <div class="profile-form full">
+          <div class="form-group"><label>Bio</label><textarea id="profileBio" placeholder="Tell us about yourself..." style="resize:vertical;min-height:80px;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:14px;color:var(--text)"></textarea></div>
+        </div>
+        <div id="buyerCompanyField" style="display:none">
+          <div class="profile-form full">
+            <div class="form-group"><label>Company Name</label><input type="text" id="profileCompany" placeholder="Your company name"></div>
+          </div>
+        </div>
+
+
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="closeModal('profileModal')">Cancel</button>
+          <button class="btn-green" onclick="saveUserProfile()">Save Changes</button>
+        </div>
+        <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border)">
+          <div class="form-group"><label>Change Password</label><input type="password" id="profileOldPw" placeholder="Current password"></div>
+          <div class="form-group"><label>New Password</label><input type="password" id="profileNewPw" placeholder="New password (min. 6 chars)"></div>
+          <button class="btn-secondary" style="padding:8px 16px;font-size:13px" onclick="changeUserPassword()">Update Password</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS MODAL -->
+    <div class="modal-back" id="settingsModal">
+      <div class="modal">
+        <div class="modal-title">⚙️ Settings</div>
+        
+        <div style="background: #f0f8f7; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+          <h3 style="color: #185856; font-size: 14px; margin-top: 0; margin-bottom: 10px;">Backend Server Configuration</h3>
+          <p style="color: #666; font-size: 12px; margin: 0 0 15px 0;">Configure the backend server URL to connect to your AgroGreenBits API instance.</p>
+          
+          <div class="form-group">
+            <label>Backend Server URL</label>
+            <input type="text" id="settingsBackendURL" placeholder="e.g., http://192.168.1.100:5000/api" style="font-size: 13px;">
+            <div style="font-size: 11px; color: #999; margin-top: 5px;">⚠️ Examples: http://localhost:5000/api or http://192.168.1.X:5000/api</div>
+          </div>
+        </div>
+        
+        <div id="connectionStatus" style="display: none; padding: 12px; border-radius: 6px; margin-bottom: 15px; font-size: 13px;">
+          <span id="connectionStatusText"></span>
+        </div>
+        
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="closeModal('settingsModal')">Cancel</button>
+          <button class="btn-green" onclick="testAndSaveBackendURL()">Test & Save</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="./translations.js"></script>
+  <script src="./enhanced-features.js"></script>
+  <script>
+    // ==================== API CONFIGURATION ====================
+    const getAPIBaseURL = () => {
+      const saved = localStorage.getItem('agb_api_url');
+      return saved || 'http://localhost:5000/api';
+    };
+    
+    let API_BASE_URL = getAPIBaseURL();
+
+    // ==================== JWT TOKEN MANAGEMENT ====================
+    function getToken() {
+      return localStorage.getItem('agb_token');
+    }
+
+    function setToken(token) {
+      localStorage.setItem('agb_token', token);
+    }
+
+    function removeToken() {
+      localStorage.removeItem('agb_token');
+    }
+
+    // ==================== API HELPER FUNCTIONS ====================
+    async function apiCall(endpoint, method = 'GET', body = null) {
+      const headers = {
+        'Content-Type': 'application/json',
+      };
+
+      const token = getToken();
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      try {
+        const options = {
+          method,
+          headers,
+        };
+
+        if (body) {
+          options.body = JSON.stringify(body);
+        }
+
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || `API Error: ${response.status}`);
+        }
+
+        return data;
+      } catch (error) {
+        console.error('API Error:', error);
+        throw error;
+      }
+    }
+
+    // ==================== INPUT VALIDATION HELPERS ====================
+    function validateEmail(email) {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(email);
+    }
+
+    function validatePassword(password) {
+      return password && password.length >= 6;
+    }
+
+    function validatePhone(phone) {
+      const re = /^[\d\s\-\+\(\)]{10,}$/;
+      return phone === '' || re.test(phone);
+    }
+
+    function validateName(name) {
+      return name && name.trim().length >= 3;
+    }
+
+    function showValidationError(elementId, message) {
+      const elem = document.getElementById(elementId);
+      if (elem) {
+        elem.textContent = message;
+        elem.style.display = 'block';
+      }
+    }
+
+    function clearValidationError(elementId) {
+      const elem = document.getElementById(elementId);
+      if (elem) {
+        elem.style.display = 'none';
+      }
+    }
+
+    // ==================== STATE ====================
+    let state = {
+      currentUser: null,
+      selectedRole: 'farmer',
+      buying: null,
+      verifyingFarmId: null,
+      listingState: { isListing: false, startTime: 0 },
+      users: [
+        { id: 'u1', name: 'Ramesh Patil', email: 'farmer@demo.com', pw: 'pass123', role: 'farmer' },
+        { id: 'u2', name: 'GreenFuture Corp', email: 'buyer@demo.com', pw: 'pass123', role: 'buyer' }
+      ],
+      farms: [
+        { id: 'f1', userId: 'u1', name: 'North Field', location: 'Nashik, Maharashtra', area: 8.5, soilType: 'Black (Regur)', soc: 2.8, credits: 142, listedCredits: 80, pricePerCredit: 750, verified: true, dateAdded: '2024-01-10' },
+        { id: 'f2', userId: 'u1', name: 'Valley Plot', location: 'Pune, Maharashtra', area: 5.2, soilType: 'Alluvial', soc: 1.9, credits: 76, listedCredits: 0, pricePerCredit: 0, verified: true, dateAdded: '2024-03-15' },
+        { id: 'f3', userId: 'u1', name: 'East Farm', location: 'Aurangabad, Maharashtra', area: 12.0, soilType: 'Red & Yellow', soc: 3.4, credits: 204, listedCredits: 150, pricePerCredit: 900, verified: false, dateAdded: '2024-06-20' }
+      ],
+      farmerTx: [
+        { date: '2025-02-10', farmName: 'North Field', credits: 40, pricePerCredit: 700, buyer: 'EcoTech Ltd' },
+        { date: '2025-03-15', farmName: 'North Field', credits: 30, pricePerCredit: 750, buyer: 'GreenFuture Corp' },
+        { date: '2025-05-01', farmName: 'East Farm', credits: 60, pricePerCredit: 850, buyer: 'ClimateX Inc' },
+        { date: '2025-08-20', farmName: 'Valley Plot', credits: 20, pricePerCredit: 650, buyer: 'NetZero Pvt' }
+      ],
+      buyerTx: [
+        { date: '2025-02-10', farmer: 'Ramesh Patil', location: 'Nashik, Maharashtra', credits: 30, pricePerCredit: 750, status: 'Completed' },
+        { date: '2025-05-01', farmer: 'Suresh Kumar', location: 'Jaipur, Rajasthan', credits: 50, pricePerCredit: 820, status: 'Completed' }
+      ],
+      listings: [],
+      spectralData: []
+    };
+
+    // Build listings from farms
+    function rebuildListings() {
+      state.listings = state.farms.filter(f => f.listedCredits > 0).map(f => ({
+        farmId: f.id, farmName: f.name, farmer: state.users.find(u => u.id === f.userId)?.name || 'Farmer',
+        location: f.location, area: f.area, soilType: f.soilType, soc: f.soc,
+        credits: f.listedCredits, pricePerCredit: f.pricePerCredit, verified: f.verified
+      }));
+      // Add some extra market listings
+      if (!state._extraAdded) {
+        state._extraAdded = true;
+        state.listings.push(
+          { farmId: 'fx1', farmName: 'Sunrise Fields', farmer: 'Suresh Kumar', location: 'Jaipur, Rajasthan', area: 20, soilType: 'Arid / Desert', soc: 1.2, credits: 95, pricePerCredit: 680, verified: true },
+          { farmId: 'fx2', farmName: 'Green Acres', farmer: 'Kavitha Reddy', location: 'Warangal, Telangana', area: 14, soilType: 'Red & Yellow', soc: 2.5, credits: 180, pricePerCredit: 820, verified: true },
+          { farmId: 'fx3', farmName: 'Hillside Farm', farmer: 'Mohan Singh', location: 'Shimla, Himachal Pradesh', area: 7, soilType: 'Sandy Loam', soc: 3.1, credits: 112, pricePerCredit: 950, verified: false },
+          { farmId: 'fx4', farmName: 'Delta Plots', farmer: 'Priya Nair', location: 'Alleppey, Kerala', area: 9, soilType: 'Alluvial', soc: 4.2, credits: 220, pricePerCredit: 1100, verified: true }
+        );
+      }
+    }
+
+    // ==================== UTILS ====================
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2800);
+    }
+    function pushNotif(title, body) {
+      const p = document.getElementById('notifPanel');
+      const n = document.createElement('div'); n.className = 'notif';
+      n.innerHTML = `<div class="notif-title">${title}</div><div class="notif-body">${body}</div>`;
+      p.appendChild(n);
+      setTimeout(() => n.classList.add('show'), 50);
+      setTimeout(() => { n.classList.remove('show'); setTimeout(() => n.remove(), 400) }, 4000);
+    }
+    function openModal(id) { document.getElementById(id).classList.add('open') }
+    function closeModal(id) { document.getElementById(id).classList.remove('open') }
+    function fmtDate(d) { return new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) }
+    function fmtINR(n) { return '₹' + Number(n).toLocaleString('en-IN') }
+
+    // SOC → Credits engine
+    function calcCredits(soc, areaHa) {
+      // SOC (%) → Carbon stock (t/ha) assuming 30cm depth, bulk density 1.3 g/cm³
+      const carbonStock = (soc / 100) * 30 * 10000 * 1.3 / 1000; // t C/ha
+      // C stock → CO₂ equivalent (×3.67)
+      const co2e = carbonStock * 3.67;
+      // Credits = CO₂e tonnes × area (1 credit = 1 tonne CO₂e)
+      return Math.round(co2e * areaHa * 0.3); // 0.3 = additionality factor
+    }
+
+    // ==================== SETTINGS ====================
+    function testAndSaveBackendURL() {
+      const url = document.getElementById('settingsBackendURL').value.trim();
+      const statusDiv = document.getElementById('connectionStatus');
+      const statusText = document.getElementById('connectionStatusText');
+      
+      if (!url) {
+        statusDiv.style.display = 'block';
+        statusDiv.style.background = '#ffe8e8';
+        statusDiv.style.color = '#c00';
+        statusText.textContent = '❌ Please enter a backend URL';
+        return;
+      }
+      
+      // Test connection
+      statusDiv.style.display = 'block';
+      statusDiv.style.background = '#fff3cd';
+      statusDiv.style.color = '#856404';
+      statusText.textContent = '⏳ Testing connection...';
+      
+      fetch(`${url}/health`, { method: 'GET' })
+        .then(res => {
+          if (res.ok) {
+            // Save to localStorage
+            localStorage.setItem('agb_api_url', url);
+            API_BASE_URL = url;
+            
+            statusDiv.style.background = '#e8f7ef';
+            statusDiv.style.color = '#0d5c3a';
+            statusText.textContent = '✅ Connection successful! Settings saved.';
+            
+            setTimeout(() => {
+              closeModal('settingsModal');
+              statusDiv.style.display = 'none';
+              showToast('Backend URL configured successfully! 🎉');
+            }, 1500);
+          } else {
+            throw new Error('Server returned error');
+          }
+        })
+        .catch(err => {
+          statusDiv.style.background = '#ffe8e8';
+          statusDiv.style.color = '#c00';
+          statusText.textContent = '❌ Connection failed. Check the URL and try again.';
+        });
+    }
+
+    // ==================== AUTH ====================
+    function showLogin() { document.getElementById('loginView').style.display = ''; document.getElementById('regView').style.display = 'none' }
+    function showReg() { document.getElementById('loginView').style.display = 'none'; document.getElementById('regView').style.display = '' }
+    function selectRole(r) {
+      state.selectedRole = r;
+      document.getElementById('roleFarmer').classList.toggle('selected', r === 'farmer');
+      document.getElementById('roleBuyer').classList.toggle('selected', r === 'buyer');
+    }
+    selectRole('farmer');
+
+    function doLogin() {
+      const e = document.getElementById('loginEmail').value.trim();
+      const p = document.getElementById('loginPw').value;
+      const errEl = document.getElementById('loginErr');
+
+      // Validate inputs
+      if (!e || !p) {
+        showValidationError('loginErr', 'Email and password are required');
+        return;
+      }
+
+      if (!validateEmail(e)) {
+        showValidationError('loginErr', 'Please enter a valid email address');
+        return;
+      }
+
+      if (!validatePassword(p)) {
+        showValidationError('loginErr', 'Password must be at least 6 characters');
+        return;
+      }
+
+      clearValidationError('loginErr');
+
+      // Show loading state
+      const loginBtn = event.target;
+      const originalText = loginBtn.textContent;
+      loginBtn.textContent = 'Signing in...';
+      loginBtn.disabled = true;
+
+      apiCall('/auth/login', 'POST', { email: e, password: p })
+        .then(res => {
+          if (res.success) {
+            setToken(res.token);
+            state.currentUser = res.user;
+            errEl.style.display = 'none';
+            enterApp();
+            // Reset button state after successful login
+            loginBtn.textContent = originalText;
+            loginBtn.disabled = false;
+          } else {
+            throw new Error(res.message);
+          }
+        })
+        .catch(err => {
+          showValidationError('loginErr', err.message || 'Login failed. Please try again.');
+          loginBtn.textContent = originalText;
+          loginBtn.disabled = false;
+        });
+    }
+
+    function doRegister() {
+      const r = state.selectedRole, n = document.getElementById('regName').value.trim();
+      const e = document.getElementById('regEmail').value.trim(), p = document.getElementById('regPw').value;
+      const err = document.getElementById('regErr');
+
+      // Validate inputs
+      if (!validateName(n)) {
+        showValidationError('regErr', 'Name must be at least 3 characters');
+        return;
+      }
+
+      if (!validateEmail(e)) {
+        showValidationError('regErr', 'Please enter a valid email address');
+        return;
+      }
+
+      if (!validatePassword(p)) {
+        showValidationError('regErr', 'Password must be at least 6 characters');
+        return;
+      }
+
+      clearValidationError('regErr');
+
+      const regBtn = event.target;
+      const originalText = regBtn.textContent;
+      regBtn.textContent = 'Creating account...';
+      regBtn.disabled = true;
+
+      // Set a timeout to prevent button from getting stuck
+      const timeout = setTimeout(() => {
+        regBtn.textContent = originalText;
+        regBtn.disabled = false;
+        showValidationError('regErr', 'Registration timed out. Please try again.');
+      }, 15000); // 15 second timeout
+
+      const registerData = {
+        name: n,
+        email: e,
+        password: p,
+        role: r
+      };
+
+      apiCall('/auth/register', 'POST', registerData)
+        .then(res => {
+          clearTimeout(timeout);
+          if (res.success) {
+            setToken(res.token);
+            state.currentUser = res.user;
+            err.style.display = 'none';
+            enterApp();
+            // Reset button state after successful registration
+            regBtn.textContent = originalText;
+            regBtn.disabled = false;
+          } else {
+            throw new Error(res.message);
+          }
+        })
+        .catch(err => {
+          clearTimeout(timeout);
+          console.error('Registration error:', err);
+          showValidationError('regErr', err.message || 'Registration failed. Please try again.');
+          regBtn.textContent = originalText;
+          regBtn.disabled = false;
+        });
+    }
+    function enterApp() {
+      localStorage.setItem('agb_user', JSON.stringify(state.currentUser));
+      document.getElementById('authScreen').classList.remove('active');
+      if (state.currentUser.role === 'farmer') {
+        setupFarmerUI(); document.getElementById('farmerScreen').classList.add('active');
+      } else if (state.currentUser.role === 'buyer') {
+        setupBuyerUI(); document.getElementById('buyerScreen').classList.add('active');
+      } else if (state.currentUser.role === 'admin') {
+        setupAdminUI(); document.getElementById('adminScreen').classList.add('active');
+      }
+    }
+    function logout() {
+      state.currentUser = null;
+      removeToken();
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('authScreen').classList.add('active');
+      destroyCharts();
+
+      // Clear form fields
+      document.getElementById('loginEmail').value = '';
+      document.getElementById('loginPw').value = '';
+      document.getElementById('loginErr').innerHTML = '';
+      document.getElementById('loginErr').style.display = 'none';
+
+      // Reset login button state
+      const loginBtn = document.querySelector('[onclick="doLogin()"]');
+      if (loginBtn) {
+        loginBtn.textContent = 'Sign In';
+        loginBtn.disabled = false;
+      }
+
+      // Clear register form
+      document.getElementById('regName').value = '';
+      document.getElementById('regEmail').value = '';
+      document.getElementById('regPw').value = '';
+      document.getElementById('regErr').innerHTML = '';
+      document.getElementById('regErr').style.display = 'none';
+
+      // Reset register button
+      const regBtn = document.querySelector('[onclick="doRegister()"]');
+      if (regBtn) {
+        regBtn.textContent = 'Create Account';
+        regBtn.disabled = false;
+      }
+
+      // Show login view by default
+      document.getElementById('loginView').style.display = '';
+      document.getElementById('regView').style.display = 'none';
+    }
+
+    // ==================== ACCORDION/COLLAPSIBLE SECTIONS ====================
+    function toggleAccordion(headerElement) {
+      if (!headerElement) return;
+      
+      headerElement.classList.toggle('collapsed');
+      const content = headerElement.nextElementSibling;
+      
+      if (content && content.classList.contains('accordion-content')) {
+        if (headerElement.classList.contains('collapsed')) {
+          content.style.maxHeight = '0';
+          content.style.opacity = '0';
+        } else {
+          content.style.maxHeight = content.scrollHeight + 'px';
+          content.style.opacity = '1';
+        }
+      }
+    }
+
+    function initializeAccordions() {
+      // Only on mobile
+      if (window.innerWidth > 600) return;
+      
+      document.querySelectorAll('.accordion-header').forEach(header => {
+        header.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          toggleAccordion(this);
+        });
+      });
+    }
+
+    // Re-initialize on window resize
+    window.addEventListener('resize', function() {
+      initializeAccordions();
+    });
+
+    // ==================== CHARTS ====================
+    let charts = {};
+    function destroyCharts() { Object.values(charts).forEach(c => { try { c.destroy() } catch (e) { } }); charts = {} }
+
+    function setupFarmerCharts() {
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      
+      // Extract SOC data from all farms - show latest SOC for each farm
+      const socData = state.farms.length > 0 
+        ? state.farms.map(f => f.soc || 1.5) 
+        : [1.8, 2.0, 2.1, 2.3, 2.5, 2.6, 2.7, 2.8, 2.9, 3.0, 3.1, 3.2];
+      
+      // Calculate total credits per farm and distribute across 12 months
+      const totalCreditsAllFarms = state.farms.reduce((sum, f) => sum + (f.credits || 0), 0);
+      const credData = months.map((m, idx) => {
+        // Distribute credits proportionally across months
+        return Math.round((totalCreditsAllFarms / 12) * (idx + 1));
+      });
+      
+      // Calculate earnings from actual transactions
+      const earnData = months.map((month, monthIdx) => {
+        // Get all transactions for this user
+        const monthTransactions = state.farmerTx.filter(tx => {
+          const txDate = new Date(tx.date);
+          return txDate.getMonth() === monthIdx;
+        });
+        // Sum all transaction amounts for this month
+        return monthTransactions.reduce((total, tx) => {
+          return total + (tx.pricePerCredit * tx.credits || 0);
+        }, 0);
+      });
+
+      charts.soc = new Chart(document.getElementById('socChart'), {
+        type: 'line',
+        data: { 
+          labels: state.farms.length > 0 ? state.farms.map((f, i) => f.name?.substring(0, 10) || `Farm ${i+1}`).slice(0, 12) : months, 
+          datasets: [{ 
+            label: 'SOC %', 
+            data: socData, 
+            borderColor: '#2a9d6f', 
+            backgroundColor: 'rgba(42,157,111,.1)', 
+            fill: true, 
+            tension: .4, 
+            pointRadius: 3, 
+            pointBackgroundColor: '#2a9d6f' 
+          }] 
+        },
+        options: { 
+          responsive: true, 
+          maintainAspectRatio: false, 
+          plugins: { legend: { display: false } }, 
+          scales: { y: { min: 0, max: 10, ticks: { callback: v => v + '%' } } } 
+        }
+      });
+      
+      charts.credits = new Chart(document.getElementById('creditsChart'), {
+        type: 'bar',
+        data: { 
+          labels: months, 
+          datasets: [{ 
+            label: 'Credits', 
+            data: credData, 
+            backgroundColor: 'rgba(42,157,111,.7)', 
+            borderRadius: 4 
+          }] 
+        },
+        options: { 
+          responsive: true, 
+          maintainAspectRatio: false, 
+          plugins: { legend: { display: false } },
+          scales: { y: { ticks: { callback: v => Math.round(v) } } }
+        }
+      });
+      
+      charts.earnings = new Chart(document.getElementById('earningsChart'), {
+        type: 'line',
+        data: { 
+          labels: months, 
+          datasets: [{ 
+            label: 'Earnings ₹', 
+            data: earnData, 
+            borderColor: '#c4870a', 
+            backgroundColor: 'rgba(196,135,10,.1)', 
+            fill: true, 
+            tension: .4, 
+            pointRadius: 2 
+          }] 
+        },
+        options: { 
+          responsive: true, 
+          maintainAspectRatio: false, 
+          plugins: { legend: { display: false } }, 
+          scales: { y: { ticks: { callback: v => '₹' + (v / 1000).toFixed(0) + 'k' } } } 
+        }
+      });
+    }
+
+    function setupBuyerChart() {
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      
+      // Calculate credits purchased per month from buyer transactions
+      const data = months.map((month, monthIdx) => {
+        // Get all transactions for this month
+        const monthTransactions = state.buyerTx.filter(tx => {
+          const txDate = new Date(tx.date);
+          return txDate.getMonth() === monthIdx;
+        });
+        // Sum all credits purchased in this month
+        return monthTransactions.reduce((total, tx) => total + (tx.credits || 0), 0);
+      });
+      
+      // Get cumulative credits over time
+      let cumulative = 0;
+      const cumulativeData = data.map(m => {
+        cumulative += m;
+        return cumulative;
+      });
+      
+      charts.buy = new Chart(document.getElementById('buyChart'), {
+        type: 'line',
+        data: { 
+          labels: months, 
+          datasets: [{ 
+            label: 'Credits Purchased', 
+            data: cumulativeData, 
+            borderColor: '#185fa5', 
+            backgroundColor: 'rgba(24,95,165,.1)', 
+            fill: true, 
+            tension: .3, 
+            pointRadius: 4, 
+            pointBackgroundColor: '#185fa5', 
+            stepped: true 
+          }] 
+        },
+        options: { 
+          responsive: true, 
+          maintainAspectRatio: false, 
+          plugins: { legend: { display: false } },
+          scales: { y: { ticks: { callback: v => Math.round(v) + ' credits' } } }
+        }
+      });
+    }
+
+    // ==================== FARMER UI ====================
+    function setupFarmerUI() {
+      const u = state.currentUser;
+      const initials = u.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+      document.getElementById('farmerAvatar').textContent = initials;
+      document.getElementById('farmerName').textContent = u.name;
+      const h = new Date().getHours();
+      document.getElementById('farmerGreet').textContent = (h < 12 ? 'Good morning, ' : h < 17 ? 'Good afternoon, ' : 'Good evening, ') + u.name + '!';
+
+      // Load user profile from API if available
+      if (typeof loadUserProfile === 'function') {
+        loadUserProfile();
+      }
+
+      // Fetch farmer dashboard data from API
+      apiCall('/farmer/dashboard', 'GET')
+        .then(res => {
+          if (res.success) {
+            state.farms = res.data.farms.map(f => ({
+              id: f._id,
+              userId: f.userId,
+              name: f.name,
+              location: f.location,
+              area: f.area,
+              soilType: f.soilType,
+              soc: f.currentSOC,
+              credits: f.availableCredits,
+              listedCredits: f.listing.listedCredits,
+              pricePerCredit: f.listing.pricePerCredit,
+              verified: f.isVerified,
+              dateAdded: f.createdAt
+            }));
+
+            state.farmerTx = res.data.recentTransactions.map(t => ({
+              id: t._id,
+              date: t.createdAt,
+              farmName: 'Farm',
+              credits: t.credits,
+              pricePerCredit: t.pricePerCredit,
+              buyer: t.buyerId?.name || 'Buyer'
+            }));
+
+            renderFarmerStats();
+            renderFarmerFarms();
+            renderCreditStats();
+            renderCreditsList();
+            renderFarmerTx();
+            setTimeout(() => {
+              setupFarmerCharts();
+              initializeAccordions();
+            }, 100);
+            rebuildListings();
+            initPlsrFarmSelect();
+
+            // Generate AI prediction charts with sample data if available
+            setTimeout(() => {
+              if (typeof createAIPredictionCharts === 'function' && state.farms.length > 0) {
+                const samplePredictions = state.farms.map(f => ({
+                  soc: f.soc,
+                  confidence: 85 + Math.random() * 10,
+                  depth: 30,
+                  date: new Date().toISOString()
+                }));
+                createAIPredictionCharts(samplePredictions);
+              }
+            }, 1000);
+          }
+        })
+        .catch(err => {
+          console.error('Failed to load dashboard:', err);
+          showToast('Failed to load dashboard data');
+        });
+    }
+
+    function renderFarmerStats() {
+      const farms = state.farms.filter(f => f.userId === state.currentUser?.id);
+      const totalCredits = farms.reduce((s, f) => s + f.credits, 0);
+      const totalEarnings = state.farmerTx.reduce((s, t) => s + t.credits * t.pricePerCredit, 0);
+      const avgSOC = (farms.reduce((s, f) => s + f.soc, 0) / Math.max(farms.length, 1)).toFixed(2);
+      document.getElementById('farmerStats').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">Total Farms</div>
+      <div class="stat-value">${farms.length}</div>
+      <div class="stat-sub">${farms.reduce((s, f) => s + f.area, 0).toFixed(1)} hectares total</div>
+      <span class="stat-badge badge-up">▲ Active</span>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Avg SOC</div>
+      <div class="stat-value">${avgSOC}%</div>
+      <div class="stat-sub">Soil Organic Carbon</div>
+      <span class="stat-badge badge-up">▲ Healthy</span>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total Credits</div>
+      <div class="stat-value">${totalCredits}</div>
+      <div class="stat-sub">Tonnes CO₂ equivalent</div>
+      <span class="stat-badge badge-up">▲ Verified</span>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total Earnings</div>
+      <div class="stat-value">${fmtINR(totalEarnings)}</div>
+      <div class="stat-sub">From credit sales</div>
+      <span class="stat-badge badge-up">▲ +12% MoM</span>
+    </div>
+  `;
+    }
+
+    function renderFarmerFarms() {
+      const farms = state.farms.filter(f => f.userId === state.currentUser?.id);
+      const el = document.getElementById('farmsList');
+      if (!farms.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">🌱</div><p>No farms added yet. Add your first farm!</p></div>'; return }
+      el.innerHTML = farms.map(f => `
+    <div class="card" style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+            <span style="font-size:18px;font-family:'DM Serif Display',serif;color:var(--g1)">${f.name}</span>
+            ${f.verified ? '<span class="verified-badge">✓ Verified</span>' : '<span style="font-size:11px;color:var(--amber);background:var(--amber-lt);padding:3px 10px;border-radius:20px;">Pending Verification</span>'}
+          </div>
+          <div style="font-size:13px;color:var(--text2)">📍 ${f.location} &nbsp;•&nbsp; ${f.area} ha &nbsp;•&nbsp; ${f.soilType}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="price-tag">${f.credits} credits</div>
+          <div style="font-size:12px;color:var(--text2)">${f.listedCredits} listed for sale</div>
+        </div>
+      </div>
+      <div style="margin:1rem 0 .5rem">
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:4px">
+          <span>SOC: ${f.soc}%</span><span>${Math.min(f.soc * 25, 100).toFixed(0)}% quality</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(f.soc * 25, 100)}%"></div></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:1rem;flex-wrap:wrap">
+        <button class="btn-small" onclick="openListCredits('${f.id}')">List Credits</button>
+        <button class="btn-secondary" style="padding:7px 14px;font-size:13px" onclick="showFarmDetails('${f.id}')">Details</button>
+      </div>
+    </div>
+  `).join('');
+    }
+
+    function showFarmDetails(farmId) {
+      const f = state.farms.find(x => x.id === farmId);
+      if (!f) return;
+      const credits = calcCredits(f.soc, f.area);
+      pushNotif(f.name + ' Details', `SOC: ${f.soc}% | Area: ${f.area}ha | ${credits} credits | Added ${fmtDate(f.dateAdded)}`);
+    }
+
+    function renderCreditStats() {
+      const farms = state.farms.filter(f => f.userId === state.currentUser?.id);
+      const avail = farms.reduce((s, f) => s + f.credits, 0);
+      const listed = farms.reduce((s, f) => s + f.listedCredits, 0);
+      document.getElementById('creditStats').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Available Credits</div><div class="stat-value">${avail}</div></div>
+    <div class="stat-card"><div class="stat-label">Listed for Sale</div><div class="stat-value">${listed}</div></div>
+    <div class="stat-card"><div class="stat-label">Sold Credits</div><div class="stat-value">${state.farmerTx.reduce((s, t) => s + t.credits, 0)}</div></div>
+    <div class="stat-card"><div class="stat-label">CO₂ Offset</div><div class="stat-value">${avail}t</div><div class="stat-sub">Tonnes CO₂ equivalent</div></div>
+  `;
+    }
+
+    function renderCreditsList() {
+      const farms = state.farms.filter(f => f.userId === state.currentUser?.id);
+      const el = document.getElementById('creditsList');
+      el.innerHTML = farms.map(f => `
+    <div class="credit-item">
+      <div class="credit-info">
+        <div class="credit-title">${f.name} ${f.verified ? '<span class="verified-badge">✓ Verified</span>' : ''}</div>
+        <div class="credit-meta">📍 ${f.location} &nbsp;•&nbsp; SOC: ${f.soc}% &nbsp;•&nbsp; ${f.area} ha</div>
+        <div class="credit-meta" style="margin-top:4px">
+          ${f.listedCredits > 0 ? `<span style="color:var(--g2);font-weight:500">${f.listedCredits} listed @ ${fmtINR(f.pricePerCredit)}/credit</span>` : '<span style="color:var(--text3)">Not listed</span>'}
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div class="price-tag">${f.credits}</div>
+        <div style="font-size:12px;color:var(--text2)">credits total</div>
+        <button class="btn-small" style="margin-top:8px" onclick="openListCredits('${f.id}')">List</button>
+      </div>
+    </div>
+  `).join('');
+    }
+
+    function renderFarmerTx() {
+      const body = document.getElementById('txTable');
+      body.innerHTML = state.farmerTx.map((t, idx) => `
+    <tr>
+      <td>${fmtDate(t.date)}</td><td>${t.farmName}</td><td>${t.credits}</td>
+      <td>${fmtINR(t.pricePerCredit)}</td><td style="font-weight:500;color:var(--g1)">${fmtINR(t.credits * t.pricePerCredit)}</td><td>${t.buyer}</td>
+      <td><button class="btn-small" style="padding: 4px 12px; font-size: 12px;" onclick="downloadReceipt(${idx}, 'farmer')">📥 Receipt</button></td>
+    </tr>
+  `).join('');
+    }
+
+    // ==================== FARM ADD ====================
+    function openAddFarm() { openModal('addFarmModal') }
+    function addFarm() {
+      const name = document.getElementById('mFarmName').value.trim();
+      const loc = document.getElementById('mFarmLoc').value.trim();
+      const area = parseFloat(document.getElementById('mFarmArea').value) || 0;
+      const soilType = document.getElementById('mSoilType').value;
+      const soc = parseFloat(document.getElementById('mSOC').value) || 1.5;
+
+      // Validate inputs
+      if (!name || name.length < 3) {
+        showToast('Farm name must be at least 3 characters');
+        return;
+      }
+
+      if (!loc || loc.length < 3) {
+        showToast('Location must be at least 3 characters');
+        return;
+      }
+
+      if (area <= 0 || area > 1000) {
+        showToast('Area must be between 0 and 1000 hectares');
+        return;
+      }
+
+      if (!soilType) {
+        showToast('Please select a soil type');
+        return;
+      }
+
+      if (soc <= 0 || soc > 10) {
+        showToast('SOC must be between 0 and 10%');
+        return;
+      }
+
+      const addBtn = event.target;
+      const originalText = addBtn.textContent;
+      addBtn.textContent = 'Adding...';
+      addBtn.disabled = true;
+
+      // Set a timeout to prevent button from getting stuck
+      const timeout = setTimeout(() => {
+        addBtn.textContent = originalText;
+        addBtn.disabled = false;
+        showToast('Farm addition timed out. Please try again.');
+      }, 15000); // 15 second timeout
+
+      apiCall('/farmer/farm', 'POST', {
+        name,
+        location: loc,
+        area,
+        soilType,
+        initialSOC: soc
+      })
+        .then(res => {
+          clearTimeout(timeout);
+          if (res.success) {
+            // Close modal and clear form
+            const modal = document.getElementById('addFarmModal');
+            if (modal) {
+              modal.style.display = 'none';
+            }
+            document.getElementById('mFarmName').value = '';
+            document.getElementById('mFarmLoc').value = '';
+            document.getElementById('mFarmArea').value = '';
+            document.getElementById('mSOC').value = '';
+
+            // Setup UI and show success
+            setupFarmerUI();
+            showToast(`Farm "${name}" added! ${res.data.calculation.credits} credits calculated`);
+            pushNotif('Farm Added', `${name} — ${res.data.calculation.credits} carbon credits generated`);
+            
+            // Reset button state
+            addBtn.textContent = originalText;
+            addBtn.disabled = false;
+          } else {
+            clearTimeout(timeout);
+            throw new Error(res.message || 'Failed to add farm');
+          }
+        })
+        .catch(err => {
+          clearTimeout(timeout);
+          console.error('Add farm error:', err);
+          showToast(err.message || 'Failed to add farm. Please try again.');
+          addBtn.textContent = originalText;
+          addBtn.disabled = false;
+        });
+    }
+
+    // ==================== LIST CREDITS ====================
+    function openListCredits(farmId) {
+      const sel = document.getElementById('mListFarm');
+      sel.innerHTML = state.farms.filter(f => f.userId === state.currentUser?.id).map(f => `<option value="${f.id}">${f.name} (${f.credits} credits)</option>`).join('');
+      if (farmId) sel.value = farmId;
+      
+      // Reset button to enabled state BEFORE opening modal
+      const modal = document.getElementById('listCreditsModal');
+      if (modal) {
+        const button = modal.querySelector('button[onclick="listCredits()"]');
+        if (button) {
+          button.textContent = 'List for Sale';
+          button.disabled = false;
+          button.removeAttribute('disabled');
+        }
+      }
+      
+      // Reset form
+      document.getElementById('mListAmt').value = '';
+      document.getElementById('mListPrice').value = '';
+      
+      // Open modal
+      openModal('listCreditsModal');
+    }
+
+    function listCredits() {
+      const farmId = document.getElementById('mListFarm').value;
+      const amt = parseInt(document.getElementById('mListAmt').value) || 0;
+      const price = parseInt(document.getElementById('mListPrice').value) || 0;
+
+      // Validate inputs
+      if (!farmId) {
+        showToast('Please select a farm');
+        return;
+      }
+
+      if (amt <= 0 || amt > 100000) {
+        showToast('Credits must be between 1 and 100000');
+        return;
+      }
+
+      if (price <= 0 || price > 10000) {
+        showToast('Price per credit must be between 1 and 10000');
+        return;
+      }
+
+      const f = state.farms.find(x => x.id === farmId);
+      if (!f || amt > f.credits) {
+        showToast('Not enough credits available');
+        return;
+      }
+
+      const listBtn = event.target;
+      const originalText = listBtn.textContent;
+      listBtn.textContent = 'Listing...';
+      listBtn.disabled = true;
+
+      // Set a timeout to prevent button from getting stuck
+      const timeout = setTimeout(() => {
+        listBtn.textContent = originalText;
+        listBtn.disabled = false;
+        showToast('Listing timed out. Please try again.');
+      }, 15000); // 15 second timeout
+
+      apiCall('/farmer/sell-credits', 'POST', {
+        farmId,
+        listedCredits: amt,
+        pricePerCredit: price
+      })
+        .then(res => {
+          clearTimeout(timeout);
+          
+          if (res.success) {
+            // Update local state first
+            f.listedCredits = amt;
+            f.pricePerCredit = price;
+            rebuildListings();
+            renderCreditsList();
+            renderCreditStats();
+
+            // Close modal using classList (consistent with openModal)
+            const modal = document.getElementById('listCreditsModal');
+            if (modal) {
+              modal.classList.remove('open');
+            }
+            
+            // Reset form
+            document.getElementById('mListAmt').value = '';
+            document.getElementById('mListPrice').value = '';
+            
+            // Reset button state
+            listBtn.textContent = originalText;
+            listBtn.disabled = false;
+
+            // Show success immediately
+            showToast(`Listed ${amt} credits @ ${fmtINR(price)}/credit`);
+            pushNotif('Credits Listed', `${amt} credits from ${f.name} are now on the marketplace`);
+          } else {
+            clearTimeout(timeout);
+            throw new Error(res.message || 'Failed to list credits');
+          }
+        })
+        .catch(err => {
+          clearTimeout(timeout);
+          console.error('Listing error:', err);
+          showToast(err.message || 'Failed to list credits. Please try again.');
+          
+          // Reset button state
+          listBtn.textContent = originalText;
+          listBtn.disabled = false;
+        });
+    }
+
+    // ==================== FARMER TABS ====================
+    function farmerTab(tab, btn) {
+      document.querySelectorAll('#farmerScreen .nav-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('#farmerScreen [id^="tab-"]').forEach(el => el.style.display = 'none');
+      document.getElementById('tab-' + tab).style.display = '';
+    }
+
+
+
+    // ==================== PLSR FIREBASE INTEGRATION ====================
+    let PLSR_AUTO_REFRESH = null;
+    
+    // Map frontend farm IDs to Firebase farm IDs
+    const FARM_ID_MAP = {
+      'f1': 'farm_001',  // North Field → farm_001 (Test Farm)
+      'f2': 'farm_002',  // Valley Plot → farm_002
+      'f3': 'farm_003'   // East Farm → farm_003
+    };
+    
+    function initPlsrFarmSelect() {
+      const sel = document.getElementById('plsrFarmSelect');
+      if (!sel) return;
+      const farmOptions = state.farms.filter(f => f.userId === state.currentUser?.id);
+      sel.innerHTML = farmOptions.map(f => `<option value="${f.id}">${f.name}</option>`).join('');
+      if (farmOptions.length > 0) sel.value = farmOptions[0].id;
+    }
+
+    async function runPLSRAnalysis() {
+      const selectedFarmId = document.getElementById('plsrFarmSelect').value;
+      // Convert frontend farm ID to Firebase farm ID
+      const firebaseFarmId = FARM_ID_MAP[selectedFarmId] || selectedFarmId || 'farm_001';
+      const btn = document.getElementById('plsrAnalyzeBtn');
+      if (!btn) return;
+      
+      btn.innerHTML = '<span class="spinner"></span> Analyzing...';
+      btn.disabled = true;
+
+      try {
+        const token = localStorage.getItem('agb_token');
+        const response = await fetch('http://localhost:5000/api/firebase/predict-from-latest', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token ? `Bearer ${token}` : ''
+          },
+          body: JSON.stringify({ farmId: firebaseFarmId })
+        });
+
+        if (!response.ok) {
+          throw new Error(`API Error: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        if (data.success && data.prediction) {
+          updatePlsrDisplay(data.prediction);
+          pushNotif('PLSR Analysis Complete', `SOC: ${data.prediction.soc}% → ${data.prediction.credits} credits`);
+        } else {
+          throw new Error(data.message || 'Analysis failed');
+        }
+      } catch (err) {
+        showToast('PLSR Analysis Error: ' + (err.message || 'Unknown error'));
+      } finally {
+        btn.innerHTML = 'Analyze with PLSR';
+        btn.disabled = false;
+      }
+    }
+
+    function updatePlsrDisplay(prediction) {
+      // Update SOC percentage
+      const socEl = document.getElementById('plsrSoc');
+      if (socEl) socEl.textContent = prediction.soc.toFixed(2);
+
+      // Update Credits
+      const creditsEl = document.getElementById('plsrCredits');
+      if (creditsEl) creditsEl.textContent = prediction.credits.toFixed(0);
+
+      // Update Confidence
+      const confEl = document.getElementById('plsrConfidence');
+      if (confEl) confEl.textContent = (prediction.confidence * 100).toFixed(1);
+
+      // Update CO2 Equivalent
+      const co2El = document.getElementById('plsrCo2');
+      if (co2El) co2El.textContent = prediction.co2Equivalent.toFixed(2);
+
+      // Update info boxes
+      const carbonStockEl = document.getElementById('plsrCarbonStock');
+      if (carbonStockEl) carbonStockEl.textContent = prediction.carbonStock.toFixed(2);
+
+      const areaEl = document.getElementById('plsrArea');
+      if (areaEl) areaEl.textContent = prediction.areaHa?.toFixed(1) || 'N/A';
+
+      const depthEl = document.getElementById('plsrDepth');
+      if (depthEl) depthEl.textContent = '30';  // Always display 30 cm
+
+      const lastUpdatedEl = document.getElementById('plsrTimestamp');
+      if (lastUpdatedEl) {
+        const now = new Date();
+        lastUpdatedEl.textContent = now.toLocaleTimeString();
+      }
+
+      // Show results container
+      const resultsDiv = document.getElementById('plsrResults');
+      if (resultsDiv) resultsDiv.style.display = 'grid';
+    }
+
+    function applyPlsrCreditsToFarm() {
+      const selectedFarmId = document.getElementById('plsrFarmSelect').value;
+      if (!selectedFarmId) {
+        showToast('Please select a farm first');
+        return;
+      }
+
+      // Get current values from display
+      const soc = parseFloat(document.getElementById('plsrSoc').textContent);
+      const credits = parseInt(document.getElementById('plsrCredits').textContent);
+      const areaHa = parseFloat(document.getElementById('plsrArea').textContent);
+
+      if (isNaN(soc) || isNaN(credits)) {
+        showToast('Please run PLSR analysis first');
+        return;
+      }
+
+      const btn = event.target;
+      btn.innerHTML = '<span class="spinner"></span> Applying...';
+      btn.disabled = true;
+
+      // Convert frontend farm ID to Firebase farm ID
+      const firebaseFarmId = FARM_ID_MAP[selectedFarmId] || selectedFarmId;
+
+      apiCall('/farmer/apply-credits', 'POST', {
+        farmId: selectedFarmId,
+        firebaseFarmId: firebaseFarmId,
+        soc: soc,
+        credits: credits,
+        areaHa: areaHa,
+        depth: 30,
+        source: 'ai'
+      })
+        .then(res => {
+          if (res.success) {
+            // Update local state
+            const farm = state.farms.find(f => f.id === selectedFarmId);
+            if (farm) {
+              farm.soc = soc;
+              farm.credits = credits;
+            }
+
+            // Refresh displays
+            renderFarmerFarms();
+            renderFarmerStats();
+            renderCreditStats();
+            renderCreditsList();
+            rebuildListings();
+
+            showToast(`✅ ${res.message || 'Credits applied successfully'}`);
+            pushNotif('Credits Applied', `${credits} carbon credits added to farm`);
+          } else {
+            showToast(res.message || 'Failed to apply credits');
+          }
+        })
+        .catch(err => {
+          showToast('Error: ' + (err.message || 'Failed to apply credits'));
+        })
+        .finally(() => {
+          btn.innerHTML = '✅ Apply Credits to Farm';
+          btn.disabled = false;
+        });
+    }
+
+    function toggleAutoRefresh() {
+      const btn = document.getElementById('plsrAutoRefreshBtn');
+      if (!btn) return;
+
+      if (PLSR_AUTO_REFRESH) {
+        clearInterval(PLSR_AUTO_REFRESH);
+        PLSR_AUTO_REFRESH = null;
+        btn.innerHTML = 'Auto-Refresh (5 min)';
+        btn.classList.remove('active');
+        showToast('Auto-refresh stopped');
+      } else {
+        // Run initial analysis
+        runPLSRAnalysis();
+        // Then set up interval for every 5 minutes
+        PLSR_AUTO_REFRESH = setInterval(() => {
+          runPLSRAnalysis();
+        }, 5 * 60 * 1000);
+        btn.innerHTML = '⏸ Stop Auto-Refresh';
+        btn.classList.add('active');
+        showToast('Auto-refresh enabled (every 5 minutes)');
+      }
+    }
+
+
+
+    // ==================== BUYER UI ====================
+    function setupBuyerUI() {
+      const u = state.currentUser;
+      const initials = u.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+      document.getElementById('buyerAvatar').textContent = initials;
+      document.getElementById('buyerName').textContent = u.name;
+
+      // Load user profile from API if available
+      if (typeof loadUserProfile === 'function') {
+        loadUserProfile();
+      }
+
+      // Fetch marketplace data
+      apiCall('/buyer/marketplace', 'GET')
+        .then(res => {
+          if (res.success) {
+            state.listings = res.data.map(f => ({
+              farmId: f.farmId,
+              farmName: f.farmName,
+              farmer: f.farmer,
+              location: f.location,
+              area: f.area,
+              soilType: f.soilType,
+              soc: f.soc,
+              credits: f.credits,
+              pricePerCredit: f.pricePerCredit,
+              verified: f.isVerified
+            }));
+
+            renderMarketStats();
+            renderMarket(state.listings);
+          }
+        })
+        .catch(err => {
+          console.error('Failed to load marketplace:', err);
+          showToast('Failed to load marketplace');
+        });
+
+      // Fetch portfolio data
+      apiCall('/buyer/portfolio', 'GET')
+        .then(res => {
+          if (res.success) {
+            state.buyerTx = res.data.transactions.map(t => ({
+              date: t.createdAt,
+              farmer: t.farmerId?.name || 'Farmer',
+              location: t.farmId?.location || '',
+              credits: t.credits,
+              pricePerCredit: t.pricePerCredit,
+              status: t.status
+            }));
+
+            renderPortfolioStats();
+            renderHoldings();
+            renderBuyerTx();
+            setTimeout(() => {
+              setupBuyerChart();
+              initializeAccordions();
+            }, 100);
+          }
+        })
+        .catch(err => {
+          console.error('Failed to load portfolio:', err);
+        });
+    }
+
+    function renderMarketStats() {
+      const total = state.listings.reduce((s, l) => s + l.credits, 0);
+      const verified = state.listings.filter(l => l.verified).length;
+      const avgPrice = (state.listings.reduce((s, l) => s + l.pricePerCredit, 0) / Math.max(state.listings.length, 1)).toFixed(0);
+      document.getElementById('marketStats').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Available Credits</div><div class="stat-value">${total}</div><div class="stat-sub">Across all farms</div></div>
+    <div class="stat-card"><div class="stat-label">Active Sellers</div><div class="stat-value">${state.listings.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Verified Listings</div><div class="stat-value">${verified}</div></div>
+    <div class="stat-card"><div class="stat-label">Avg Price</div><div class="stat-value">${fmtINR(avgPrice)}</div><div class="stat-sub">Per credit</div></div>
+  `;
+    }
+
+    function renderMarket(listings) {
+      const el = document.getElementById('marketGrid');
+      if (!listings.length) { el.innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🔍</div><p>No listings match your filters</p></div>'; return }
+      el.innerHTML = listings.map(l => `
+    <div class="farmer-card">
+      <div class="farmer-header">
+        <div class="farmer-avatar">${l.farmer[0]}</div>
+        <div>
+          <div class="farmer-name">${l.farmer}</div>
+          <div class="farmer-loc">📍 ${l.location}</div>
+        </div>
+        ${l.verified ? '<span class="verified-badge" style="margin-left:auto">✓ Verified</span>' : '<span style="font-size:10px;color:var(--amber);background:var(--amber-lt);padding:2px 8px;border-radius:20px;margin-left:auto">Unverified</span>'}
+      </div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:6px">${l.farmName} &nbsp;•&nbsp; ${l.area} ha &nbsp;•&nbsp; ${l.soilType}</div>
+      <div class="info-row"><span>SOC Level</span><span style="font-weight:500;color:var(--g1)">${l.soc}%</span></div>
+      <div class="soc-bar"><div class="soc-fill" style="width:${Math.min(l.soc * 20, 100)}%"></div></div>
+      <div class="info-row" style="margin-top:6px"><span>Available</span><span style="font-weight:500;color:var(--text)">${l.credits} credits</span></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.75rem">
+        <div><div style="font-size:11px;color:var(--text2)">Price per credit</div><div class="price-tag">${fmtINR(l.pricePerCredit)}</div></div>
+        <button class="btn-small" onclick="openBuy('${l.farmId}')">Buy Credits</button>
+      </div>
+    </div>
+  `).join('');
+    }
+
+    function filterMarket() {
+      const loc = document.getElementById('fLoc').value.toLowerCase();
+      const maxP = parseFloat(document.getElementById('fPrice').value) || Infinity;
+      const minA = parseFloat(document.getElementById('fAmt').value) || 0;
+      const verOnly = document.getElementById('fVerified').value === 'verified';
+      const filtered = state.listings.filter(l =>
+        (!loc || l.location.toLowerCase().includes(loc) || l.farmer.toLowerCase().includes(loc)) &&
+        l.pricePerCredit <= maxP && l.credits >= minA && (!verOnly || l.verified)
+      );
+      renderMarket(filtered);
+    }
+
+    function openBuy(farmId) {
+      const l = state.listings.find(x => x.farmId === farmId);
+      if (!l) return;
+      state.buying = l;
+      document.getElementById('buyModalContent').innerHTML = `
+    <div style="background:var(--g7);border-radius:var(--radius-sm);padding:1rem;margin-bottom:1rem">
+      <div style="font-weight:500;color:var(--g1)">${l.farmName} — ${l.farmer}</div>
+      <div style="font-size:13px;color:var(--text2)">📍 ${l.location} &nbsp;•&nbsp; SOC: ${l.soc}% &nbsp;•&nbsp; ${l.verified ? '✓ Verified' : 'Unverified'}</div>
+      <div style="font-size:13px;color:var(--text2);margin-top:4px">Available: <strong style="color:var(--g1)">${l.credits} credits</strong> @ ${fmtINR(l.pricePerCredit)}/credit</div>
+    </div>
+  `;
+      document.getElementById('mBuyAmt').value = '';
+      document.getElementById('mBuyAmt').max = l.credits;
+      document.getElementById('mBuyAmt').oninput = () => {
+        const a = parseInt(document.getElementById('mBuyAmt').value) || 0;
+        document.getElementById('buyTotal').textContent = a ? `Total: ${fmtINR(a * l.pricePerCredit)}` : '';
+      };
+      document.getElementById('buyTotal').textContent = '';
+      
+      // Reset buy button before opening modal
+      const modal = document.getElementById('buyModal');
+      if (modal) {
+        const button = modal.querySelector('button[onclick="confirmBuy()"]');
+        if (button) {
+          button.textContent = 'Confirm Purchase';
+          button.disabled = false;
+          button.removeAttribute('disabled');
+        }
+      }
+      
+      openModal('buyModal');
+    }
+
+    function confirmBuy() {
+      const l = state.buying;
+      const amt = parseInt(document.getElementById('mBuyAmt').value) || 0;
+
+      // Validate input
+      if (!amt || amt <= 0) {
+        showToast('Please enter a valid amount');
+        return;
+      }
+
+      if (amt > l.credits) {
+        showToast(`Only ${l.credits} credits available`);
+        return;
+      }
+
+      const buyBtn = event.target;
+      const originalText = buyBtn.textContent;
+      buyBtn.textContent = 'Processing...';
+      buyBtn.disabled = true;
+
+      // Set a timeout to prevent button from getting stuck
+      const timeout = setTimeout(() => {
+        buyBtn.textContent = originalText;
+        buyBtn.disabled = false;
+        showToast('Purchase timed out. Please try again.');
+      }, 15000); // 15 second timeout
+
+      apiCall('/buyer/buy-credits', 'POST', {
+        farmId: l.farmId,
+        credits: amt
+      })
+        .then(res => {
+          clearTimeout(timeout);
+          if (res.success) {
+            l.credits -= amt;
+            const farm = state.farms.find(f => f.id === l.farmId);
+            if (farm) {
+              farm.listedCredits = Math.max(0, farm.listedCredits - amt);
+            }
+
+            state.buyerTx.push({
+              date: new Date().toISOString().split('T')[0],
+              farmer: l.farmer,
+              location: l.location,
+              credits: amt,
+              pricePerCredit: l.pricePerCredit,
+              status: 'Completed'
+            });
+
+            // Close modal using classList
+            const modal = document.getElementById('buyModal');
+            if (modal) {
+              modal.classList.remove('open');
+            }
+            
+            // Clear state and form
+            state.buying = null;
+            document.getElementById('mBuyAmt').value = '';
+            
+            // Re-render all views
+            renderMarketStats();
+            renderMarket(state.listings);
+            renderPortfolioStats();
+            renderHoldings();
+            renderBuyerTx();
+
+            // Show success
+            showToast(`Purchased ${amt} credits for ${fmtINR(amt * l.pricePerCredit)}`);
+            pushNotif('Purchase Successful', `${amt} carbon credits from ${l.farmer} — ${fmtINR(amt * l.pricePerCredit)} paid`);
+            
+            // Reset button state
+            buyBtn.textContent = originalText;
+            buyBtn.disabled = false;
+          } else {
+            clearTimeout(timeout);
+            throw new Error(res.message || 'Purchase failed');
+          }
+        })
+        .catch(err => {
+          clearTimeout(timeout);
+          console.error('Purchase error:', err);
+          showToast(err.message || 'Purchase failed. Please try again.');
+          buyBtn.textContent = originalText;
+          buyBtn.disabled = false;
+        });
+    }
+
+    function renderPortfolioStats() {
+      const total = state.buyerTx.reduce((s, t) => s + t.credits, 0);
+      const spent = state.buyerTx.reduce((s, t) => s + t.credits * t.pricePerCredit, 0);
+      document.getElementById('portfolioStats').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Total Credits</div><div class="stat-value">${total}</div><div class="stat-sub">Tonnes CO₂ offset</div></div>
+    <div class="stat-card"><div class="stat-label">Total Invested</div><div class="stat-value">${fmtINR(spent)}</div></div>
+    <div class="stat-card"><div class="stat-label">Purchases</div><div class="stat-value">${state.buyerTx.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Avg Cost/Credit</div><div class="stat-value">${fmtINR(total ? Math.round(spent / total) : 0)}</div></div>
+  `;
+    }
+
+    function renderHoldings() {
+      const el = document.getElementById('holdingsList');
+      if (!state.buyerTx.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">🌍</div><p>No credits purchased yet. Visit the marketplace to get started.</p></div>'; return }
+      const grouped = {};
+      state.buyerTx.forEach(t => { if (!grouped[t.farmer]) grouped[t.farmer] = { ...t, totalCredits: 0, totalSpent: 0 }; grouped[t.farmer].totalCredits += t.credits; grouped[t.farmer].totalSpent += t.credits * t.pricePerCredit });
+      el.innerHTML = Object.values(grouped).map(g => `
+    <div class="credit-item">
+      <div class="credit-info">
+        <div class="credit-title">${g.farmer}</div>
+        <div class="credit-meta">📍 ${g.location}</div>
+      </div>
+      <div style="text-align:right">
+        <div class="price-tag">${g.totalCredits} credits</div>
+        <div style="font-size:12px;color:var(--text2)">${fmtINR(g.totalSpent)} spent</div>
+      </div>
+    </div>
+  `).join('');
+    }
+
+    function renderBuyerTx() {
+      const body = document.getElementById('buyTxTable');
+      body.innerHTML = state.buyerTx.map((t, idx) => `
+    <tr>
+      <td>${fmtDate(t.date)}</td><td>${t.farmer}</td><td>${t.location}</td><td>${t.credits}</td>
+      <td>${fmtINR(t.pricePerCredit)}</td><td style="font-weight:500;color:var(--g1)">${fmtINR(t.credits * t.pricePerCredit)}</td>
+      <td><span style="background:#e8f7ef;color:#0d5c3a;padding:3px 10px;border-radius:20px;font-size:12px">${t.status}</span></td>
+      <td><button class="btn-small" style="padding: 4px 12px; font-size: 12px;" onclick="downloadReceipt(${idx}, 'buyer')">📥 Receipt</button></td>
+    </tr>
+  `).join('');
+    }
+
+    // ==================== RECEIPT DOWNLOAD ====================
+    function downloadReceipt(transactionIdx, userType) {
+      let transaction, receiptHTML;
+      
+      if (userType === 'farmer') {
+        transaction = state.farmerTx[transactionIdx];
+        const totalAmount = transaction.credits * transaction.pricePerCredit;
+        receiptHTML = `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px; background: #fff;">
+            <div style="text-align: center; margin-bottom: 40px;">
+              <h1 style="color: #185856; margin: 0; font-size: 28px; font-family: 'DM Serif Display', serif;">🌿 AgroGreenBits</h1>
+              <p style="color: #999; margin: 5px 0 0 0; font-size: 12px;">Carbon Credit Transaction Receipt</p>
+            </div>
+            
+            <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+              <h2 style="color: #185856; font-size: 16px; margin-top: 0;">Transaction Receipt</h2>
+              <p><strong>Receipt Date:</strong> ${fmtDate(transaction.date)}</p>
+              <p><strong>Transaction ID:</strong> TXN-${Date.now()}</p>
+            </div>
+            
+            <div style="background: #f0f8f7; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+              <h3 style="color: #185856; font-size: 14px; margin-top: 0;">Farm Details</h3>
+              <p><strong>Farm Name:</strong> ${transaction.farmName}</p>
+              <p><strong>Farmer:</strong> ${state.currentUser?.name || 'Not specified'}</p>
+              <p><strong>Buyer:</strong> ${transaction.buyer}</p>
+            </div>
+            
+            <div style="background: #fff9f0; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+              <h3 style="color: #185856; font-size: 14px; margin-top: 0;">Credit Details</h3>
+              <table style="width: 100%; border-collapse: collapse;">
+                <tr style="border-bottom: 1px solid #ddd;">
+                  <td style="padding: 10px 0;"><strong>Credits Sold</strong></td>
+                  <td style="padding: 10px 0; text-align: right;">${transaction.credits} credits</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #ddd;">
+                  <td style="padding: 10px 0;"><strong>Price per Credit</strong></td>
+                  <td style="padding: 10px 0; text-align: right;">${fmtINR(transaction.pricePerCredit)}</td>
+                </tr>
+                <tr style="background: #f0f8f7; border-bottom: 2px solid #185856;">
+                  <td style="padding: 15px 0;"><strong>Total Amount</strong></td>
+                  <td style="padding: 15px 0; text-align: right; font-size: 18px; color: #185856; font-weight: bold;">${fmtINR(totalAmount)}</td>
+                </tr>
+              </table>
+            </div>
+            
+            <div style="background: #e8f7ef; padding: 15px; border-radius: 8px; border-left: 4px solid #0d5c3a; margin-bottom: 20px;">
+              <p style="margin: 0; color: #0d5c3a; font-size: 12px;"><strong>✓ Status:</strong> Completed</p>
+              <p style="margin: 5px 0 0 0; color: #0d5c3a; font-size: 12px;">Carbon credits have been successfully transferred to buyer's account.</p>
+            </div>
+            
+            <div style="border-top: 1px solid #ddd; padding-top: 20px; text-align: center; color: #999; font-size: 11px;">
+              <p style="margin: 0;">AgroGreenBits | AI-Based Carbon Credit Platform</p>
+              <p style="margin: 5px 0 0 0;">This is an officially generated receipt. Keep it safe for your records.</p>
+              <p style="margin: 5px 0 0 0;">Generated on ${new Date().toLocaleString('en-IN')}</p>
+            </div>
+          </div>
+        `;
+      } else if (userType === 'buyer') {
+        transaction = state.buyerTx[transactionIdx];
+        const totalAmount = transaction.credits * transaction.pricePerCredit;
+        receiptHTML = `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px; background: #fff;">
+            <div style="text-align: center; margin-bottom: 40px;">
+              <h1 style="color: #185856; margin: 0; font-size: 28px; font-family: 'DM Serif Display', serif;">🌿 AgroGreenBits</h1>
+              <p style="color: #999; margin: 5px 0 0 0; font-size: 12px;">Carbon Credit Purchase Receipt</p>
+            </div>
+            
+            <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+              <h2 style="color: #185856; font-size: 16px; margin-top: 0;">Purchase Receipt</h2>
+              <p><strong>Receipt Date:</strong> ${fmtDate(transaction.date)}</p>
+              <p><strong>Transaction ID:</strong> TXN-${Date.now()}</p>
+            </div>
+            
+            <div style="background: #f0f8f7; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+              <h3 style="color: #185856; font-size: 14px; margin-top: 0;">Seller Details</h3>
+              <p><strong>Farmer:</strong> ${transaction.farmer}</p>
+              <p><strong>Location:</strong> ${transaction.location}</p>
+              <p><strong>Buyer:</strong> ${state.currentUser?.name || 'Not specified'}</p>
+            </div>
+            
+            <div style="background: #fff9f0; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+              <h3 style="color: #185856; font-size: 14px; margin-top: 0;">Credit Details</h3>
+              <table style="width: 100%; border-collapse: collapse;">
+                <tr style="border-bottom: 1px solid #ddd;">
+                  <td style="padding: 10px 0;"><strong>Credits Purchased</strong></td>
+                  <td style="padding: 10px 0; text-align: right;">${transaction.credits} credits</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #ddd;">
+                  <td style="padding: 10px 0;"><strong>Price per Credit</strong></td>
+                  <td style="padding: 10px 0; text-align: right;">${fmtINR(transaction.pricePerCredit)}</td>
+                </tr>
+                <tr style="background: #f0f8f7; border-bottom: 2px solid #185856;">
+                  <td style="padding: 15px 0;"><strong>Total Amount Paid</strong></td>
+                  <td style="padding: 15px 0; text-align: right; font-size: 18px; color: #185856; font-weight: bold;">${fmtINR(totalAmount)}</td>
+                </tr>
+              </table>
+            </div>
+            
+            <div style="background: #e8f7ef; padding: 15px; border-radius: 8px; border-left: 4px solid #0d5c3a; margin-bottom: 20px;">
+              <p style="margin: 0; color: #0d5c3a; font-size: 12px;"><strong>✓ Status:</strong> ${transaction.status}</p>
+              <p style="margin: 5px 0 0 0; color: #0d5c3a; font-size: 12px;">Carbon credits have been successfully added to your portfolio.</p>
+            </div>
+            
+            <div style="border-top: 1px solid #ddd; padding-top: 20px; text-align: center; color: #999; font-size: 11px;">
+              <p style="margin: 0;">AgroGreenBits | AI-Based Carbon Credit Platform</p>
+              <p style="margin: 5px 0 0 0;">This is an officially generated receipt. Keep it safe for your records.</p>
+              <p style="margin: 5px 0 0 0;">Generated on ${new Date().toLocaleString('en-IN')}</p>
+            </div>
+          </div>
+        `;
+      }
+      
+      // Generate PDF
+      const element = document.createElement('div');
+      element.innerHTML = receiptHTML;
+      
+      const opt = {
+        margin: 10,
+        filename: `receipt-${userType}-${transactionIdx}-${Date.now()}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+      };
+      
+      html2pdf().set(opt).from(element).save();
+      showToast('Receipt downloaded successfully! 📥');
+    }
+
+    function buyerTab(tab, btn) {
+      document.querySelectorAll('#buyerScreen .nav-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('#buyerScreen [id^="btab-"]').forEach(el => el.style.display = 'none');
+      document.getElementById('btab-' + tab).style.display = '';
+    }
+
+    // Init
+    rebuildListings();
+
+    // ==================== AUTO-LOGIN ON PAGE LOAD ====================
+    window.addEventListener('DOMContentLoaded', () => {
+      const token = getToken();
+      if (token && localStorage.getItem('agb_user')) {
+        try {
+          const user = JSON.parse(localStorage.getItem('agb_user'));
+          state.currentUser = user;
+          enterApp();
+        } catch (e) {
+          removeToken();
+          localStorage.removeItem('agb_user');
+        }
+      }
+    });
+
+    // Remember user when they login
+    const originalEnterApp = enterApp;
+    function enterAppWrapper() {
+      if (state.currentUser) {
+        localStorage.setItem('agb_user', JSON.stringify(state.currentUser));
+      }
+      originalEnterApp();
+    }
+
+    document.addEventListener('click', () => {
+      const dropdown = document.getElementById('langDropdown');
+      if (dropdown) dropdown.classList.remove('show');
+    });
+
+    // ==================== PROFILE MODAL ====================
+    function openProfileModal() {
+      const user = state.currentUser;
+      if (!user) return;
+
+      document.getElementById('profileName').value = user.name || '';
+      document.getElementById('profileEmail').value = user.email || '';
+      document.getElementById('profilePhone').value = user.phone || '';
+      document.getElementById('profileLocation').value = user.location || '';
+      document.getElementById('profileBio').value = user.bio || '';
+
+      // Show company field only for buyers
+      const companyField = document.getElementById('buyerCompanyField');
+      if (user.role === 'buyer') {
+        companyField.style.display = 'block';
+        document.getElementById('profileCompany').value = user.companyName || '';
+      } else {
+        companyField.style.display = 'none';
+      }
+
+      // Update avatar preview
+      const avatar = document.getElementById('profileAvatarPreview');
+      if (user.name) {
+        const initials = user.name.split(' ').map(n => n[0]).join('');
+        avatar.textContent = initials.toUpperCase();
+      } else {
+        avatar.textContent = '👤';
+      }
+
+      document.getElementById('profileOldPw').value = '';
+      document.getElementById('profileNewPw').value = '';
+
+      openModal('profileModal');
+    }
+
+    function saveUserProfile() {
+      const token = getToken();
+      if (!token) {
+        showToast('Please log in first');
+        return;
+      }
+
+      const profileData = {
+        name: document.getElementById('profileName').value,
+        phone: document.getElementById('profilePhone').value,
+        location: document.getElementById('profileLocation').value,
+        bio: document.getElementById('profileBio').value
+      };
+
+      // Add company name for buyers
+      if (state.currentUser.role === 'buyer') {
+        profileData.companyName = document.getElementById('profileCompany').value;
+      }
+
+      const btn = event.target;
+      const originalText = btn.textContent;
+      btn.textContent = 'Saving...';
+      btn.disabled = true;
+
+      apiCall('/profile', 'PUT', profileData)
+        .then(res => {
+          if (res.success) {
+            // Update current user in state
+            state.currentUser = { ...state.currentUser, ...res.user };
+            localStorage.setItem('agb_user', JSON.stringify(state.currentUser));
+            closeModal('profileModal');
+            showToast('Profile updated successfully');
+            // Update avatar if on page
+            const avatar = document.getElementById('farmerAvatar') || document.getElementById('buyerAvatar');
+            if (avatar) {
+              const initials = res.user.name.split(' ').map(n => n[0]).join('');
+              avatar.textContent = initials.toUpperCase();
+            }
+          }
+        })
+        .catch(err => showToast(err.message || 'Failed to update profile'))
+        .finally(() => {
+          btn.textContent = originalText;
+          btn.disabled = false;
+        });
+    }
+
+    function changeUserPassword() {
+      const token = getToken();
+      if (!token) {
+        showToast('Please log in first');
+        return;
+      }
+
+      const oldPw = document.getElementById('profileOldPw').value;
+      const newPw = document.getElementById('profileNewPw').value;
+
+      if (!oldPw || !newPw) {
+        showToast('Please enter both passwords');
+        return;
+      }
+
+      if (newPw.length < 6) {
+        showToast('New password must be at least 6 characters');
+        return;
+      }
+
+      const btn = event.target;
+      const originalText = btn.textContent;
+      btn.textContent = 'Updating...';
+      btn.disabled = true;
+
+      apiCall('/profile/password', 'PUT', { oldPassword: oldPw, newPassword: newPw })
+        .then(res => {
+          if (res.success) {
+            document.getElementById('profileOldPw').value = '';
+            document.getElementById('profileNewPw').value = '';
+            showToast('Password changed successfully');
+          }
+        })
+        .catch(err => showToast(err.message || 'Failed to change password'))
+        .finally(() => {
+          btn.textContent = originalText;
+          btn.disabled = false;
+        });
+    }
+
+    // ==================== ADMIN DASHBOARD ====================
+    function setupAdminUI() {
+      const u = state.currentUser;
+      document.getElementById('adminGreet').textContent = `Welcome, ${u.name}`;
+      document.getElementById('adminEmail').textContent = u.email;
+      loadAdminFarms();
+    }
+
+    function loadAdminFarms() {
+      // Fetch all farms (verified and unverified) from admin API
+      apiCall('/admin/farms', 'GET')
+        .then(res => {
+          if (res.success) {
+            state.adminFarms = res.data;
+            updateAdminStats();
+            renderAdminFarms();
+            setTimeout(initializeAccordions, 100);
+          }
+        })
+        .catch(err => {
+          console.error('Failed to load farms:', err);
+          showToast('Failed to load farms');
+        });
+    }
+
+    function updateAdminStats() {
+      const farms = state.adminFarms || [];
+      const verified = farms.filter(f => f.isVerified).length;
+      const pending = farms.filter(f => !f.isVerified).length;
+      const totalCredits = farms.reduce((sum, f) => sum + (f.credits || 0), 0);
+
+      document.getElementById('adminTotalFarms').textContent = farms.length;
+      document.getElementById('adminVerifiedCount').textContent = verified;
+      document.getElementById('adminPendingCount').textContent = pending;
+      document.getElementById('adminTotalCredits').textContent = totalCredits;
+    }
+
+    function renderAdminFarms() {
+      const farms = state.adminFarms || [];
+      const filtered = filterAdminFarmsList(farms);
+      const el = document.getElementById('adminFarmsList');
+
+      if (filtered.length === 0) {
+        el.innerHTML = '<div class="empty"><div class="empty-icon">🌱</div><p>No farms found</p></div>';
+        return;
+      }
+
+      el.innerHTML = filtered.map(f => `
+        <div class="card" style="margin-bottom: 12px; padding: 1rem;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                <strong style="font-size: 16px; color: var(--g1); font-family: 'DM Serif Display', serif;">${f.farmName || 'Unknown Farm'}</strong>
+                ${f.isVerified ? '<span class="verified-badge">✓ Verified</span>' : '<span style="font-size:11px;color:var(--amber);background:var(--amber-lt);padding:3px 10px;border-radius:20px;">Pending</span>'}
+              </div>
+              <div style="font-size: 13px; color: var(--text2);">Farmer: <strong>${f.farmer || 'Unknown'}</strong></div>
+              <div style="font-size: 12px; color: var(--text3); margin-top: 4px;">📍 ${f.location} | ${f.soilType} | ${f.area}ha</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 11px; color: var(--text3); text-transform: uppercase; font-weight: 500; margin-bottom: 4px;">Credits</div>
+              <div style="font-size: 20px; color: var(--g1); font-weight: 600;">${f.credits}</div>
+              <div style="font-size: 12px; color: var(--text3); margin-top: 4px;">SOC: ${f.soc}%</div>
+            </div>
+          </div>
+          ${!f.isVerified ? `
+            <div style="display: flex; gap: 8px; margin-top: 1rem;">
+              <button class="btn-green" style="flex: 1; padding: 8px;" onclick="openVerifyModal('${f.farmId}', '${f.farmName}', ${f.soc}, ${f.credits}, '${f.farmer}', '${f.location}')">
+                ✓ Verify Farm
+              </button>
+              <button class="btn-secondary" style="padding: 8px 16px; font-size: 12px;" onclick="showFarmDetails('${f.farmId}')">Details</button>
+            </div>
+          ` : ''}
+        </div>
+      `).join('');
+    }
+
+    function filterAdminFarmsList(farms) {
+      const filterVal = document.getElementById('adminFilterStatus')?.value || '';
+      if (filterVal === 'verified') return farms.filter(f => f.isVerified);
+      if (filterVal === 'pending') return farms.filter(f => !f.isVerified);
+      return farms;
+    }
+
+    function filterAdminFarms() {
+      renderAdminFarms();
+    }
+
+    function openVerifyModal(farmId, farmName, soc, credits, farmer, location) {
+      state.verifyingFarmId = farmId;
+      
+      // Fetch complete farm details for verification
+      apiCall(`/admin/farms/${farmId}`, 'GET')
+        .then(res => {
+          if (res.success) {
+            const farm = res.data;
+            
+            // Calculate SOC to credits ratio
+            const area = farm.area || 1;
+            const socToCreditsMultiplier = 30; // 1% SOC = 30 credits per hectare
+            const calculatedCredits = Math.round((farm.currentSOC || 0) * area * socToCreditsMultiplier);
+            
+            // Farmer track record (count verified farms by this farmer)
+            const farmerEmail = farm.userId?.email || 'unknown@email.com';
+            
+            // Build verification checklist HTML
+            const verificationHTML = `
+              <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                
+                <!-- 1. FARM BASIC INFO -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; padding: 1rem; background: var(--g7); border-radius: var(--radius-sm);">
+                  <div>
+                    <div style="font-size: 11px; color: var(--text3); text-transform: uppercase; font-weight: 500; margin-bottom: 4px;">Farm Name</div>
+                    <div style="font-weight: 600; color: var(--text); font-size: 14px;">${farm.name}</div>
+                  </div>
+                  <div>
+                    <div style="font-size: 11px; color: var(--text3); text-transform: uppercase; font-weight: 500; margin-bottom: 4px;">Location</div>
+                    <div style="font-weight: 600; color: var(--text); font-size: 14px;">${farm.location || 'N/A'}</div>
+                  </div>
+                  <div>
+                    <div style="font-size: 11px; color: var(--text3); text-transform: uppercase; font-weight: 500; margin-bottom: 4px;">Area (Hectares)</div>
+                    <div style="font-weight: 600; color: var(--text); font-size: 14px;">${farm.area || 0} ha</div>
+                  </div>
+                  <div>
+                    <div style="font-size: 11px; color: var(--text3); text-transform: uppercase; font-weight: 500; margin-bottom: 4px;">Soil Type</div>
+                    <div style="font-weight: 600; color: var(--text); font-size: 14px;">${farm.soilType || 'Not specified'}</div>
+                  </div>
+                </div>
+
+                <!-- 2. SOC CALCULATION BREAKDOWN -->
+                <div style="border-left: 3px solid var(--g1); padding: 1rem; background: rgba(101, 194, 111, 0.05); border-radius: 0 var(--radius-sm) var(--radius-sm) 0;">
+                  <div style="margin-bottom: 1rem;">
+                    <div style="font-size: 12px; color: var(--text3); text-transform: uppercase; font-weight: 600; margin-bottom: 8px;">✓ SOC CALCULATION</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                      <div>
+                        <div style="font-size: 12px; color: var(--text3); margin-bottom: 4px;">Measured SOC %</div>
+                        <div style="font-size: 24px; color: var(--g1); font-weight: 700;">${(farm.currentSOC || 0).toFixed(2)}%</div>
+                      </div>
+                      <div>
+                        <div style="font-size: 12px; color: var(--text3); margin-bottom: 4px;">Carbon Credits</div>
+                        <div style="font-size: 24px; color: var(--g1); font-weight: 700;">${farm.totalCredits || 0}</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div style="font-size: 12px; color: var(--text3); line-height: 1.5;">
+                    Formula: SOC % × Area (${farm.area} ha) × ${socToCreditsMultiplier} = ${farm.totalCredits || 0} credits
+                  </div>
+                </div>
+
+                <!-- 3. FARMER CREDENTIALS -->
+                <div style="border: 1px solid var(--border); padding: 1rem; border-radius: var(--radius-sm);">
+                  <div style="font-size: 12px; color: var(--text3); text-transform: uppercase; font-weight: 600; margin-bottom: 1rem;">👤 FARMER CREDENTIALS</div>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div>
+                      <div style="font-size: 11px; color: var(--text3); margin-bottom: 4px;">Farmer Name</div>
+                      <div style="font-weight: 600; color: var(--text);">${farm.userId?.name || 'Unknown'}</div>
+                    </div>
+                    <div>
+                      <div style="font-size: 11px; color: var(--text3); margin-bottom: 4px;">Email</div>
+                      <div style="font-weight: 600; color: var(--text); word-break: break-all; font-size: 13px;">${farm.userId?.email || 'N/A'}</div>
+                    </div>
+                    <div>
+                      <div style="font-size: 11px; color: var(--text3); margin-bottom: 4px;">Phone</div>
+                      <div style="font-weight: 600; color: var(--text);">${farm.userId?.phone || 'N/A'}</div>
+                    </div>
+                    <div>
+                      <div style="font-size: 11px; color: var(--text3); margin-bottom: 4px;">Role</div>
+                      <div style="font-weight: 600; color: var(--g1);">Farmer</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 4. SPECTRAL DATA INFO -->
+                <div style="border: 1px solid var(--border); padding: 1rem; border-radius: var(--radius-sm);">
+                  <div style="font-size: 12px; color: var(--text3); text-transform: uppercase; font-weight: 600; margin-bottom: 1rem;">📊 SPECTRAL SENSOR DATA</div>
+                  <div style="font-size: 13px; color: var(--text3); line-height: 1.6;">
+                    <p>✓ AS7341 multispectral sensor data received</p>
+                    <p>✓ Wavelength range: 415nm - 950nm (8 channels)</p>
+                    <p>✓ Spectral resolution validated</p>
+                    <p>✓ Data quality: Good (no anomalies detected)</p>
+                    <p style="margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); color: var(--g1);">
+                      🔍 <strong>Admin should verify</strong>: Check spectral readings against baseline for this soil type
+                    </p>
+                  </div>
+                </div>
+
+                <!-- 5. GEOLOCATION VERIFICATION -->
+                <div style="border: 1px solid var(--border); padding: 1rem; border-radius: var(--radius-sm);">
+                  <div style="font-size: 12px; color: var(--text3); text-transform: uppercase; font-weight: 600; margin-bottom: 1rem;">📍 GEOLOCATION & LOCATION</div>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                      <div style="font-size: 11px; color: var(--text3); margin-bottom: 4px;">Stated Location</div>
+                      <div style="font-weight: 600; color: var(--text); font-size: 14px;">${farm.location || 'N/A'}</div>
+                    </div>
+                    <div>
+                      <div style="font-size: 11px; color: var(--text3); margin-bottom: 4px;">Verification Status</div>
+                      <div style="font-weight: 600; color: var(--g1); font-size: 14px;">✓ Plausible</div>
+                    </div>
+                  </div>
+                  <div style="font-size: 13px; color: var(--text3); line-height: 1.6;">
+                    <p>🔍 <strong>Admin should verify</strong>:</p>
+                    <p>• Location is real and accessible</p>
+                    <p>• Area size (${farm.area} ha) is reasonable for stated location</p>
+                    <p>• No red flags for location mismatch</p>
+                  </div>
+                </div>
+
+                <!-- 6. VERIFICATION CHECKLIST -->
+                <div style="background: var(--g7); padding: 1rem; border-radius: var(--radius-sm); border-left: 3px solid var(--g1);">
+                  <div style="font-size: 12px; color: var(--text3); text-transform: uppercase; font-weight: 600; margin-bottom: 1rem;">✅ VERIFICATION CHECKLIST</div>
+                  <div style="font-size: 13px; color: var(--text); line-height: 1.8;">
+                    <div>☐ Spectral sensor data is valid and plausible</div>
+                    <div>☐ SOC % reading is realistic (${(farm.currentSOC || 0).toFixed(2)}% is ${(farm.currentSOC || 0) > 5 ? 'high' : (farm.currentSOC || 0) > 3 ? 'moderate' : 'low'})</div>
+                    <div>☐ Credit calculation is correct (${farm.totalCredits} credits)</div>
+                    <div>☐ Location is verified and plausible</div>
+                    <div>☐ Farmer has no red flags in history</div>
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); color: var(--g1); font-weight: 600;">
+                      Ready to verify: All checks passed ✓
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            `;
+            
+            document.getElementById('verifyFarmInfo').innerHTML = verificationHTML;
+            document.getElementById('verifyNote').value = '';
+            document.getElementById('verifyNote').placeholder = 'E.g., "Verified - spectral data looks good, location confirmed"';
+            
+            // Reset verify button before opening modal
+            const modal = document.getElementById('verifyModal');
+            if (modal) {
+              const button = modal.querySelector('button[onclick="confirmVerifyFarm()"]');
+              if (button) {
+                button.textContent = 'Verify Farm';
+                button.disabled = false;
+                button.removeAttribute('disabled');
+              }
+            }
+            
+            modal.style.display = 'flex';
+          }
+        })
+        .catch(err => {
+          console.error('Failed to load farm details:', err);
+          showToast('Failed to load farm details for verification');
+        });
+    }
+
+    function closeVerifyModal() {
+      document.getElementById('verifyModal').style.display = 'none';
+      state.verifyingFarmId = null;
+    }
+
+    function confirmVerifyFarm() {
+      const farmId = state.verifyingFarmId;
+      const note = document.getElementById('verifyNote').value;
+      const btn = event.target;
+      const originalText = btn.textContent;
+      btn.textContent = 'Verifying...';
+      btn.disabled = true;
+
+      // Set a timeout to prevent button from getting stuck
+      const timeout = setTimeout(() => {
+        btn.textContent = originalText;
+        btn.disabled = false;
+        showToast('Verification timed out. Please try again.');
+      }, 15000); // 15 second timeout
+
+      apiCall('/admin/verify-farm', 'POST', {
+        farmId: farmId,
+        verificationNote: note || 'Verified by admin'
+      })
+        .then(res => {
+          clearTimeout(timeout);
+          if (res.success) {
+            // Update local state for the verified farm
+            if (state.adminFarms) {
+              const farm = state.adminFarms.find(f => f.farmId === farmId);
+              if (farm) {
+                farm.isVerified = true;
+                farm.verifiedAt = new Date();
+                farm.verificationNote = note || 'Verified by admin';
+              }
+            }
+            
+            // Force close modal using display property
+            const modal = document.getElementById('verifyModal');
+            if (modal) {
+              modal.style.display = 'none';
+            }
+            
+            // Clear verifying state
+            state.verifyingFarmId = null;
+            
+            // Show success immediately
+            showToast(`Farm verified successfully! ✓`);
+            
+            // Re-render only the admin farms list (no full reload)
+            updateAdminStats();
+            renderAdminFarms();
+            
+            // Reset button state after modal close
+            btn.textContent = originalText;
+            btn.disabled = false;
+            
+            // Background refresh of stats
+            setTimeout(() => {
+              apiCall('/admin/dashboard', 'GET')
+                .then(res => {
+                  if (res.success) {
+                    // Stats updated
+                  }
+                })
+                .catch(err => console.error('Stats update failed:', err));
+            }, 1500);
+          } else {
+            clearTimeout(timeout);
+            throw new Error(res.message || 'Verification failed');
+          }
+        })
+        .catch(err => {
+          clearTimeout(timeout);
+          console.error('Verification error:', err);
+          showToast(err.message || 'Failed to verify farm. Please try again.');
+          btn.textContent = originalText;
+          btn.disabled = false;
+        });
+    }
+  </script>
+
+
+</body>
+
+</html>

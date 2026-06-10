@@ -1,0 +1,12 @@
+{
+  "name": "agrogreenbits-frontend",
+  "version": "1.0.0",
+  "description": "AgroGreenBits - Carbon Credit Marketplace (Vanilla HTML/CSS/JS)",
+  "type": "module",
+  "scripts": {
+    "serve": "python -m http.server 8080"
+  },
+  "keywords": ["agriculture", "carbon-credits", "marketplace", "farmers"],
+  "author": "AgroGreenBits Team",
+  "license": "MIT"
+}

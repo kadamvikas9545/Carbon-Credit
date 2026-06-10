@@ -1,0 +1,13 @@
+{
+  "model_type": "PLSR",
+  "n_components": 10,
+  "n_training_samples": 120,
+  "n_test_samples": 30,
+  "train_r2": 0.9554134297792973,
+  "test_r2": -4.135069289012925,
+  "test_rmse": 1.067900967807504,
+  "test_mae": 0.8561389628841699,
+  "trained_at": "2026-04-04T10:35:35.130031",
+  "data_description": "Synthetic spectroscopy data (400-2400nm, 128 bands)",
+  "target": "SOC percentage (0.5-8.0%)"
+}

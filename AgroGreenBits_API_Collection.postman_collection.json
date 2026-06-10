@@ -1,0 +1,584 @@
+{
+  "info": {
+    "name": "AgroGreenBits API Collection",
+    "description": "Complete API testing collection for AgroGreenBits Carbon Credit Platform",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register - Farmer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Rajesh Kumar\",\n  \"email\": \"rajesh@farm.com\",\n  \"password\": \"password123\",\n  \"role\": \"farmer\",\n  \"phone\": \"+91 98765 43210\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            },
+            "description": "Register a new farmer account"
+          },
+          "response": []
+        },
+        {
+          "name": "Register - Buyer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Priya Sharma\",\n  \"email\": \"priya@company.com\",\n  \"password\": \"password123\",\n  \"role\": \"buyer\",\n  \"companyName\": \"GreenTech Solutions\",\n  \"phone\": \"+91 87654 32109\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            },
+            "description": "Register a new buyer/company account"
+          },
+          "response": []
+        },
+        {
+          "name": "Login - Farmer (Demo)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"farmer@demo.com\",\n  \"password\": \"pass123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Login with demo farmer account. Copy token and set as {{farmer_token}} variable"
+          },
+          "response": []
+        },
+        {
+          "name": "Login - Buyer (Demo)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"buyer@demo.com\",\n  \"password\": \"pass123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Login with demo buyer account. Copy token and set as {{buyer_token}} variable"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{farmer_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/profile",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "profile"]
+            },
+            "description": "Get current logged-in user profile"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{farmer_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Rajesh Kumar Updated\",\n  \"phone\": \"+91 99999 11111\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/profile",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "profile"]
+            },
+            "description": "Update user profile information"
+          },
+          "response": []
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{farmer_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"pass123\",\n  \"newPassword\": \"newpassword123\",\n  \"confirmPassword\": \"newpassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/change-password",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "change-password"]
+            },
+            "description": "Change user password"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Farmer Operations",
+      "item": [
+        {
+          "name": "Get Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{farmer_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/farmer/dashboard",
+              "host": ["{{base_url}}"],
+              "path": ["farmer", "dashboard"]
+            },
+            "description": "Get farmer dashboard summary with stats"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Farm",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{farmer_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"North Field\",\n  \"location\": \"Nashik, Maharashtra\",\n  \"area\": 8.5,\n  \"soilType\": \"Black (Regur)\",\n  \"initialSOC\": 2.8\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/farmer/farm",
+              "host": ["{{base_url}}"],
+              "path": ["farmer", "farm"]
+            },
+            "description": "Add a new farm with initial SOC reading"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Farms",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{farmer_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/farmer/farms",
+              "host": ["{{base_url}}"],
+              "path": ["farmer", "farms"]
+            },
+            "description": "Get all farms owned by the farmer"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Farm Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{farmer_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/farmer/farm/{{farm_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["farmer", "farm", "{{farm_id}}"]
+            },
+            "description": "Get details of a specific farm with SOC history"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Farm",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{farmer_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"North Field - Updated\",\n  \"location\": \"Nashik, Maharashtra\",\n  \"area\": 9.5,\n  \"soilType\": \"Black (Regur)\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/farmer/farm/{{farm_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["farmer", "farm", "{{farm_id}}"]
+            },
+            "description": "Update farm details"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Farm",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{farmer_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/farmer/farm/{{farm_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["farmer", "farm", "{{farm_id}}"]
+            },
+            "description": "Delete a farm (only if no sold credits)"
+          },
+          "response": []
+        },
+        {
+          "name": "List Credits for Sale",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{farmer_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farmId\": \"{{farm_id}}\",\n  \"listedCredits\": 80,\n  \"pricePerCredit\": 750\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/farmer/sell-credits",
+              "host": ["{{base_url}}"],
+              "path": ["farmer", "sell-credits"]
+            },
+            "description": "List carbon credits from a farm for sale on marketplace"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Transactions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{farmer_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/farmer/transactions",
+              "host": ["{{base_url}}"],
+              "path": ["farmer", "transactions"]
+            },
+            "description": "Get all credit sales transactions"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Buyer Operations",
+      "item": [
+        {
+          "name": "Browse Marketplace",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyer_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/buyer/marketplace?location=Maharashtra&minPrice=500&maxPrice=1000&minCredits=50&verifiedOnly=false",
+              "host": ["{{base_url}}"],
+              "path": ["buyer", "marketplace"],
+              "query": [
+                {
+                  "key": "location",
+                  "value": "Maharashtra"
+                },
+                {
+                  "key": "minPrice",
+                  "value": "500"
+                },
+                {
+                  "key": "maxPrice",
+                  "value": "1000"
+                },
+                {
+                  "key": "minCredits",
+                  "value": "50"
+                },
+                {
+                  "key": "verifiedOnly",
+                  "value": "false"
+                }
+              ]
+            },
+            "description": "Browse available carbon credits with optional filters"
+          },
+          "response": []
+        },
+        {
+          "name": "Browse Marketplace (All)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyer_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/buyer/marketplace",
+              "host": ["{{base_url}}"],
+              "path": ["buyer", "marketplace"]
+            },
+            "description": "Browse all available credits"
+          },
+          "response": []
+        },
+        {
+          "name": "Buy Credits",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyer_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farmId\": \"{{farm_id}}\",\n  \"credits\": 50\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/buyer/buy-credits",
+              "host": ["{{base_url}}"],
+              "path": ["buyer", "buy-credits"]
+            },
+            "description": "Purchase carbon credits from a listed farm"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Portfolio",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{buyer_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/buyer/portfolio",
+              "host": ["{{base_url}}"],
+              "path": ["buyer", "portfolio"]
+            },
+            "description": "Get buyer's carbon portfolio and purchase history"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "AI Prediction",
+      "item": [
+        {
+          "name": "Predict SOC",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{farmer_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"spectral_data\": [0.45, 0.52, 0.48, 0.51, 0.49, 0.53, 0.50, 0.54, 0.51, 0.55, 0.52, 0.56, 0.53, 0.57, 0.54, 0.58, 0.55, 0.59, 0.56, 0.60, 0.57, 0.61, 0.58, 0.62, 0.59, 0.63, 0.60, 0.64, 0.61, 0.65],\n  \"depth\": 15,\n  \"farmId\": \"{{farm_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/predict",
+              "host": ["{{base_url}}"],
+              "path": ["predict"]
+            },
+            "description": "Run AI SOC prediction from spectral sensor data"
+          },
+          "response": []
+        },
+        {
+          "name": "Predict SOC (Without Farm)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{farmer_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"spectral_data\": [0.40, 0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.65, 0.60, 0.55, 0.50, 0.45, 0.40, 0.43, 0.46, 0.49, 0.52, 0.55, 0.58, 0.61, 0.64, 0.67, 0.70, 0.68, 0.66, 0.64, 0.62, 0.60, 0.58, 0.56],\n  \"depth\": 20\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/predict",
+              "host": ["{{base_url}}"],
+              "path": ["predict"]
+            },
+            "description": "Run prediction without specifying a farm (defaults to 1 hectare)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin Operations",
+      "item": [
+        {
+          "name": "Verify Farm",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{farmer_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farmId\": \"{{farm_id}}\",\n  \"verificationNote\": \"Farm verified by admin\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/verify-farm",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "verify-farm"]
+            },
+            "description": "Verify a carbon farm (admin operation)"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    },
+    {
+      "key": "farmer_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "buyer_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "farm_id",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
