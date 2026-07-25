@@ -13,7 +13,7 @@ async function loadUserProfile() {
     const token = localStorage.getItem('token');
     if (!token) return;
     
-    const response = await fetch('http://localhost:5000/api/profile', {
+    const response = await fetch((window.API_BASE || API_BASE) + '/profile', {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     
@@ -150,7 +150,7 @@ async function saveUserProfile() {
       updateData.companyName = document.getElementById('profileCompany').value;
     }
     
-    const response = await fetch('http://localhost:5000/api/profile', {
+    const response = await fetch((window.API_BASE || API_BASE) + '/profile', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

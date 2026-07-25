@@ -1948,6 +1948,7 @@
       color: var(--text2)
     }
   </style>
+  <script type="module" src="/config.js"></script>
 </head>
 
 <body>
@@ -2546,7 +2547,7 @@
     // ==================== API CONFIGURATION ====================
     const getAPIBaseURL = () => {
       const saved = localStorage.getItem('agb_api_url');
-      return saved || 'http://localhost:5000/api';
+      return saved || (window.API_BASE || 'http://localhost:5000/api');
     };
     
     let API_BASE_URL = getAPIBaseURL();
@@ -3545,7 +3546,7 @@
 
       try {
         const token = localStorage.getItem('agb_token');
-        const response = await fetch('http://localhost:5000/api/firebase/predict-from-latest', {
+        const response = await fetch((window.API_BASE || API_BASE) + '/firebase/predict-from-latest', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

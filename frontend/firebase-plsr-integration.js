@@ -21,7 +21,7 @@ async function processSensorDataWithPLSR(farmId, jwtToken) {
     // 5. Return prediction
     
     const response = await fetch(
-      'http://localhost:5000/api/firebase/predict-from-latest',
+      (window.API_BASE || API_BASE) + '/firebase/predict-from-latest',
       {
         method: 'POST',
         headers: {
@@ -62,7 +62,7 @@ async function extractAndProcessSpectralData(farmId, jwtToken) {
     // ── STEP 1: Fetch latest sensor reading from Firebase ────────────────────
     console.log('📊 Step 1: Fetching latest spectral data from Firebase...');
     const latestResponse = await fetch(
-      `http://localhost:5000/api/firebase/latest-spectral/${farmId}`,
+      `${(window.API_BASE || API_BASE)}/firebase/latest-spectral/${farmId}`,
       {
         headers: { 'Authorization': `Bearer ${jwtToken}` }
       }
@@ -99,7 +99,7 @@ async function extractAndProcessSpectralData(farmId, jwtToken) {
     // ── STEP 3: Store result to Firebase ────────────────────────────────────
     console.log('\n💾 Step 3: Storing prediction result to Firebase...');
     const storeResponse = await fetch(
-      'http://localhost:5000/api/firebase/store-reading',
+      (window.API_BASE || API_BASE) + '/firebase/store-reading',
       {
         method: 'POST',
         headers: {
