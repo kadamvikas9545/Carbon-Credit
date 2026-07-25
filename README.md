@@ -197,7 +197,7 @@ npm run dev    # Uses nodemon for auto-reload
 
 Expected output:
 ```
-🌿 AgroGreenBits API running on http://localhost:5000
+🌿 AgroGreenBits API running on https://carbon-credit-q7fp.onrender.com
 ✅ MongoDB connected
 ```
 
@@ -292,7 +292,7 @@ Navigate to: `http://localhost:8080`
 
 ### **Base URL**
 ```
-http://localhost:5000/api
+https://carbon-credit-q7fp.onrender.com
 ```
 
 ### **Authentication Endpoints**
@@ -591,7 +591,7 @@ Solution:
 
 ### **Frontend not connecting to backend**
 ```
-Error: Failed to fetch from http://localhost:5000/api
+Error: Failed to fetch from https://carbon-credit-q7fp.onrender.com
 
 Solution:
 1. Verify backend is running on port 5000
