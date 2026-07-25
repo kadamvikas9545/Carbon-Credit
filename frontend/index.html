@@ -1948,7 +1948,7 @@
       color: var(--text2)
     }
   </style>
-  <script type="module" src="/config.js"></script>
+  <script type="module" src="./frontend/config.js"></script>
 </head>
 
 <body>
@@ -2592,7 +2592,12 @@
           options.body = JSON.stringify(body);
         }
 
-        const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+        const apiBase = getAPIBaseURL();
+
+console.log("Using API:", apiBase);
+console.log("Request URL:", `${apiBase}${endpoint}`);
+
+const response = await fetch(`${apiBase}${endpoint}`, options);
         const contentType = response.headers.get('content-type') || '';
         const responseText = await response.text();
 
