@@ -11,7 +11,6 @@ const API_BASE = (function() {
   return 'https://carbon-credit-q7fp.onrender.com/api';
 })();
 
-export { API_BASE };
 
 // For non-module scripts that expect a global, also attach:
 window.API_BASE = API_BASE;
