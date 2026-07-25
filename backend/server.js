@@ -6,7 +6,7 @@ const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 const express = require('express');
 const cors = require('cors');
-const mongoose = require('mongoose');
+const connectDB = require('./config/db');
  
 const authRoutes = require('./routes/auth');
 const farmerRoutes = require('./routes/farmer');
@@ -19,16 +19,37 @@ const app = express();
 const PORT = process.env.PORT || 5000;
  
 // ── Middleware ─────────────────────────────────────────────────────────────────
-app.use(cors({ 
-  origin: [
-    'http://localhost:5173',
-    'http://localhost:5174',
-    'http://127.0.0.1:5500',      // VS Code Live Server
-    'http://localhost:8080',
-    'http://127.0.0.1:8080'
-  ], 
-  credentials: true 
-}));
+// Configure CORS. In production allow only the deployed frontend origin
+// (FRONTEND_URL). In development allow localhost origins for testing.
+const isProd = process.env.NODE_ENV === 'production';
+const frontendOrigin = process.env.FRONTEND_URL || '';
+
+const devLocalOrigins = [
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://127.0.0.1:5500', // VS Code Live Server
+  'http://localhost:8080',
+  'http://127.0.0.1:8080',
+];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // allow requests with no origin (curl, server-to-server)
+      if (!origin) return callback(null, true);
+      if (isProd) {
+        if (frontendOrigin && origin === frontendOrigin) return callback(null, true);
+        return callback(new Error('CORS policy: origin not allowed'), false);
+      }
+      // development: permit localhost dev origins and any configured FRONTEND_URL
+      if (frontendOrigin && origin === frontendOrigin) return callback(null, true);
+      if (devLocalOrigins.indexOf(origin) !== -1) return callback(null, true);
+      return callback(new Error('CORS policy: origin not allowed'), false);
+    },
+    // Enable credentials only if a FRONTEND_URL is set (cookie-based auth).
+    credentials: !!frontendOrigin,
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
  
@@ -40,18 +61,44 @@ if (process.env.NODE_ENV === 'development') {
   });
 }
  
-// ── Database Connection ────────────────────────────────────────────────────────
-if (process.env.MONGO_URI) {
-  mongoose
-    .connect(process.env.MONGO_URI)
-    .then(() => console.log('✅ MongoDB connected'))
-    .catch((err) => {
-      console.warn('⚠️ MongoDB connection failed:', err.message);
-      console.warn('⚠️ Running API in mock mode without database');
+// ── Database Connection and server start ───────────────────────────────────────
+async function startServer() {
+  try {
+    await connectDB();
+    console.log('✅ MongoDB connected');
+  } catch (err) {
+    console.error('⚠️ MongoDB connection failed:', err.message || err);
+    if (isProd) {
+      console.error('Exiting: MongoDB is required in production.');
+      process.exit(1);
+    }
+    console.warn('Continuing in mock mode (development) without DB');
+  }
+
+  const server = app.listen(PORT, () => {
+    console.log(`🌿 AgroGreenBits API running on http://0.0.0.0:${PORT}`);
+  });
+
+  // Graceful shutdown
+  const shutdown = (signal) => {
+    console.log(`Received ${signal}. Closing server...`);
+    server.close(() => {
+      const mongoose = require('mongoose');
+      mongoose.connection.close(false, () => {
+        console.log('Mongo connection closed. Exiting.');
+        process.exit(0);
+      });
     });
-} else {
-  console.warn('⚠️ MONGO_URI not set in .env - Running API in mock mode');
+  };
+
+  process.on('SIGINT', () => shutdown('SIGINT'));
+  process.on('SIGTERM', () => shutdown('SIGTERM'));
+  process.on('unhandledRejection', (reason) => {
+    console.error('Unhandled Rejection:', reason);
+  });
 }
+
+startServer();
  
 // ── Routes ─────────────────────────────────────────────────────────────────────
 app.use('/api/auth', authRoutes);
@@ -75,7 +122,5 @@ app.use((err, _req, res, _next) => {
   });
 });
  
-app.listen(PORT, () => {
-  console.log(`🌿 AgroGreenBits API running on http://localhost:${PORT}`);
-});
+// (server is started inside startServer after DB connection)
  

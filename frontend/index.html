@@ -2547,7 +2547,7 @@
     // ==================== API CONFIGURATION ====================
     const getAPIBaseURL = () => {
       const saved = localStorage.getItem('agb_api_url');
-      return saved || (window.API_BASE || 'http://localhost:5000/api');
+      return saved || (window.API_BASE || 'https://carbon-credit-3xyk.onrender.com/api');
     };
     
     let API_BASE_URL = getAPIBaseURL();
