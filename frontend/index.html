@@ -2593,13 +2593,28 @@
         }
 
         const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
-        const data = await response.json();
+        const contentType = response.headers.get('content-type') || '';
+        const responseText = await response.text();
 
-        if (!response.ok) {
-          throw new Error(data.message || `API Error: ${response.status}`);
+        let data = null;
+        if (responseText) {
+          if (contentType.includes('application/json')) {
+            try {
+              data = JSON.parse(responseText);
+            } catch (parseErr) {
+              throw new Error(`API returned invalid JSON (${response.status})`);
+            }
+          } else {
+            data = { message: responseText };
+          }
         }
 
-        return data;
+        if (!response.ok) {
+          const message = data && data.message ? data.message : `API Error: ${response.status}`;
+          throw new Error(message);
+        }
+
+        return data || { success: true };
       } catch (error) {
         console.error('API Error:', error);
         throw error;
