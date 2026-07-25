@@ -23,6 +23,11 @@ const PORT = process.env.PORT || 5000;
 // (FRONTEND_URL). In development allow localhost origins for testing.
 const isProd = process.env.NODE_ENV === 'production';
 const frontendOrigin = process.env.FRONTEND_URL || '';
+const allowedOrigins = new Set([
+  frontendOrigin,
+  process.env.FRONTEND_URL_2 || '',
+  'https://carbon-credit-1-sezl.onrender.com',
+]);
 
 const devLocalOrigins = [
   'http://localhost:5173',
@@ -38,11 +43,11 @@ app.use(
       // allow requests with no origin (curl, server-to-server)
       if (!origin) return callback(null, true);
       if (isProd) {
-        if (frontendOrigin && origin === frontendOrigin) return callback(null, true);
+        if (allowedOrigins.has(origin)) return callback(null, true);
         return callback(new Error('CORS policy: origin not allowed'), false);
       }
       // development: permit localhost dev origins and any configured FRONTEND_URL
-      if (frontendOrigin && origin === frontendOrigin) return callback(null, true);
+      if (allowedOrigins.has(origin)) return callback(null, true);
       if (devLocalOrigins.indexOf(origin) !== -1) return callback(null, true);
       return callback(new Error('CORS policy: origin not allowed'), false);
     },
